@@ -66,6 +66,7 @@ function App() {
           <p>我們已收到您的報名資訊，請確認以下明細並完成繳費。</p>
           <div className="summary-box">
             <p><strong>報名場次：</strong>{formData.session}</p>
+            <p><strong>預計領取時間：</strong>{formData.pickupTime.replace('T', ' ')}</p>
             <p><strong>訂單總額：</strong>NT$ {calculatedTotal}</p>
             <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
             {formData.paymentMethod === '銀行轉帳/ATM' && <p className="bank-alert">請記得轉帳至：(617) 00817220606250</p>}
@@ -207,9 +208,8 @@ function App() {
 
               <div className="form-group">
                 <label>預計領取日期 & 時間 (基金會開放時間：週二-五 9-21, 週六-日 9-17) *</label>
-                <input type="text" name="pickupTime" required value={formData.pickupTime} onChange={handleInputChange} placeholder="例如：5/2 14:00" />
+                <input type="datetime-local" name="pickupTime" required value={formData.pickupTime} onChange={handleInputChange} />
               </div>
-
               <div className="form-group">
                 <label>領取地點 *</label>
                 <select name="pickupLocation" value={formData.pickupLocation} onChange={handleInputChange}>
