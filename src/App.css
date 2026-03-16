@@ -238,7 +238,7 @@ textarea {
 }
 
 .react-datepicker__day {
-  color: white !important;
+  color: white;
 }
 
 .react-datepicker__day:hover {
@@ -251,6 +251,18 @@ textarea {
   color: white !important;
 }
 
+/* 禁用日期的樣式：反灰且取消指標事件 */
+.react-datepicker__day--disabled {
+  color: #666 !important;
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+.react-datepicker__day--disabled:hover {
+  background-color: transparent !important;
+  color: #666 !important;
+}
+
 .react-datepicker__time-container {
   background-color: var(--card-bg) !important;
   border-left: 1px solid rgba(255,255,255,0.1) !important;
@@ -261,7 +273,13 @@ textarea {
 }
 
 .react-datepicker__time-list-item {
-  color: white !important;
+  color: white;
+}
+
+/* 禁用時間的樣式 */
+.react-datepicker__time-list-item--disabled {
+  color: #666 !important;
+  text-decoration: none !important;
 }
 
 .react-datepicker__time-list-item:hover {

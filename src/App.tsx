@@ -237,8 +237,10 @@ function App() {
                   placeholderText="請選擇領取時間"
                   required
                   filterDate={(date) => date.getDay() !== 1 && date.getDay() !== 2}
-                  minTime={new Date(new Date().setHours(9, 0, 0))}
-                  maxTime={new Date(new Date().setHours(15, 0, 0))}
+                  filterTime={(time) => {
+                    const hours = time.getHours();
+                    return hours >= 9 && hours <= 15;
+                  }}
                 />
               </div>
               <div className="form-group">
