@@ -15,7 +15,7 @@ function App() {
     paymentMethod: '親至新港文教基金會繳費',
     bankLast5: '',
     pickupTime: '',
-    pickupLocation: '新港文教基金會(會館)',
+    pickupLocation: '新港文教基金會(閱讀館)',
     referral: [] as string[],
     notes: ''
   });
@@ -201,7 +201,7 @@ function App() {
               <div className="form-group">
                 <label>領取地點 *</label>
                 <select name="pickupLocation" value={formData.pickupLocation} onChange={handleInputChange}>
-                  <option value="新港文教基金會(會館)">新港文教基金會(會館)</option>
+                  <option value="新港文教基金會(閱讀館)">新港文教基金會(閱讀館)</option>
                   <option value="培桂堂(建議選此處，可同時參觀)">培桂堂</option>
                 </select>
               </div>
