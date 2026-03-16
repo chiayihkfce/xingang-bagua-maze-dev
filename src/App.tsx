@@ -147,11 +147,6 @@ function App() {
                 <label>聯絡電話(手機為主) *</label>
                 <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder="0912-345-678" />
               </div>
-
-              <div className="form-group">
-                <label>Email信箱 (行前通知與客服使用)</label>
-                <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleInputChange} placeholder="若與上方相同可不填" />
-              </div>
             </div>
 
             <div className="form-card">
@@ -175,11 +170,6 @@ function App() {
               <div className="form-group">
                 <label>當天遊玩人數 (如為單人購買可不填)</label>
                 <input type="text" name="players" value={formData.players} onChange={handleInputChange} placeholder="例如：4人" />
-              </div>
-
-              <div className="form-group">
-                <label>總金額 (請自行計算填寫或參考下方自動加總)</label>
-                <input type="text" name="totalAmount" value={formData.totalAmount} onChange={handleInputChange} placeholder={`參考金額：${calculatedTotal}`} />
               </div>
             </div>
 
