@@ -209,6 +209,15 @@ textarea {
   font-size: 16px !important;
   box-sizing: border-box;
   transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* 讓 Chrome/Edge 的日曆圖示顯示出來 */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  padding: 0.2rem;
 }
 
 input:focus, select:focus, textarea:focus {
