@@ -84,7 +84,8 @@ function App() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const submissionData = {
+    // 準備要傳送的資料
+    const submissionData: any = {
       ...formData,
       totalAmount: calculatedTotal,
       referral: formData.referral.join(', '),
@@ -93,13 +94,19 @@ function App() {
 
     try {
       if (GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+        // 使用 URLSearchParams 封裝資料，這是最穩定的傳送方式
+        const params = new URLSearchParams();
+        for (const key in submissionData) {
+          params.append(key, submissionData[key]);
+        }
+
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',
+          mode: 'no-cors', // 關鍵：繞過 CORS 檢查
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: JSON.stringify(submissionData),
+          body: params.toString(),
         });
       } else {
         console.warn('尚未設定 GOOGLE_SCRIPT_URL，僅模擬提交');
