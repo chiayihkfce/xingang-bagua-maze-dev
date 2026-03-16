@@ -410,4 +410,6 @@ input:focus, select:focus, textarea:focus {
   margin-top: 3rem;
   font-size: 0.9rem;
   color: #666;
+  text-align: center;
+  width: 100%;
 }
