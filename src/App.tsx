@@ -43,6 +43,10 @@ function App() {
 
   const handleDateChange = (date: Date | null) => {
     if (date) {
+      // 防呆：如果是週一(1)或週二(2)，則不進行更新
+      const day = date.getDay();
+      if (day === 1 || day === 2) return;
+
       // 轉換為 YYYY-MM-DD HH:mm 格式字串存入 formData
       const formattedDate = date.toLocaleString('zh-TW', {
         year: 'numeric',
@@ -236,6 +240,7 @@ function App() {
                   className="date-picker-input"
                   placeholderText="請選擇領取時間"
                   required
+                  minDate={new Date()}
                   filterDate={(date) => date.getDay() !== 1 && date.getDay() !== 2}
                   filterTime={(time) => {
                     const hours = time.getHours();
