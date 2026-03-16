@@ -5,6 +5,7 @@ import './App.css'
 
 function App() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -23,6 +24,9 @@ function App() {
   });
 
   const [calculatedTotal, setCalculatedTotal] = useState(0);
+
+  // 請在此處填入您部署後的 Google Apps Script URL
+  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
 
   // 價格邏輯
   useEffect(() => {
@@ -76,11 +80,40 @@ function App() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('提交報名資料:', formData);
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsSubmitting(true);
+
+    const submissionData = {
+      ...formData,
+      totalAmount: calculatedTotal,
+      referral: formData.referral.join(', '),
+      timestamp: new Date().toLocaleString('zh-TW')
+    };
+
+    try {
+      if (GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData),
+        });
+      } else {
+        console.warn('尚未設定 GOOGLE_SCRIPT_URL，僅模擬提交');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.error('提交失敗:', error);
+      alert('報名失敗，請檢查網路連線或稍後再試。');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -285,7 +318,9 @@ function App() {
                 <span>估計總額：</span>
                 <span className="amount">NT$ {calculatedTotal}</span>
               </div>
-              <button type="submit" className="submit-btn">送出報名表單</button>
+              <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? '正在送出...' : '送出報名表單'}
+              </button>
             </div>
           </form>
         </section>
