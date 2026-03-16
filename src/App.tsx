@@ -26,7 +26,7 @@ function App() {
   const [calculatedTotal, setCalculatedTotal] = useState(0);
 
   // 請在此處填入您部署後的 Google Apps Script URL
-  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
 
   // 價格邏輯
   useEffect(() => {
