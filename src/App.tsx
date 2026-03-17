@@ -34,12 +34,14 @@ function App() {
     pickupTime: '',
     pickupLocation: '新港文教基金會(閱讀館)',
     referral: [] as string[],
-    notes: ''
+    notes: '',
+    hp_field: '' // 陷阱欄位 (Honeypot)
   });
 
   const [calculatedTotal, setCalculatedTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+  const [loadTime] = useState(Date.now()); // 紀錄頁面載入時間
 
   // 請在此處填入您部署後的 Google Apps Script URL
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
@@ -386,7 +388,19 @@ function App() {
   };
 
   const handleConfirmSubmit = async () => {
-    // --- 二次驗證邏輯 ---
+    // --- 機器人驗證 (Honeypot & Speed Check) ---
+    if (formData.hp_field !== '') {
+      console.warn('機器人行為檢測：陷阱欄位已填寫');
+      return; // 靜默攔截
+    }
+
+    const timeDiff = (Date.now() - loadTime) / 1000;
+    if (timeDiff < 5) {
+      alert('【送出失敗】填表速度異常過快，請確認資訊後再試。');
+      return;
+    }
+
+    // --- 原有的二次驗證邏輯 ---
     const qty = parseInt(formData.quantity) || 0;
     const players = parseInt(formData.players) || 0;
     const maxPlayers = qty * 4;
@@ -796,6 +810,18 @@ function App() {
 
         <section className="registration-section">
           <form onSubmit={handleSubmit} className="reg-form">
+            {/* 陷阱欄位 (Honeypot) - 機器人會填寫，人類看不到 */}
+            <div style={{ display: 'none' }} aria-hidden="true">
+              <input 
+                type="text" 
+                name="hp_field" 
+                value={formData.hp_field} 
+                onChange={handleInputChange} 
+                tabIndex={-1} 
+                autoComplete="off" 
+              />
+            </div>
+
             <div className="form-card">
               <h3 className="form-section-title">基本資料</h3>
               <div className="form-group">
