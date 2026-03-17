@@ -637,22 +637,27 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 .admin-login-actions button {
   flex: 1;
-  height: 50px;
+  height: 52px; /* 固定高度 */
   border-radius: 50px;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box; /* 確保邊框計算在內 */
+  transition: all 0.3s ease;
 }
 
 .cancel-btn {
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.admin-login-actions .submit-btn {
+  border: 2px solid transparent; /* 加入透明邊框以對齊取消按鈕的厚度 */
+  padding: 0;
 }
 
 .cancel-btn:hover {
