@@ -101,7 +101,8 @@ function App() {
         alert('密碼錯誤');
       }
     } catch (err) {
-      alert('登入失敗，請確認網路連線');
+      console.error('登入偵錯資訊:', err);
+      alert('登入失敗，可能是後端腳本未更新或密碼錯誤。');
     } finally {
       setIsDataLoading(false);
     }
@@ -133,79 +134,95 @@ function App() {
   const handleAddSession = async () => {
     if (!newSession.name || !newSession.price) return;
     setIsSubmitting(true);
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'addSession', pw: adminPassword, ...newSession })
-    });
-    alert('已送出新增要求');
-    window.location.reload();
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'addSession', pw: adminPassword, ...newSession })
+      });
+      // 靜態更新：重新載入場次，不重新整理頁面
+      const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
+      const data = await res.json();
+      setSessions(data);
+      setNewSession({ name: '', price: '' });
+      alert('新增成功');
+    } catch (err) {
+      alert('新增失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 5. 管理操作：刪除場次
   const handleDeleteSession = async (name: string) => {
     if (!window.confirm(`確定要刪除場次「${name}」嗎？`)) return;
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
-    });
-    alert('已送出刪除要求');
-    window.location.reload();
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
+      });
+      setSessions(prev => prev.filter(s => s.name !== name));
+      alert('已刪除');
+    } catch (err) {
+      alert('刪除失敗');
+    }
   };
 
   // 6. 管理操作：刪除報名資料
   const handleDeleteSubmission = async (rowIndex: number) => {
     if (!window.confirm('確定要刪除這筆報名資料嗎？此操作不可復原！')) return;
-    setIsSubmitting(true);
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'deleteSubmission', pw: adminPassword, rowIndex })
-    });
-    alert('已送出刪除要求');
-    window.location.reload();
-  };
-
-  // 7. 管理操作：開啟修改視窗
-  const startEditSubmission = (row: any[], index: number) => {
-    setEditingRowIndex(index);
-    setEditData({
-      timestamp: row[0],
-      email: row[1],
-      name: row[2],
-      phone: row[3],
-      contactEmail: row[4],
-      session: row[5],
-      quantity: row[6],
-      players: row[7],
-      totalAmount: row[8],
-      paymentMethod: row[9],
-      bankLast5: row[10],
-      pickupTime: row[11],
-      pickupLocation: row[12],
-      referral: row[13],
-      notes: row[14]
-    });
-    setIsEditing(true);
+    setIsDataLoading(true);
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'deleteSubmission', pw: adminPassword, rowIndex })
+      });
+      // 靜態更新：從列表中移除該行
+      setSubmissions(prev => prev.filter((_, i) => i !== rowIndex));
+      setTotalRows(prev => prev - 1);
+      alert('已刪除');
+    } catch (err) {
+      alert('刪除失敗');
+    } finally {
+      setIsDataLoading(false);
+    }
   };
 
   // 8. 管理操作：送出修改
   const handleUpdateSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ 
-        action: 'updateSubmission', 
-        pw: adminPassword, 
-        rowIndex: editingRowIndex,
-        ...editData 
-      })
-    });
-    alert('修改成功');
-    window.location.reload();
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ 
+          action: 'updateSubmission', 
+          pw: adminPassword, 
+          rowIndex: editingRowIndex,
+          ...editData 
+        })
+      });
+      // 靜態更新該行資料
+      const newSubmissions = [...submissions];
+      if (editingRowIndex !== null) {
+        newSubmissions[editingRowIndex] = [
+          editData.timestamp, editData.email, editData.name, editData.phone, editData.contactEmail,
+          editData.session, editData.quantity, editData.players, editData.totalAmount, 
+          editData.paymentMethod, editData.bankLast5, editData.pickupTime, editData.pickupLocation,
+          editData.referral, editData.notes
+        ];
+        setSubmissions(newSubmissions);
+      }
+      setIsEditing(false);
+      alert('修改成功');
+    } catch (err) {
+      alert('修改失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
