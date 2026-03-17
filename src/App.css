@@ -809,9 +809,21 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 /* 報名表格 */
+/* 管理員模式下的容器全寬化 */
+.admin-dashboard {
+  max-width: none !important;
+  width: 98% !important;
+  padding-left: 1%;
+  padding-right: 1%;
+}
+
 .submissions-table-container {
   overflow-x: auto;
   padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .submissions-table {
