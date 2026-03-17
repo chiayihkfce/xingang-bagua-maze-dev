@@ -523,127 +523,117 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   backdrop-filter: blur(5px);
 }
 
+/* 管理員登入彈窗風格提升 */
 .admin-login-modal {
-  background: var(--card-bg);
-  padding: 2.5rem;
-  border-radius: 15px;
-  border: 1px solid var(--primary-gold);
+  background: linear-gradient(145deg, var(--card-bg), #1a252f);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  border: 2px solid var(--primary-gold);
   width: 90%;
   max-width: 400px;
   text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(241, 196, 15, 0.1);
 }
 
 .admin-login-modal h2 {
-  margin-top: 0;
+  font-family: 'Noto Serif TC', serif;
   color: var(--primary-gold);
+  margin-bottom: 2rem;
+  letter-spacing: 2px;
 }
 
-.admin-login-modal input {
-  margin: 1.5rem 0;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.modal-actions button {
-  flex: 1;
-  padding: 0.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-}
-
-.modal-actions button[type="submit"] {
-  background: var(--primary-gold);
-  color: black;
-  font-weight: bold;
-}
-
-.modal-actions button[type="button"] {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-/* 管理後台儀表板 */
-.admin-dashboard {
-  padding-top: 2rem;
-}
-
+/* 管理後台導覽優化 */
 .admin-nav {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  margin: 2rem 0;
+  border-bottom: 1px solid rgba(241, 196, 15, 0.2);
+  padding-bottom: 1rem;
 }
 
 .admin-nav button {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.6rem 1.5rem;
-  border-radius: 20px;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-family: 'Noto Serif TC', serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .admin-nav button.active {
-  background: var(--primary-gold);
-  color: black;
-  border-color: var(--primary-gold);
-}
-
-.admin-section {
-  background: var(--card-bg);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-top: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.session-list {
-  margin-bottom: 2rem;
-}
-
-.session-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.action-cell {
-  display: flex;
-  gap: 0.5rem;
-  white-space: nowrap;
-}
-
-.edit-btn, .delete-btn {
-  padding: 0.4rem 0.8rem;
-  border-radius: 5px;
-  cursor: pointer;
+  color: var(--primary-gold);
   font-weight: bold;
-  border: none;
-  font-size: 0.8rem;
-  min-width: 50px;
-  transition: opacity 0.2s;
+}
+
+.admin-nav button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: var(--primary-gold);
+  box-shadow: 0 0 10px var(--primary-gold);
+}
+
+/* 管理區塊卡片化 */
+.admin-section {
+  background: linear-gradient(145deg, rgba(44, 62, 80, 0.6), rgba(26, 37, 47, 0.8));
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(241, 196, 15, 0.15);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.admin-section h3 {
+  font-family: 'Noto Serif TC', serif;
+  color: var(--primary-gold);
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--accent-orange);
+  padding-left: 1rem;
+}
+
+/* 表格樣式細緻化 */
+.submissions-table {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.submissions-table th {
+  background: rgba(0, 0, 0, 0.4) !important;
+  color: var(--primary-gold);
+  font-family: 'Noto Serif TC', serif;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  border-bottom: 2px solid var(--accent-orange);
+}
+
+.submissions-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.submissions-table tr:hover td {
+  background: rgba(241, 196, 15, 0.05);
+}
+
+/* 修改/刪除按鈕精緻化 */
+.edit-btn, .delete-btn {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .edit-btn {
-  background: var(--primary-gold);
-  color: black;
+  border: 1px solid var(--primary-gold);
 }
 
 .delete-btn {
-  background: #e74c3c;
-  color: white;
-}
-
-.edit-btn:hover, .delete-btn:hover {
-  opacity: 0.8;
+  border: 1px solid #e74c3c;
 }
 
 .edit-form-grid {
