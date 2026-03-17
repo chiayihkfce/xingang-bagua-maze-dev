@@ -111,6 +111,19 @@ function App() {
     window.location.reload();
   };
 
+  // 6. 管理操作：刪除報名資料
+  const handleDeleteSubmission = async (rowIndex: number) => {
+    if (!window.confirm('確定要刪除這筆報名資料嗎？此操作不可復原！')) return;
+    setIsSubmitting(true);
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'deleteSubmission', pw: adminPassword, rowIndex })
+    });
+    alert('已送出刪除要求，請重新整理');
+    window.location.reload();
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -221,11 +234,19 @@ function App() {
             <h3>報名清單</h3>
             <table className="submissions-table">
               <thead>
-                <tr>{submissions[0]?.map((h: any, i: number) => <th key={i}>{h}</th>)}</tr>
+                <tr>
+                  {submissions[0]?.map((h: any, i: number) => <th key={i}>{h}</th>)}
+                  <th>操作</th>
+                </tr>
               </thead>
               <tbody>
                 {submissions.slice(1).map((row, i) => (
-                  <tr key={i}>{row.map((cell: any, j: number) => <td key={j}>{cell}</td>)}</tr>
+                  <tr key={i}>
+                    {row.map((cell: any, j: number) => <td key={j}>{cell}</td>)}
+                    <td>
+                      <button onClick={() => handleDeleteSubmission(i + 1)} className="delete-btn">刪除</button>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
