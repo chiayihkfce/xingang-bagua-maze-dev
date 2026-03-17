@@ -840,28 +840,60 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 /* 報名表格 */
-/* 管理員模式下的容器全寬化 */
+/* 管理員模式下的容器全寬化與響應式 */
 .admin-dashboard {
   max-width: none !important;
-  width: 98% !important;
-  padding-left: 1%;
-  padding-right: 1%;
+  width: 100% !important;
+  padding: 1rem !important;
+  box-sizing: border-box;
 }
 
 .submissions-table-container {
-  overflow-x: auto;
-  padding: 1rem;
+  width: 100%;
+  overflow-x: auto; /* 允許橫向捲動 */
+  -webkit-overflow-scrolling: touch; /* iOS 順滑捲動 */
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  width: 100%;
+  margin-top: 1rem;
   box-sizing: border-box;
 }
 
 .submissions-table {
-  width: 100%;
+  width: max-content; /* 讓表格根據內容撐開，觸發容器捲動 */
+  min-width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
-  min-width: 1200px;
+  font-size: 0.85rem;
+}
+
+/* 編輯彈窗手機版優化 */
+@media (max-width: 768px) {
+  .admin-login-modal {
+    padding: 2rem 1.5rem !important;
+    width: 95% !important;
+    max-height: 90vh;
+    overflow-y: auto; /* 允許垂直捲動 */
+  }
+
+  .admin-nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-nav button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .edit-form-grid {
+    grid-template-columns: 1fr; /* 手機版改為單欄 */
+    gap: 1rem;
+  }
+  
+  .admin-section {
+    padding: 1.5rem 1rem !important;
+  }
 }
 
 .submissions-table th, .submissions-table td {
