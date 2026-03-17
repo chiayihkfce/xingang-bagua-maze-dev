@@ -455,6 +455,24 @@ function App() {
                   <label>價格</label>
                   <input type="number" value={editingSession.newPrice} onChange={e => setEditingSession({...editingSession, newPrice: e.target.value})} />
                 </div>
+                <div className="form-group">
+                  <label>固定日期 (非強選場次請留空)</label>
+                  <DatePicker
+                    selected={editingSession.fixedDate ? new Date(editingSession.fixedDate) : null}
+                    onChange={(date) => {
+                      if (date) {
+                        const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        setEditingSession({...editingSession, fixedDate: formatted});
+                      } else {
+                        setEditingSession({...editingSession, fixedDate: ''});
+                      }
+                    }}
+                    dateFormat="yyyy-MM-dd"
+                    className="date-picker-input"
+                    placeholderText="點擊選擇日期"
+                    isClearable
+                  />
+                </div>
                 <div className="form-group" style={{gridColumn: '1 / -1'}}>
                   <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
                   <div className="time-slot-grid">
@@ -515,7 +533,21 @@ function App() {
                 </div>
                 <div className="form-group">
                   <label>固定日期 (非強選場次請留空)</label>
-                  <input type="text" placeholder="例如：2026-05-02" value={newSession.fixedDate} onChange={e => setNewSession({...newSession, fixedDate: e.target.value})} />
+                  <DatePicker
+                    selected={newSession.fixedDate ? new Date(newSession.fixedDate) : null}
+                    onChange={(date) => {
+                      if (date) {
+                        const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        setNewSession({...newSession, fixedDate: formatted});
+                      } else {
+                        setNewSession({...newSession, fixedDate: ''});
+                      }
+                    }}
+                    dateFormat="yyyy-MM-dd"
+                    className="date-picker-input"
+                    placeholderText="點擊選擇日期"
+                    isClearable
+                  />
                 </div>
                 <div className="form-group" style={{gridColumn: '1 / -1'}}>
                   <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
