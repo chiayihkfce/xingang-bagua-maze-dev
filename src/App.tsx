@@ -39,10 +39,12 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
-  // 請在此處填入您部署後的 Google Apps Script URL
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
+  // --- 2. 工具與常數 ---
+  const TIME_SLOTS = [
+    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
+    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'
+  ];
 
-  // --- 2. 工具函式 ---
   const formatDateTime = (date: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
@@ -57,12 +59,15 @@ function App() {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
           setSessions(data);
-          // 初始選中第一個，並檢查是否需要自動填入時間
           const first = data[0];
+          // 如果只有一個固定時間才自動填入，多個則讓使用者選
+          const times = first.fixedTime ? first.fixedTime.split(',') : [];
+          const autoTime = (first.fixedDate && times.length === 1) ? `${first.fixedDate} ${times[0]}` : '';
+          
           setFormData(prev => ({ 
             ...prev, 
             session: first.name,
-            pickupTime: (first.fixedDate && first.fixedTime) ? `${first.fixedDate} ${first.fixedTime}` : ''
+            pickupTime: autoTime
           }));
         } else {
           setSessions([{ name: '暫無開放場次，請洽管理員', price: 0 }]);
@@ -85,7 +90,7 @@ function App() {
 
   const [isDataLoading, setIsDataLoading] = useState(false);
 
-  // 3. 管理員登入：合併請求優化
+  // 3. 管理員登入
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsDataLoading(true);
@@ -135,6 +140,23 @@ function App() {
   const [isEditingSession, setIsEditingSession] = useState(false);
   const [editingSession, setEditingSession] = useState({ oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '' });
 
+  // 管理操作：切換固定時間多選
+  const toggleFixedTime = (time: string, isEdit: boolean) => {
+    if (isEdit) {
+      const currentTimes = editingSession.fixedTime ? editingSession.fixedTime.split(',') : [];
+      const newTimes = currentTimes.includes(time) 
+        ? currentTimes.filter(t => t !== time) 
+        : [...currentTimes, time].sort();
+      setEditingSession({ ...editingSession, fixedTime: newTimes.join(',') });
+    } else {
+      const currentTimes = newSession.fixedTime ? newSession.fixedTime.split(',') : [];
+      const newTimes = currentTimes.includes(time) 
+        ? currentTimes.filter(t => t !== time) 
+        : [...currentTimes, time].sort();
+      setNewSession({ ...newSession, fixedTime: newTimes.join(',') });
+    }
+  };
+
   // 4. 管理操作：新增場次
   const handleAddSession = async () => {
     if (!newSession.name || !newSession.price) return;
@@ -183,7 +205,6 @@ function App() {
           ...editingSession 
         })
       });
-      // 重新載入以確保同步
       const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
       const data = await res.json();
       setSessions(data);
@@ -205,7 +226,6 @@ function App() {
         mode: 'no-cors',
         body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
       });
-      // 由於 no-cors 無法讀取內容，我們假設送出即成功並更新 UI
       setSessions(prev => prev.filter(s => s.name !== name));
       alert('刪除要求已送出');
     } catch (err) {
@@ -224,7 +244,6 @@ function App() {
         mode: 'no-cors',
         body: JSON.stringify({ action: 'deleteSubmission', pw: adminPassword, rowIndex })
       });
-      // 靜態更新：從列表中移除該行
       setSubmissions(prev => prev.filter((_, i) => i !== rowIndex));
       setTotalRows(prev => prev - 1);
       alert('已刪除');
@@ -235,93 +254,27 @@ function App() {
     }
   };
 
-  // 7. 管理操作：開啟修改視窗
-  const startEditSubmission = (row: any[], index: number) => {
-    setEditingRowIndex(index);
-    
-    // 處理時間格式化，移除 ISO 格式的 T 和 Z
-    let rawTime = row[11] || '';
-    if (typeof rawTime === 'string' && rawTime.includes('T')) {
-      rawTime = formatDateTime(new Date(rawTime)).substring(0, 16);
-    }
-
-    setEditData({
-      timestamp: row[0],
-      email: row[1],
-      name: row[2],
-      phone: row[3],
-      contactEmail: row[4],
-      session: row[5],
-      quantity: row[6],
-      players: row[7],
-      totalAmount: row[8],
-      paymentMethod: row[9],
-      bankLast5: row[10],
-      pickupTime: rawTime,
-      pickupLocation: row[12],
-      referral: row[13],
-      notes: row[14]
-    });
-    setIsEditing(true);
-  };
-
-  // 8. 管理操作：送出修改
-  const handleUpdateSubmission = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ 
-          action: 'updateSubmission', 
-          pw: adminPassword, 
-          rowIndex: editingRowIndex,
-          ...editData 
-        })
-      });
-      // 靜態更新該行資料
-      const newSubmissions = [...submissions];
-      if (editingRowIndex !== null) {
-        newSubmissions[editingRowIndex] = [
-          editData.timestamp, editData.email, editData.name, editData.phone, editData.contactEmail,
-          editData.session, editData.quantity, editData.players, editData.totalAmount, 
-          editData.paymentMethod, editData.bankLast5, editData.pickupTime, editData.pickupLocation,
-          editData.referral, editData.notes
-        ];
-        setSubmissions(newSubmissions);
-      }
-      setIsEditing(false);
-      alert('修改成功');
-    } catch (err) {
-      alert('修改失敗');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    // 姓名欄位：僅過濾掉數字，允許其他所有字元（包括輸入法緩衝），長度限制 20
     if (name === 'name') {
-      const filteredValue = value.replace(/[0-9]/g, ''); // 僅移除數字
+      const filteredValue = value.replace(/[0-9]/g, '');
       if (filteredValue.length > 20) return;
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
       return;
     }
 
-    // 當場次改變時，檢查是否為固定時間場次
     if (name === 'session') {
       const selectedSession = sessions.find(s => s.name === value);
-      const fixedTime = (selectedSession?.fixedDate && selectedSession?.fixedTime) 
-        ? `${selectedSession.fixedDate} ${selectedSession.fixedTime}` 
+      const times = selectedSession?.fixedTime ? selectedSession.fixedTime.split(',') : [];
+      // 只有當只有一個固定時間時才自動填入，多個則清空讓使用者選
+      const fixedTime = (selectedSession?.fixedDate && times.length === 1) 
+        ? `${selectedSession.fixedDate} ${times[0]}` 
         : '';
       setFormData(prev => ({ ...prev, session: value, pickupTime: fixedTime }));
       return;
     }
 
-    // 電話欄位防呆：限制 15 字
     if (name === 'phone') {
       if (value.length > 15) return;
     }
@@ -453,6 +406,21 @@ function App() {
                   <label>價格</label>
                   <input type="number" value={editingSession.newPrice} onChange={e => setEditingSession({...editingSession, newPrice: e.target.value})} />
                 </div>
+                <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                  <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
+                  <div className="time-slot-grid">
+                    {TIME_SLOTS.map(t => (
+                      <button 
+                        key={t} 
+                        type="button"
+                        className={`time-slot-btn ${editingSession.fixedTime.split(',').includes(t) ? 'active' : ''}`}
+                        onClick={() => toggleFixedTime(t, true)}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="modal-actions admin-login-actions">
                   <button type="button" onClick={() => setIsEditingSession(false)} className="cancel-btn">取消</button>
                   <button type="submit" className="submit-btn" disabled={isSubmitting}>儲存修改</button>
@@ -500,9 +468,20 @@ function App() {
                   <label>固定日期 (非強選場次請留空)</label>
                   <input type="text" placeholder="例如：2026-05-02" value={newSession.fixedDate} onChange={e => setNewSession({...newSession, fixedDate: e.target.value})} />
                 </div>
-                <div className="form-group">
-                  <label>固定時間 (非強選場次請留空)</label>
-                  <input type="text" placeholder="例如：10:00" value={newSession.fixedTime} onChange={e => setNewSession({...newSession, fixedTime: e.target.value})} />
+                <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                  <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
+                  <div className="time-slot-grid">
+                    {TIME_SLOTS.map(t => (
+                      <button 
+                        key={t} 
+                        type="button"
+                        className={`time-slot-btn ${newSession.fixedTime.split(',').includes(t) ? 'active' : ''}`}
+                        onClick={() => toggleFixedTime(t, false)}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
               <button onClick={handleAddSession} disabled={isSubmitting} className="submit-btn" style={{width: '100%', marginTop: '1rem'}}>
@@ -738,6 +717,16 @@ function App() {
                   minTime={new Date(new Date().setHours(9, 0, 0))}
                   maxTime={new Date(new Date().setHours(15, 0, 0))}
                   filterTime={(time) => {
+                    const selectedSession = sessions.find(s => s.name === formData.session);
+                    const fixedTimes = selectedSession?.fixedTime ? selectedSession.fixedTime.split(',') : [];
+                    
+                    // 如果有設定固定時段，則只顯示那些時段
+                    if (fixedTimes.length > 0) {
+                      const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
+                      return fixedTimes.includes(timeStr);
+                    }
+                    
+                    // 否則顯示預設的 09:00 - 15:00
                     const hours = time.getHours();
                     const minutes = time.getMinutes();
                     if (hours >= 9 && hours < 15) return true;

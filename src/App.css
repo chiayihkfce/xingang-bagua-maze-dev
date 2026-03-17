@@ -852,6 +852,34 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.submissions-table tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+/* 時間時段按鈕組 */
+.time-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.time-slot-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.6rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.time-slot-btn:hover {
+  border-color: var(--primary-gold);
+}
+
+.time-slot-btn.active {
+  background: var(--primary-gold);
+  color: black;
+  border-color: var(--primary-gold);
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
 }
