@@ -250,6 +250,13 @@ function App() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    // 姓名欄位防呆：僅允許中文、英文字母與空格
+    if (name === 'name') {
+      const regex = /^[a-zA-Z\u4e00-\u9fa5\s]*$/;
+      if (!regex.test(value)) return; // 如果包含數字或特殊符號，直接攔截
+    }
+    
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
