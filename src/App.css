@@ -598,13 +598,39 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.delete-btn {
-  background: #e74c3c;
-  color: white;
+.action-cell {
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.edit-btn {
+  background: var(--primary-gold);
+  color: black;
   border: none;
   padding: 0.4rem 0.8rem;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
+}
+
+.edit-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.submissions-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .add-session-form {

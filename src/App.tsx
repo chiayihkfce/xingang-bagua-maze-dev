@@ -13,28 +13,16 @@ function App() {
   const [submissions, setSubmissions] = useState<any[][]>([]);
   const [adminTab, setAdminTab] = useState<'sessions' | 'submissions'>('sessions');
   const [newSession, setNewSession] = useState({ name: '', price: '' });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+  const [editData, setEditData] = useState<any>(null);
 
-  const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    phone: '',
-    contactEmail: '',
-    session: '',
-    quantity: '1',
-    players: '',
-    totalAmount: '',
-    paymentMethod: '親至新港文教基金會繳費',
-    bankLast5: '',
-    pickupTime: '',
-    pickupLocation: '新港文教基金會(閱讀館)',
-    referral: [] as string[],
-    notes: ''
-  });
-
-  const [calculatedTotal, setCalculatedTotal] = useState(0);
-
-  // 請在此處填入您部署後的 Google Apps Script URL
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
+  // 0. 時間格式化工具 (YYYY-MM-DD HH:mm:ss)
+  const formatDateTime = (date: Date) => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+           `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
 
   // 1. 初始載入場次
   useEffect(() => {
@@ -45,7 +33,6 @@ function App() {
           setSessions(data);
           setFormData(prev => ({ ...prev, session: data[0].name }));
         } else {
-          // 如果試算表是空的，設定一個預設選項
           const defaultSession = { name: '暫無開放場次，請洽管理員', price: 0 };
           setSessions([defaultSession]);
           setFormData(prev => ({ ...prev, session: defaultSession.name }));
@@ -70,7 +57,6 @@ function App() {
   // 3. 管理員登入
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 驗證密碼：直接嘗試獲取報名清單，如果成功即代表密碼正確
     try {
       const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSubmissions&pw=${adminPassword}`);
       const data = await res.json();
@@ -95,7 +81,7 @@ function App() {
       mode: 'no-cors',
       body: JSON.stringify({ action: 'addSession', pw: adminPassword, ...newSession })
     });
-    alert('已送出新增要求，請重新整理');
+    alert('已送出新增要求');
     window.location.reload();
   };
 
@@ -107,7 +93,7 @@ function App() {
       mode: 'no-cors',
       body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
     });
-    alert('已送出刪除要求，請重新整理');
+    alert('已送出刪除要求');
     window.location.reload();
   };
 
@@ -120,7 +106,48 @@ function App() {
       mode: 'no-cors',
       body: JSON.stringify({ action: 'deleteSubmission', pw: adminPassword, rowIndex })
     });
-    alert('已送出刪除要求，請重新整理');
+    alert('已送出刪除要求');
+    window.location.reload();
+  };
+
+  // 7. 管理操作：開啟修改視窗
+  const startEditSubmission = (row: any[], index: number) => {
+    setEditingRowIndex(index);
+    setEditData({
+      timestamp: row[0],
+      email: row[1],
+      name: row[2],
+      phone: row[3],
+      contactEmail: row[4],
+      session: row[5],
+      quantity: row[6],
+      players: row[7],
+      totalAmount: row[8],
+      paymentMethod: row[9],
+      bankLast5: row[10],
+      pickupTime: row[11],
+      pickupLocation: row[12],
+      referral: row[13],
+      notes: row[14]
+    });
+    setIsEditing(true);
+  };
+
+  // 8. 管理操作：送出修改
+  const handleUpdateSubmission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ 
+        action: 'updateSubmission', 
+        pw: adminPassword, 
+        rowIndex: editingRowIndex,
+        ...editData 
+      })
+    });
+    alert('修改成功');
     window.location.reload();
   };
 
@@ -135,9 +162,9 @@ function App() {
       if (day === 1 || day === 2) return;
       const hours = date.getHours();
       if (hours < 9 || hours > 15) date.setHours(9, 0, 0);
-      const formattedDate = date.toLocaleString('zh-TW', {
-        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false
-      }).replace(/\//g, '-');
+      
+      // 改用統一的時間格式處理器
+      const formattedDate = formatDateTime(date).substring(0, 16); 
       setFormData(prev => ({ ...prev, pickupTime: formattedDate }));
     }
   };
@@ -165,7 +192,7 @@ function App() {
       bankLast5: bankLast5,
       totalAmount: calculatedTotal,
       referral: formData.referral.join(', '),
-      timestamp: new Date().toLocaleString('zh-TW'),
+      timestamp: formatDateTime(new Date()), // 使用精確的本地時間格式
       action: 'addRegistration'
     };
 
@@ -202,6 +229,28 @@ function App() {
   if (isAdmin) {
     return (
       <div className="container admin-dashboard">
+        {isEditing && (
+          <div className="modal-overlay">
+            <div className="admin-login-modal" style={{maxWidth: '600px'}}>
+              <h2>修改報名資料</h2>
+              <form onSubmit={handleUpdateSubmission} className="edit-form-grid">
+                <div className="form-group"><label>姓名</label><input type="text" value={editData.name} onChange={e => setEditData({...editData, name: e.target.value})} /></div>
+                <div className="form-group"><label>電話</label><input type="text" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} /></div>
+                <div className="form-group"><label>場次</label>
+                  <select value={editData.session} onChange={e => setEditData({...editData, session: e.target.value})}>
+                    {sessions.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div className="form-group"><label>份數</label><input type="number" value={editData.quantity} onChange={e => setEditData({...editData, quantity: e.target.value})} /></div>
+                <div className="modal-actions">
+                  <button type="submit" disabled={isSubmitting}>儲存修改</button>
+                  <button type="button" onClick={() => setIsEditing(false)}>取消</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         <header className="header">
           <h1>管理後台</h1>
           <div className="admin-nav">
@@ -235,17 +284,18 @@ function App() {
             <table className="submissions-table">
               <thead>
                 <tr>
-                  {submissions[0]?.map((h: any, i: number) => <th key={i}>{h}</th>)}
                   <th>操作</th>
+                  {submissions[0]?.map((h: any, i: number) => <th key={i}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {submissions.slice(1).map((row, i) => (
                   <tr key={i}>
-                    {row.map((cell: any, j: number) => <td key={j}>{cell}</td>)}
-                    <td>
+                    <td className="action-cell">
+                      <button onClick={() => startEditSubmission(row, i + 1)} className="edit-btn">修改</button>
                       <button onClick={() => handleDeleteSubmission(i + 1)} className="delete-btn">刪除</button>
                     </td>
+                    {row.map((cell: any, j: number) => <td key={j}>{cell}</td>)}
                   </tr>
                 ))}
               </tbody>
