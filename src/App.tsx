@@ -39,6 +39,9 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
+  // 請在此處填入您部署後的 Google Apps Script URL
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
+
   // --- 2. 工具與常數 ---
   const TIME_SLOTS = [
     '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
@@ -60,7 +63,6 @@ function App() {
         if (Array.isArray(data) && data.length > 0) {
           setSessions(data);
           const first = data[0];
-          // 如果只有一個固定時間才自動填入，多個則讓使用者選
           const times = first.fixedTime ? first.fixedTime.split(',') : [];
           const autoTime = (first.fixedDate && times.length === 1) ? `${first.fixedDate} ${times[0]}` : '';
           
@@ -134,6 +136,53 @@ function App() {
       alert('無法載入分頁資料');
     } finally {
       setIsDataLoading(false);
+    }
+  };
+
+  // --- 管理員操作功能 ---
+
+  // 7. 管理操作：開啟修改視窗 (報名資料)
+  const startEditSubmission = (row: any[], index: number) => {
+    setEditingRowIndex(index);
+    let rawTime = row[11] || '';
+    if (typeof rawTime === 'string' && rawTime.includes('T')) {
+      rawTime = formatDateTime(new Date(rawTime)).substring(0, 16);
+    }
+    setEditData({
+      timestamp: row[0], email: row[1], name: row[2], phone: row[3], contactEmail: row[4],
+      session: row[5], quantity: row[6], players: row[7], totalAmount: row[8],
+      paymentMethod: row[9], bankLast5: row[10], pickupTime: rawTime,
+      pickupLocation: row[12], referral: row[13], notes: row[14]
+    });
+    setIsEditing(true);
+  };
+
+  // 8. 管理操作：送出修改 (報名資料)
+  const handleUpdateSubmission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'updateSubmission', pw: adminPassword, rowIndex: editingRowIndex, ...editData })
+      });
+      const newSubmissions = [...submissions];
+      if (editingRowIndex !== null) {
+        newSubmissions[editingRowIndex] = [
+          editData.timestamp, editData.email, editData.name, editData.phone, editData.contactEmail,
+          editData.session, editData.quantity, editData.players, editData.totalAmount, 
+          editData.paymentMethod, editData.bankLast5, editData.pickupTime, editData.pickupLocation,
+          editData.referral, editData.notes
+        ];
+        setSubmissions(newSubmissions);
+      }
+      setIsEditing(false);
+      alert('修改成功');
+    } catch (err) {
+      alert('修改失敗');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
