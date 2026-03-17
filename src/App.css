@@ -300,6 +300,18 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+.fixed-session-hint {
+  background: rgba(241, 196, 15, 0.1);
+  color: var(--primary-gold);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-gold);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
 .radio-group, .checkbox-grid {
   display: flex;
   flex-direction: column;

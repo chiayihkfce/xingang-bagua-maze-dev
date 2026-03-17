@@ -781,6 +781,21 @@ function App() {
 
               <div className="form-group">
                 <label>預計遊玩日期 & 時間 (開放日 09:00-15:00，週一二不開放) *</label>
+                
+                {/* 新增固定場次提示文字 */}
+                {(() => {
+                  const selectedSession = sessions.find(s => s.name === formData.session);
+                  if (selectedSession?.fixedDate || selectedSession?.fixedTime) {
+                    return (
+                      <div className="fixed-session-hint">
+                        ★ 此場次固定於 {selectedSession.fixedDate || '不限日期'}，
+                        開放時段：{selectedSession.fixedTime ? selectedSession.fixedTime.replace(/,/g, '、') : '全時段'}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
                 <DatePicker
                   selected={formData.pickupTime ? new Date(formData.pickupTime) : null}
                   onChange={handleDateChange}
