@@ -740,7 +740,25 @@ function App() {
                 <label>【報名場次】 *</label>
                 <select name="session" value={formData.session} onChange={handleInputChange}>
                   {sessions.length > 0 ? (
-                    sessions.map(s => <option key={s.name} value={s.name}>{s.name} (${s.price})</option>)
+                    <>
+                      {/* 特別預約場次：有固定日期或時間 */}
+                      {sessions.filter(s => s.fixedDate || s.fixedTime).length > 0 && (
+                        <optgroup label="✨ 特別預約場次 (固定日期時段)">
+                          {sessions.filter(s => s.fixedDate || s.fixedTime).map(s => (
+                            <option key={s.name} value={s.name}>{s.name} (${s.price})</option>
+                          ))}
+                        </optgroup>
+                      )}
+                      
+                      {/* 一般預約場次：無固定日期時間 */}
+                      {sessions.filter(s => !s.fixedDate && !s.fixedTime).length > 0 && (
+                        <optgroup label="📅 一般預約場次 (自由選擇時段)">
+                          {sessions.filter(s => !s.fixedDate && !s.fixedTime).map(s => (
+                            <option key={s.name} value={s.name}>{s.name} (${s.price})</option>
+                          ))}
+                        </optgroup>
+                      )}
+                    </>
                   ) : (
                     <option disabled>載入中...</option>
                   )}
