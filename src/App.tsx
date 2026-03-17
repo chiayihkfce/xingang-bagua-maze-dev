@@ -155,7 +155,7 @@ function App() {
   const handleDeleteSession = async (name: string) => {
     if (!window.confirm(`確定要刪除場次「${name}」嗎？`)) return;
     try {
-      const res = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
