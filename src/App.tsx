@@ -814,7 +814,8 @@ function App() {
                     if (conflicts.length > 0) {
                       return (
                         <div className="conflict-notice">
-                          ★ 提醒：您目前選擇的日期已有特別場次（{conflicts.map(c => c.name).join('、')}），相關時段不開放一般預約。
+                          ★ 提醒：您目前選擇的日期已有特別場次（{conflicts.map(c => c.name).join('、')}），
+                          其固定時段：{conflicts.map(c => c.fixedTime?.replace(/,/g, '、')).join(' ; ')} 不開放一般預約。
                         </div>
                       );
                     }
