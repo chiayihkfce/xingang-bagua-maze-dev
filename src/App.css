@@ -725,7 +725,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   background: rgba(0, 0, 0, 0.5) !important;
   color: var(--primary-gold);
   padding: 1.2rem 1rem;
-  text-align: left;
+  text-align: center;
   font-family: 'Noto Serif TC', serif;
   border-bottom: 2px solid var(--accent-orange);
 }
@@ -734,6 +734,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 0.9rem;
+  text-align: center;
 }
 
 /* 修改/刪除按鈕 */
