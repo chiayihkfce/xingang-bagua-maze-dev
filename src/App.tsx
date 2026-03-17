@@ -658,7 +658,7 @@ function App() {
           <div className="admin-trigger" onClick={() => setShowAdminLogin(true)}>
             <img src="footer-logo.svg" alt="HKFCE Logo" className="footer-admin-logo" />
           </div>
-          <p className="copy">&copy; 2024 新港文教基金會 | 新港八卦迷蹤 製作團隊</p>
+          <p className="copy">&copy; 2026 新港文教基金會 | 新港八卦迷蹤 製作團隊</p>
         </div>
       </footer>
     </div>
