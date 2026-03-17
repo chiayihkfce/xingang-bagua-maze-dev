@@ -379,20 +379,35 @@ function App() {
       <div className="container admin-dashboard">
         {isEditing && (
           <div className="modal-overlay">
-            <div className="admin-login-modal" style={{maxWidth: '600px'}}>
-              <h2>修改報名資料</h2>
-              <form onSubmit={handleUpdateSubmission} className="edit-form-grid">
-                <div className="form-group"><label>姓名</label><input type="text" value={editData.name} onChange={e => setEditData({...editData, name: e.target.value})} /></div>
-                <div className="form-group"><label>電話</label><input type="text" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} /></div>
-                <div className="form-group"><label>場次</label>
-                  <select value={editData.session} onChange={e => setEditData({...editData, session: e.target.value})}>
-                    {sessions.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-                  </select>
+            <div className="admin-login-modal form-card" style={{maxWidth: '800px', width: '95%'}}>
+              <h2 className="form-section-title">修改報名資料</h2>
+              <form onSubmit={handleUpdateSubmission}>
+                <div className="edit-form-grid">
+                  <div className="form-group"><label>填表姓名</label><input type="text" value={editData.name} onChange={e => setEditData({...editData, name: e.target.value})} /></div>
+                  <div className="form-group"><label>聯絡電話</label><input type="text" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} /></div>
+                  <div className="form-group"><label>Email</label><input type="email" value={editData.email} onChange={e => setEditData({...editData, email: e.target.value})} /></div>
+                  <div className="form-group"><label>報名場次</label>
+                    <select value={editData.session} onChange={e => setEditData({...editData, session: e.target.value})}>
+                      {sessions.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group"><label>份數</label><input type="number" value={editData.quantity} onChange={e => setEditData({...editData, quantity: e.target.value})} /></div>
+                  <div className="form-group"><label>遊玩人數</label><input type="text" value={editData.players} onChange={e => setEditData({...editData, players: e.target.value})} /></div>
+                  <div className="form-group"><label>遊玩日期時間</label><input type="text" value={editData.pickupTime} onChange={e => setEditData({...editData, pickupTime: e.target.value})} /></div>
+                  <div className="form-group"><label>領取地點</label>
+                    <select value={editData.pickupLocation} onChange={e => setEditData({...editData, pickupLocation: e.target.value})}>
+                      <option value="新港文教基金會(閱讀館)">新港文教基金會(閱讀館)</option>
+                      <option value="培桂堂(建議選此處，可同時參觀)">培桂堂</option>
+                    </select>
+                  </div>
+                  <div className="form-group" style={{gridColumn: '1 / -1'}}><label>備註</label>
+                    <textarea value={editData.notes} onChange={e => setEditData({...editData, notes: e.target.value})} rows={2}></textarea>
+                  </div>
                 </div>
-                <div className="form-group"><label>份數</label><input type="number" value={editData.quantity} onChange={e => setEditData({...editData, quantity: e.target.value})} /></div>
-                <div className="modal-actions">
-                  <button type="submit" disabled={isSubmitting}>儲存修改</button>
-                  <button type="button" onClick={() => setIsEditing(false)}>取消</button>
+                
+                <div className="modal-actions admin-login-actions">
+                  <button type="button" onClick={() => setIsEditing(false)} className="cancel-btn">取消</button>
+                  <button type="submit" className="submit-btn" disabled={isSubmitting}>儲存修改</button>
                 </div>
               </form>
             </div>
