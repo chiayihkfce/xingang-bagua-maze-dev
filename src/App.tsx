@@ -426,7 +426,7 @@ function App() {
           <div className="admin-nav">
             <button onClick={() => setAdminTab('sessions')} className={adminTab === 'sessions' ? 'active' : ''}>場次管理</button>
             <button onClick={() => setAdminTab('submissions')} className={adminTab === 'submissions' ? 'active' : ''}>報名清單</button>
-            <button onClick={() => setIsAdmin(false)}>登出</button>
+            <button onClick={() => setIsAdmin(false)}>登出後台</button>
           </div>
         </header>
 
