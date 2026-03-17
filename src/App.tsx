@@ -308,6 +308,7 @@ function App() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
+    // 姓名欄位：僅過濾掉數字
     if (name === 'name') {
       const filteredValue = value.replace(/[0-9]/g, '');
       if (filteredValue.length > 20) return;
@@ -315,10 +316,31 @@ function App() {
       return;
     }
 
+    // 當份數改變時，如果是一般預約，自動切換場次
+    if (name === 'quantity') {
+      const qty = parseInt(value) || 0;
+      setFormData(prev => {
+        let updatedSession = prev.session;
+        if (sessionType === '一般預約') {
+          const filtered = sessions.filter(s => !s.fixedDate && !s.fixedTime);
+          if (qty >= 5) {
+            const groupSession = filtered.find(s => s.name.includes('團體優惠')) || filtered[0];
+            updatedSession = groupSession?.name || '';
+          } else {
+            // 優先找包含「單人」、「個人」或「一般」的場次，若都沒有則選第一個
+            const soloSession = filtered.find(s => s.name.includes('單人') || s.name.includes('個人') || s.name.includes('一般')) || filtered[0];
+            updatedSession = soloSession?.name || '';
+          }
+        }
+        return { ...prev, quantity: value, session: updatedSession };
+      });
+      return;
+    }
+
+    // 當場次改變時 (主要是特別預約手動切換)
     if (name === 'session') {
       const selectedSession = sessions.find(s => s.name === value);
       const times = selectedSession?.fixedTime ? selectedSession.fixedTime.split(',') : [];
-      // 只有當只有一個固定時間時才自動填入，多個則清空讓使用者選
       const fixedTime = (selectedSession?.fixedDate && times.length === 1) 
         ? `${selectedSession.fixedDate} ${times[0]}` 
         : '';
@@ -746,13 +768,28 @@ function App() {
                   onChange={(e) => {
                     const newType = e.target.value as '一般預約' | '特別預約';
                     setSessionType(newType);
-                    // 切換類型後，自動選中該類型的第一個場次
+                    
+                    // 切換類型後，過濾出該類型的場次
                     const filtered = sessions.filter(s => 
                       newType === '特別預約' ? (s.fixedDate || s.fixedTime) : (!s.fixedDate && !s.fixedTime)
                     );
+                    
                     if (filtered.length > 0) {
+                      let targetValue = filtered[0].name;
+                      
+                      // 如果是一般預約，根據目前的份數自動選擇場次
+                      if (newType === '一般預約') {
+                        const qty = parseInt(formData.quantity) || 0;
+                        if (qty >= 5) {
+                          targetValue = filtered.find(s => s.name.includes('團體優惠'))?.name || targetValue;
+                        } else {
+                          targetValue = filtered.find(s => s.name.includes('單人') || s.name.includes('個人') || s.name.includes('一般'))?.name || targetValue;
+                        }
+                      }
+                      
+                      // 更新場次，並觸發連動邏輯（如固定時間更新）
                       handleInputChange({ 
-                        target: { name: 'session', value: filtered[0].name } 
+                        target: { name: 'session', value: targetValue } 
                       } as any);
                     }
                   }}
@@ -764,7 +801,13 @@ function App() {
 
               <div className="form-group">
                 <label>【詳細場次】 *</label>
-                <select name="session" value={formData.session} onChange={handleInputChange}>
+                <select 
+                  name="session" 
+                  value={formData.session} 
+                  onChange={handleInputChange}
+                  disabled={sessionType === '一般預約'}
+                  className={sessionType === '一般預約' ? 'fixed-readonly' : ''}
+                >
                   {sessions.length > 0 ? (
                     sessions
                       .filter(s => sessionType === '特別預約' ? (s.fixedDate || s.fixedTime) : (!s.fixedDate && !s.fixedTime))
