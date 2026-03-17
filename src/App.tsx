@@ -251,10 +251,12 @@ function App() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    // 姓名欄位防呆：僅允許中文、英文字母與空格，限制 20 字
+    // 姓名欄位：僅過濾掉數字，允許其他所有字元（包括輸入法緩衝），長度限制 20
     if (name === 'name') {
-      const regex = /^[a-zA-Z\u4e00-\u9fa5\s]*$/;
-      if (!regex.test(value) || value.length > 20) return;
+      const filteredValue = value.replace(/[0-9]/g, ''); // 僅移除數字
+      if (filteredValue.length > 20) return;
+      setFormData(prev => ({ ...prev, [name]: filteredValue }));
+      return;
     }
 
     // 電話欄位防呆：限制 15 字
