@@ -786,9 +786,15 @@ function App() {
                 {(() => {
                   const selectedSession = sessions.find(s => s.name === formData.session);
                   if (selectedSession?.fixedDate || selectedSession?.fixedTime) {
+                    // 格式化日期：移除 T00:00:00.000Z 等 ISO 資訊
+                    let displayDate = selectedSession.fixedDate || '不限日期';
+                    if (displayDate.includes('T')) {
+                      displayDate = displayDate.split('T')[0];
+                    }
+                    
                     return (
                       <div className="fixed-session-hint">
-                        ★ 此場次固定於 {selectedSession.fixedDate || '不限日期'}，
+                        ★ 此場次固定於 {displayDate}，
                         開放時段：{selectedSession.fixedTime ? selectedSession.fixedTime.replace(/,/g, '、') : '全時段'}
                       </div>
                     );
