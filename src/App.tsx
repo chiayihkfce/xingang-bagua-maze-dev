@@ -47,6 +47,9 @@ function App() {
            `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRows, setTotalRows] = useState(0);
+
   // --- 3. 副作用處理 (useEffect) ---
   useEffect(() => {
     fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`)
@@ -78,15 +81,20 @@ function App() {
 
   const [isDataLoading, setIsDataLoading] = useState(false);
 
-  // 3. 管理員登入
+  // 3. 管理員登入：合併請求優化
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsDataLoading(true);
     try {
-      const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSubmissions&pw=${adminPassword}`);
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setSubmissions(data);
+      // 合併請求：一次抓取場次與第一頁資料
+      const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=adminLogin&pw=${adminPassword}`);
+      const result = await res.json();
+      
+      if (result.submissions) {
+        setSubmissions(result.submissions);
+        setSessions(result.sessions);
+        setTotalRows(result.totalRows);
+        setCurrentPage(1);
         setIsAdmin(true);
         setShowAdminLogin(false);
       } else {
@@ -94,6 +102,28 @@ function App() {
       }
     } catch (err) {
       alert('登入失敗，請確認網路連線');
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
+
+  // 3.5 載入特定分頁
+  const loadPage = async (page: number) => {
+    setIsDataLoading(true);
+    try {
+      const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSubmissionsPage&pw=${adminPassword}&page=${page}`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        // 如果是第一頁，保留標題；否則僅更新內容
+        if (page === 1) {
+          setSubmissions(data);
+        } else {
+          setSubmissions([submissions[0], ...data]);
+        }
+        setCurrentPage(page);
+      }
+    } catch (err) {
+      alert('無法載入分頁資料');
     } finally {
       setIsDataLoading(false);
     }
@@ -307,7 +337,14 @@ function App() {
           </section>
         ) : (
           <section className="admin-section submissions-table-container">
-            <h3>報名清單</h3>
+            <div className="admin-section-header">
+              <h3>報名清單 (共 {totalRows} 筆)</h3>
+              <div className="pagination">
+                <button onClick={() => loadPage(currentPage - 1)} disabled={currentPage === 1 || isDataLoading}>上一頁</button>
+                <span>第 {currentPage} 頁 / 共 {Math.ceil(totalRows / 50)} 頁</span>
+                <button onClick={() => loadPage(currentPage + 1)} disabled={currentPage >= Math.ceil(totalRows / 50) || isDataLoading}>下一頁</button>
+              </div>
+            </div>
             <table className="submissions-table">
               <thead>
                 <tr>
