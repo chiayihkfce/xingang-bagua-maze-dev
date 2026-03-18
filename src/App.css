@@ -1252,8 +1252,8 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .bunny-sprite {
-  width: 110px;
-  height: 60px;
+  width: 160px; /* 從 110px 加大到 160px */
+  height: 120px; /* 從 60px 加大到 120px */
   position: relative;
   transform-origin: center bottom;
 }
