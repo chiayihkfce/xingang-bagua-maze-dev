@@ -532,11 +532,23 @@ function App() {
     // 當場次改變時 (主要是特別預約手動切換)
     if (name === 'session') {
       const selectedSession = sessions.find(s => s.name === value);
-      const times = selectedSession?.fixedTime ? selectedSession.fixedTime.split(',') : [];
-      const fixedTime = (selectedSession?.fixedDate && times.length === 1) 
-        ? `${selectedSession.fixedDate} ${times[0]}` 
-        : '';
-      setFormData(prev => ({ ...prev, session: value, pickupTime: fixedTime }));
+      let newPickupTime = formData.pickupTime;
+
+      // 如果是固定場次（有固定日期），自動填入第一個可選時段
+      if (selectedSession?.fixedDate) {
+        const times = selectedSession.fixedTime ? selectedSession.fixedTime.split(',') : [];
+        const timeToUse = times.length > 0 ? times[0] : '09:00';
+        newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
+      } else if (selectedSession?.fixedTime) {
+        // 如果只有固定時間（無固定日期），且目前只有一個時段時才自動填入
+        const times = selectedSession.fixedTime.split(',');
+        if (times.length === 1) {
+          const currentDate = formData.pickupTime.split(' ')[0] || new Date().toISOString().split('T')[0];
+          newPickupTime = `${currentDate} ${times[0]}`;
+        }
+      }
+
+      setFormData(prev => ({ ...prev, session: value, pickupTime: newPickupTime }));
       return;
     }
 
