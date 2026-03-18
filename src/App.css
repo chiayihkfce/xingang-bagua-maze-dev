@@ -594,11 +594,11 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.85);
-  display: grid; /* 使用 Grid 控制置中與間距 */
+  display: grid; 
   place-items: center;
   z-index: 2000;
   backdrop-filter: blur(5px);
-  padding: 60px 20px; /* 增加明確的上下內邊距 */
+  padding: 40px 20px;
   box-sizing: border-box;
   overflow-y: auto;
 }
@@ -654,9 +654,6 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   max-width: 480px;
   text-align: center;
   box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-  max-height: 75vh; /* 進一步調降最大高度 */
-  overflow-y: auto;
-  margin: 60px auto; /* 強制增加外部邊距 */
 }
 
 .admin-login-modal input[type="password"] {
@@ -675,21 +672,55 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   margin-bottom: 0.8rem;
 }
 
-/* 登入彈窗按鈕佈局 - 改為固定在底部 */
+/* 修改資料專用彈窗樣式 */
+.admin-edit-modal {
+  max-height: 80vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important; /* 清除內距以讓內部 Header/Footer 貼邊 */
+  overflow: hidden !important; /* 彈窗本體不捲動 */
+  max-width: 800px !important;
+}
+
+.admin-edit-modal .form-section-title {
+  padding: 2.5rem 2.5rem 1rem !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+.admin-edit-modal form {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.admin-edit-modal .edit-form-grid {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem 2.5rem;
+  /* 捲動條美化 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-gold) transparent;
+}
+
+.admin-edit-modal .admin-login-actions {
+  flex: 0 0 auto;
+  padding: 1.5rem 2.5rem 2.5rem !important;
+  margin: 0 !important;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: static !important; /* 取消 sticky，由 Flex 控制固定 */
+  box-shadow: 0 -10px 20px rgba(0,0,0,0.2);
+}
+
+/* 登入彈窗按鈕佈局 */
 .admin-login-actions {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 2.5rem;
   width: 100%;
-  position: sticky;
-  bottom: 0;
-  background: var(--card-bg);
-  padding-top: 1.5rem;
-  padding-bottom: 3.5rem; /* 配合彈窗原本的 padding */
-  margin-bottom: -3.5rem; /* 抵消彈窗原本的 padding 讓它貼到底部 */
-  z-index: 10;
-  box-shadow: 0 -15px 25px rgba(0,0,0,0.4); /* 增加陰影區分捲動內容 */
 }
 
 .admin-login-actions button {
@@ -902,14 +933,12 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 /* 編輯彈窗手機版優化 */
 @media (max-width: 768px) {
   .modal-overlay {
-    padding: 40px 10px; /* 手機版保留邊界 */
+    padding: 20px 10px; /* 手機版保留基礎邊界 */
   }
 
-  .admin-login-modal {
-    padding: 2rem 1.5rem !important;
-    width: 95% !important;
-    max-height: 75vh !important; /* 統一手機版的最大高度 */
-    margin: 40px auto; /* 確保間距 */
+  .admin-edit-modal {
+    max-height: 85vh !important;
+    margin: 20px auto !important;
   }
 
   .admin-nav {

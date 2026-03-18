@@ -685,7 +685,7 @@ function App() {
 
         {isEditing && (
           <div className="modal-overlay">
-            <div className="admin-login-modal form-card" style={{maxWidth: '800px', width: '95%'}}>
+            <div className="admin-login-modal form-card admin-edit-modal" style={{maxWidth: '800px', width: '95%'}}>
               <h2 className="form-section-title">修改報名資料</h2>
               <form onSubmit={handleUpdateSubmission}>
                 <div className="edit-form-grid">
