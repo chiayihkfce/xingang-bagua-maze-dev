@@ -81,9 +81,16 @@ function App() {
   // 1. 初始載入場次
   useEffect(() => {
     const fetchSessions = async () => {
+      console.time('🚀 [Performance] 初始載入場次 (fetchSessions)');
+      const startTime = Date.now();
       try {
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
         const data = await res.json();
+        const duration = Date.now() - startTime;
+        
+        console.log(`📊 [Debug] 收到場次資料筆數: ${Array.isArray(data) ? data.length : 0} 筆`);
+        console.log(`⏱️ [Debug] API 耗時: ${duration}ms`);
+
         if (Array.isArray(data) && data.length > 0) {
           setSessions(data);
           const first = data[0];
@@ -99,8 +106,10 @@ function App() {
           setSessions([{ name: '暫無開放場次，請洽管理員', price: 0 }]);
         }
       } catch (err) {
-        console.error('無法載入場次:', err);
+        console.error('❌ [Error] 無法載入場次:', err);
         setSessions([{ name: '載入場次失敗，請重新整理', price: 0 }]);
+      } finally {
+        console.timeEnd('🚀 [Performance] 初始載入場次 (fetchSessions)');
       }
     };
     fetchSessions();
