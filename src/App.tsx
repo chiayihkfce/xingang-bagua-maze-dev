@@ -534,22 +534,21 @@ function App() {
     // 當場次改變時 (主要是特別預約手動切換)
     if (name === 'session') {
       const selectedSession = sessions.find(s => s.name === value);
-      let newPickupTime = formData.pickupTime;
+      
+      // 1. 預設先清空日期時間，避免舊場次的殘留值 (解決從特別場切換回一般場的 BUG)
+      let newPickupTime = ''; 
 
-      // 如果是固定場次（有固定日期）
+      // 2. 只有如果是「固定特別場次」，才根據規則自動帶入時間
       if (selectedSession?.fixedDate) {
         const times = selectedSession.fixedTime ? selectedSession.fixedTime.split(',') : [];
-        // 如果目前填寫的時間日期與固定日期不同，或者目前沒填時間，則預設填入第一個時段
-        if (!newPickupTime.startsWith(selectedSession.fixedDate)) {
-          const timeToUse = times.length > 0 ? times[0] : '09:00';
-          newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
-        }
+        const timeToUse = times.length > 0 ? times[0] : '09:00';
+        newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
       } else if (selectedSession?.fixedTime) {
-        // 如果只有固定時間（無固定日期），且目前只有一個時段時才自動填入
+        // 如果只有固定時間（無固定日期），且目前只有一個時段時才自動帶入
         const times = selectedSession.fixedTime.split(',');
         if (times.length === 1) {
-          const currentDate = formData.pickupTime.split(' ')[0] || new Date().toISOString().split('T')[0];
-          newPickupTime = `${currentDate} ${times[0]}`;
+          const todayStr = new Date().toISOString().split('T')[0];
+          newPickupTime = `${todayStr} ${times[0]}`;
         }
       }
 
@@ -1475,9 +1474,6 @@ function App() {
                       maxDate={sessions.find(s => s.name === formData.session)?.fixedDate 
                         ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
                         : undefined}
-                      minDateSpecial={sessions.find(s => s.name === formData.session)?.fixedDate 
-                        ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
-                        : new Date()}
                       filterDate={(date) => {
                         const selectedSession = sessions.find(s => s.name === formData.session);
                         if (selectedSession?.fixedDate) {
