@@ -1487,6 +1487,9 @@ function App() {
                       minTime={new Date(new Date().setHours(9, 0, 0))}
                       maxTime={new Date(new Date().setHours(15, 0, 0))}
                       filterTime={(time) => {
+                        // 0. 安全檢查：如果是今天，不能選擇過去的時間
+                        if (time.getTime() < new Date().getTime()) return false;
+
                         const selectedSession = sessions.find(s => s.name === formData.session);
                         const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
                         
