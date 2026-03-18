@@ -1240,37 +1240,114 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
 }
 
-/* 小白兔跳動裝飾 */
-.bunny-decoration {
+/* 生動小白兔裝飾 */
+.bunny-container {
   position: fixed;
-  bottom: 10px;
-  left: -50px;
-  font-size: 2.5rem;
+  bottom: 20px;
+  left: -100px;
   z-index: 9999;
-  pointer-events: none; /* 重要：點擊會穿透，不影響按鈕操作 */
+  pointer-events: none;
   user-select: none;
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-  animation: bunnyWander 25s infinite linear, bunnyHop 0.6s infinite ease-out alternate;
+  animation: bunnyWander 25s infinite linear;
+}
+
+/* 兔子身體結構 */
+.bunny-body {
+  position: relative;
+  width: 50px;
+  height: 40px;
+  background: white;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+  animation: bunnyHop 0.6s infinite ease-out alternate;
+}
+
+/* 頭部 */
+.bunny-head {
+  position: absolute;
+  top: -20px;
+  right: -5px;
+  width: 30px;
+  height: 30px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* 耳朵 */
+.bunny-ear {
+  position: absolute;
+  top: -25px;
+  width: 8px;
+  height: 25px;
+  background: white;
+  border-radius: 50% 50% 0 0;
+  transform-origin: bottom;
+  animation: earWiggle 0.6s infinite ease-out alternate;
+}
+.bunny-ear.left { left: 5px; transform: rotate(-10deg); }
+.bunny-ear.right { left: 15px; transform: rotate(10deg); }
+
+/* 眼睛 */
+.bunny-eye {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  width: 4px;
+  height: 4px;
+  background: #333;
+  border-radius: 50%;
+}
+
+/* 腳部動畫 */
+.bunny-foot {
+  position: absolute;
+  bottom: -5px;
+  width: 15px;
+  height: 8px;
+  background: white;
+  border-radius: 10px;
+  animation: footMove 0.6s infinite ease-out alternate;
+}
+.bunny-foot.front { right: 5px; }
+.bunny-foot.back { left: 5px; }
+
+/* 尾巴 */
+.bunny-tail {
+  position: absolute;
+  left: -5px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
 }
 
 @keyframes bunnyHop {
-  from { transform: translateY(0) scaleX(1.1); }
-  to { transform: translateY(-40px) scaleX(0.9); }
+  0% { transform: translateY(0) scaleY(0.8) scaleX(1.1); }
+  100% { transform: translateY(-50px) scaleY(1.1) scaleX(0.9); }
+}
+
+@keyframes earWiggle {
+  0% { transform: rotate(-10deg) scaleY(1); }
+  100% { transform: rotate(-20deg) scaleY(1.2); }
+}
+
+@keyframes footMove {
+  0% { transform: scaleX(1.2); }
+  100% { transform: scaleX(0.8) translateY(-5px); }
 }
 
 @keyframes bunnyWander {
-  0% { left: -50px; opacity: 0; }
-  5% { opacity: 1; }
+  0% { left: -100px; transform: scaleX(1); } /* 面向右 */
   45% { transform: scaleX(1); }
-  50% { left: calc(100vw - 50px); transform: scaleX(-1); } /* 撞到右邊轉頭 */
-  95% { opacity: 1; }
-  100% { left: -50px; opacity: 0; transform: scaleX(-1); }
+  50% { left: calc(100vw - 100px); transform: scaleX(-1); } /* 轉向左 */
+  95% { transform: scaleX(-1); }
+  100% { left: -100px; transform: scaleX(1); }
 }
 
-/* 在手機上縮小一點，避免太突兀 */
 @media (max-width: 600px) {
-  .bunny-decoration {
-    font-size: 1.8rem;
-    bottom: 5px;
+  .bunny-container {
+    transform: scale(0.7);
+    bottom: 10px;
   }
 }

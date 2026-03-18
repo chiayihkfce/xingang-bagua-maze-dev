@@ -1267,8 +1267,19 @@ function App() {
         </div>
       )}
 
-      {/* 小白兔跳動裝飾 */}
-      <div className="bunny-decoration">🐇</div>
+      {/* 生動小白兔裝飾 */}
+      <div className="bunny-container">
+        <div className="bunny-body">
+          <div className="bunny-tail"></div>
+          <div className="bunny-foot front"></div>
+          <div className="bunny-foot back"></div>
+          <div className="bunny-head">
+            <div className="bunny-ear left"></div>
+            <div className="bunny-ear right"></div>
+            <div className="bunny-eye"></div>
+          </div>
+        </div>
+      </div>
 
       {showAdminLogin && (
         <div className="modal-overlay">
