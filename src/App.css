@@ -1240,7 +1240,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
 }
 
-/* 生動小白兔裝飾 */
+/* 靈動小白兔裝飾 */
 .bunny-container {
   position: fixed;
   bottom: 20px;
@@ -1248,106 +1248,66 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   z-index: 9999;
   pointer-events: none;
   user-select: none;
-  animation: bunnyWander 25s infinite linear;
+  animation: bunnyWander 30s infinite linear;
 }
 
-/* 兔子身體結構 */
-.bunny-body {
+.bunny-sprite {
+  width: 60px;
+  height: 60px;
   position: relative;
-  width: 50px;
-  height: 40px;
-  background: white;
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
-  animation: bunnyHop 0.6s infinite ease-out alternate;
+  animation: bunnyHopping 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
 }
 
-/* 頭部 */
-.bunny-head {
-  position: absolute;
-  top: -20px;
-  right: -5px;
-  width: 30px;
-  height: 30px;
-  background: white;
-  border-radius: 50%;
+.bunny-svg {
+  width: 100%;
+  height: 100%;
 }
 
-/* 耳朵 */
-.bunny-ear {
-  position: absolute;
-  top: -25px;
-  width: 8px;
-  height: 25px;
-  background: white;
-  border-radius: 50% 50% 0 0;
-  transform-origin: bottom;
-  animation: earWiggle 0.6s infinite ease-out alternate;
-}
-.bunny-ear.left { left: 5px; transform: rotate(-10deg); }
-.bunny-ear.right { left: 15px; transform: rotate(10deg); }
-
-/* 眼睛 */
-.bunny-eye {
-  position: absolute;
-  top: 10px;
-  right: 5px;
-  width: 4px;
-  height: 4px;
-  background: #333;
-  border-radius: 50%;
-}
-
-/* 腳部動畫 */
-.bunny-foot {
+/* 地面陰影 - 隨跳躍縮放 */
+.bunny-shadow {
   position: absolute;
   bottom: -5px;
-  width: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
   height: 8px;
-  background: white;
-  border-radius: 10px;
-  animation: footMove 0.6s infinite ease-out alternate;
-}
-.bunny-foot.front { right: 5px; }
-.bunny-foot.back { left: 5px; }
-
-/* 尾巴 */
-.bunny-tail {
-  position: absolute;
-  left: -5px;
-  top: 20px;
-  width: 12px;
-  height: 12px;
-  background: white;
+  background: rgba(0,0,0,0.2);
   border-radius: 50%;
+  filter: blur(2px);
+  animation: shadowScale 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
 }
 
-@keyframes bunnyHop {
-  0% { transform: translateY(0) scaleY(0.8) scaleX(1.1); }
-  100% { transform: translateY(-50px) scaleY(1.1) scaleX(0.9); }
+@keyframes bunnyHopping {
+  0%, 100% { 
+    transform: translateY(0) scaleY(0.85) scaleX(1.1); 
+  }
+  40% { 
+    transform: translateY(-60px) scaleY(1.1) scaleX(0.9); 
+  }
 }
 
-@keyframes earWiggle {
-  0% { transform: rotate(-10deg) scaleY(1); }
-  100% { transform: rotate(-20deg) scaleY(1.2); }
-}
-
-@keyframes footMove {
-  0% { transform: scaleX(1.2); }
-  100% { transform: scaleX(0.8) translateY(-5px); }
+@keyframes shadowScale {
+  0%, 100% { 
+    transform: translateX(-50%) scale(1.2);
+    opacity: 1;
+  }
+  40% { 
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0.3;
+  }
 }
 
 @keyframes bunnyWander {
-  0% { left: -100px; transform: scaleX(1); } /* 面向右 */
-  45% { transform: scaleX(1); }
-  50% { left: calc(100vw - 100px); transform: scaleX(-1); } /* 轉向左 */
-  95% { transform: scaleX(-1); }
+  0% { left: -100px; transform: scaleX(1); }
+  48% { transform: scaleX(1); }
+  50% { left: calc(100vw - 100px); transform: scaleX(-1); }
+  98% { transform: scaleX(-1); }
   100% { left: -100px; transform: scaleX(1); }
 }
 
 @media (max-width: 600px) {
   .bunny-container {
-    transform: scale(0.7);
-    bottom: 10px;
+    transform: scale(0.6);
+    bottom: 15px;
   }
 }

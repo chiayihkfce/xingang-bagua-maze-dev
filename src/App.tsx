@@ -1267,18 +1267,32 @@ function App() {
         </div>
       )}
 
-      {/* 生動小白兔裝飾 */}
+      {/* 靈動小白兔裝飾 */}
       <div className="bunny-container">
-        <div className="bunny-body">
-          <div className="bunny-tail"></div>
-          <div className="bunny-foot front"></div>
-          <div className="bunny-foot back"></div>
-          <div className="bunny-head">
-            <div className="bunny-ear left"></div>
-            <div className="bunny-ear right"></div>
-            <div className="bunny-eye"></div>
-          </div>
+        <div className="bunny-sprite">
+          <svg className="bunny-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* 尾巴 */}
+            <circle cx="20" cy="70" r="8" fill="white" />
+            {/* 後腳 */}
+            <ellipse cx="35" cy="85" rx="12" ry="6" fill="white" />
+            {/* 身體 */}
+            <path d="M20 70C20 50 40 40 65 45C80 50 85 70 80 85C75 90 30 95 20 70Z" fill="white" />
+            {/* 前腳 */}
+            <ellipse cx="70" cy="88" rx="10" ry="5" fill="white" />
+            {/* 頭部 */}
+            <circle cx="75" cy="45" r="18" fill="white" />
+            {/* 耳朵 - 左 */}
+            <path d="M65 35C60 10 70 5 72 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
+            <path d="M65 35C60 15 68 12 70 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
+            {/* 耳朵 - 右 */}
+            <path d="M82 35C85 5 95 10 88 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
+            <path d="M82 35C86 10 92 12 88 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
+            {/* 眼睛 */}
+            <circle cx="82" cy="42" r="2.5" fill="#E74C3C" />
+            <circle cx="83" cy="41" r="0.8" fill="white" />
+          </svg>
         </div>
+        <div className="bunny-shadow"></div>
       </div>
 
       {showAdminLogin && (
