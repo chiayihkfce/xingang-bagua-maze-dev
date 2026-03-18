@@ -758,11 +758,11 @@ function App() {
                     <strong style={{color: 'var(--primary-gold)'}}>{auditTarget.row[9]}</strong>
                   </p>
                   
-                  {/* 如果是銀行轉帳，特別顯示末五碼 */}
-                  {auditTarget.row[9] === '銀行轉帳/ATM' && (
+                  {/* 修正：只要付款方式包含「銀行轉帳」，就顯示末五碼 (Index 10) */}
+                  {(String(auditTarget.row[9]).includes('銀行轉帳') || String(auditTarget.row[9]).includes('ATM')) && (
                     <p style={{margin: '0.5rem 0 0 0', background: 'rgba(230, 126, 34, 0.15)', padding: '0.8rem', borderRadius: '8px', border: '1px dashed var(--accent-orange)', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                       <span style={{color: 'var(--accent-orange)', fontWeight: 'bold'}}>帳戶末五碼：</span>
-                      <strong style={{color: 'var(--accent-orange)', fontSize: '1.2rem', letterSpacing: '2px'}}>{auditTarget.row[10]}</strong>
+                      <strong style={{color: 'var(--accent-orange)', fontSize: '1.2rem', letterSpacing: '2px'}}>{auditTarget.row[10] || '未提供'}</strong>
                     </p>
                   )}
                 </div>
@@ -799,7 +799,23 @@ function App() {
                 <button 
                   onClick={() => setShowAuditModal(false)} 
                   className="cancel-btn" 
-                  style={{width: '100%', height: '50px'}}
+                  style={{
+                    width: '100%', 
+                    height: '50px', 
+                    background: 'rgba(255,255,255,0.05)', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#ccc',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                    e.currentTarget.style.color = '#ccc';
+                  }}
                 >
                   關閉
                 </button>
