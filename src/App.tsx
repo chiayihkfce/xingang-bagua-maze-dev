@@ -1469,7 +1469,14 @@ function App() {
                       className="date-picker-input"
                       placeholderText="請選擇遊玩時間"
                       required
-                      minDate={new Date()}
+                      minDate={(() => {
+                        const now = new Date();
+                        // 如果現在已經過 15:00，今天已經沒有可選時段，最小日期直接設為明天
+                        if (now.getHours() >= 15) {
+                          now.setDate(now.getDate() + 1);
+                        }
+                        return now;
+                      })()}
                       // 特別預約場次：鎖定日期區間為當天
                       maxDate={sessions.find(s => s.name === formData.session)?.fixedDate 
                         ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
