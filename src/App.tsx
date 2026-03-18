@@ -351,7 +351,9 @@ function App() {
   };
 
   const [isEditingSession, setIsEditingSession] = useState(false);
-  const [editingSession, setEditingSession] = useState({ oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false });
+  const [editingSession, setEditingSession] = useState({ 
+    oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false 
+  });
 
   // 管理操作：切換固定時間多選
   const toggleFixedTime = (time: string, isEdit: boolean) => {
@@ -381,14 +383,13 @@ function App() {
         body: JSON.stringify({ 
           action: 'addSession', 
           pw: adminPassword, 
-          isSpecial: !!(newSession.fixedDate || newSession.fixedTime),
           ...newSession 
         })
       });
       const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
       const data = await res.json();
       setSessions(data);
-      setNewSession({ name: '', price: '', fixedDate: '', fixedTime: '' });
+      setNewSession({ name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false });
       alert('新增成功');
     } catch (err) {
       alert('新增失敗');
