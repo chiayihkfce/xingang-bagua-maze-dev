@@ -1273,26 +1273,26 @@ function App() {
           <svg className="bunny-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* 尾巴 */}
             <circle cx="20" cy="70" r="8" fill="white" />
-            {/* 後腳 - 增加 class 處理蹬地動作 */}
+            {/* 後腳 - 加長加大 */}
             <g className="bunny-b-leg">
-              <ellipse cx="35" cy="85" rx="12" ry="6" fill="white" />
+              <ellipse cx="35" cy="85" rx="15" ry="8" fill="white" />
             </g>
             {/* 身體 */}
             <path d="M20 70C20 50 40 40 65 45C80 50 85 70 80 85C75 90 30 95 20 70Z" fill="white" />
-            {/* 前腳 - 增加 class 處理收縮動作 */}
+            {/* 前腳 - 加長加大 */}
             <g className="bunny-f-foot">
-              <ellipse cx="70" cy="88" rx="10" ry="5" fill="white" />
+              <ellipse cx="70" cy="88" rx="14" ry="7" fill="white" />
             </g>
             {/* 頭部 */}
             <circle cx="75" cy="45" r="18" fill="white" />
-            {/* 耳朵組 - 增加 class 處理擺動 */}
+            {/* 耳朵組 - 加長耳朵路徑 */}
             <g className="bunny-ears-group">
-              {/* 耳朵 - 左 */}
-              <path d="M65 35C60 10 70 5 72 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
-              <path d="M65 35C60 15 68 12 70 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
-              {/* 耳朵 - 右 */}
-              <path d="M82 35C85 5 95 10 88 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
-              <path d="M82 35C86 10 92 12 88 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
+              {/* 耳朵 - 左 (拉長) */}
+              <path d="M65 35C55 0 68 -5 72 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
+              <path d="M65 35C58 5 66 2 70 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
+              {/* 耳朵 - 右 (拉長) */}
+              <path d="M82 35C88 -5 98 0 88 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
+              <path d="M82 35C88 5 94 8 88 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
             </g>
             {/* 眼睛 */}
             <circle cx="82" cy="42" r="2.5" fill="#E74C3C" />
