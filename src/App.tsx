@@ -14,7 +14,7 @@ function App() {
   const [adminPassword, setAdminPassword] = useState('');
   const [submissions, setSubmissions] = useState<any[][]>([]);
   const [adminTab, setAdminTab] = useState<'sessions' | 'submissions'>('sessions');
-  const [newSession, setNewSession] = useState({ name: '', price: '', fixedDate: '', fixedTime: '' });
+  const [newSession, setNewSession] = useState({ name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false });
   const [isEditing, setIsEditing] = useState(false);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>(null);
