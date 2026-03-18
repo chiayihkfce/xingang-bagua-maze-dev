@@ -351,7 +351,7 @@ function App() {
   };
 
   const [isEditingSession, setIsEditingSession] = useState(false);
-  const [editingSession, setEditingSession] = useState({ oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '' });
+  const [editingSession, setEditingSession] = useState({ oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false });
 
   // 管理操作：切換固定時間多選
   const toggleFixedTime = (time: string, isEdit: boolean) => {
@@ -378,7 +378,12 @@ function App() {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
-        body: JSON.stringify({ action: 'addSession', pw: adminPassword, ...newSession })
+        body: JSON.stringify({ 
+          action: 'addSession', 
+          pw: adminPassword, 
+          isSpecial: !!(newSession.fixedDate || newSession.fixedTime),
+          ...newSession 
+        })
       });
       const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
       const data = await res.json();
@@ -399,7 +404,8 @@ function App() {
       newName: session.name, 
       newPrice: String(session.price),
       fixedDate: session.fixedDate || '',
-      fixedTime: session.fixedTime || ''
+      fixedTime: session.fixedTime || '',
+      isSpecial: !!(session.fixedDate || session.fixedTime)
     });
     setIsEditingSession(true);
   };
@@ -431,13 +437,18 @@ function App() {
   };
 
   // 5. 管理操作：刪除場次
-  const handleDeleteSession = async (name: string) => {
+  const handleDeleteSession = async (name: string, isSpecial: boolean) => {
     if (!window.confirm(`確定要刪除場次「${name}」嗎？`)) return;
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
-        body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
+        body: JSON.stringify({ 
+          action: 'deleteSession', 
+          pw: adminPassword, 
+          name,
+          isSpecial // 告知後端是哪種類型，以便搜尋正確的試算表分頁
+        })
       });
       setSessions(prev => prev.filter(s => s.name !== name));
       alert('刪除要求已送出');
@@ -814,7 +825,12 @@ function App() {
                   <span style={{color: 'var(--text-light)', flex: 1}}>{s.name} - ${s.price}</span>
                   <div className="action-cell">
                     <button onClick={() => startEditSession(s)} className="edit-btn">修改</button>
-                    <button onClick={() => handleDeleteSession(s.name)} className="delete-btn">刪除</button>
+                    <button 
+                      onClick={() => handleDeleteSession(s.name, !!(s.fixedDate || s.fixedTime))} 
+                      className="delete-btn"
+                    >
+                      刪除
+                    </button>
                   </div>
                 </div>
               ))}
