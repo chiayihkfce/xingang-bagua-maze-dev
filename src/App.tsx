@@ -736,30 +736,70 @@ function App() {
       <div className="container admin-dashboard">
         {showAuditModal && auditTarget && (
           <div className="modal-overlay">
-            <div className="admin-login-modal form-card" style={{maxWidth: '500px'}}>
-              <h2 className="form-section-title">報名資料審核</h2>
-              <div className="audit-details" style={{textAlign: 'left', marginBottom: '1.5rem', lineHeight: '1.8'}}>
-                <p><strong>報名人：</strong>{auditTarget.row[2]}</p>
-                <p><strong>報名場次：</strong>{auditTarget.row[5]}</p>
-                <p><strong>份數：</strong>{auditTarget.row[6]} 份</p>
-                <p><strong>總金額：</strong><span style={{color: 'var(--primary-gold)', fontWeight: 'bold'}}>NT$ {auditTarget.row[8]}</span></p>
-                <p><strong>當前狀態：</strong>{auditTarget.row[1] || '待審核'}</p>
+            <div className="admin-login-modal form-card" style={{maxWidth: '500px', padding: '2.5rem'}}>
+              <h2 className="form-section-title" style={{textAlign: 'center', fontSize: '1.5rem', marginBottom: '2rem'}}>報名資料審核</h2>
+              
+              <div className="audit-details" style={{textAlign: 'left', marginBottom: '2rem'}}>
+                <div style={{background: 'rgba(255,255,255,0.05)', padding: '1.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)'}}>
+                  <p style={{margin: '0 0 0.8rem 0', display: 'flex', justifyContent: 'space-between'}}>
+                    <span style={{color: 'var(--text-muted)'}}>報名人：</span>
+                    <strong style={{color: 'white', fontSize: '1.1rem'}}>{auditTarget.row[2]}</strong>
+                  </p>
+                  <p style={{margin: '0 0 0.8rem 0', display: 'flex', justifyContent: 'space-between'}}>
+                    <span style={{color: 'var(--text-muted)'}}>報名場次：</span>
+                    <span style={{textAlign: 'right'}}>{auditTarget.row[5]}</span>
+                  </p>
+                  <p style={{margin: '0 0 0.8rem 0', display: 'flex', justifyContent: 'space-between'}}>
+                    <span style={{color: 'var(--text-muted)'}}>份數 / 人數：</span>
+                    <span>{auditTarget.row[6]} 份 / {auditTarget.row[7]} 人</span>
+                  </p>
+                  <p style={{margin: '0 0 0.8rem 0', display: 'flex', justifyContent: 'space-between', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.1)'}}>
+                    <span style={{color: 'var(--text-muted)'}}>付款方式：</span>
+                    <strong style={{color: 'var(--primary-gold)'}}>{auditTarget.row[9]}</strong>
+                  </p>
+                  
+                  {/* 如果是銀行轉帳，特別顯示末五碼 */}
+                  {auditTarget.row[9] === '銀行轉帳/ATM' && (
+                    <p style={{margin: '0.5rem 0 0 0', background: 'rgba(230, 126, 34, 0.15)', padding: '0.8rem', borderRadius: '8px', border: '1px dashed var(--accent-orange)', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                      <span style={{color: 'var(--accent-orange)', fontWeight: 'bold'}}>帳戶末五碼：</span>
+                      <strong style={{color: 'var(--accent-orange)', fontSize: '1.2rem', letterSpacing: '2px'}}>{auditTarget.row[10]}</strong>
+                    </p>
+                  )}
+                </div>
+
+                <div style={{marginTop: '1.5rem', padding: '0 0.5rem'}}>
+                  <p style={{margin: '0 0 0.5rem 0', display: 'flex', justifyContent: 'space-between'}}>
+                    <span style={{color: 'var(--text-muted)'}}>訂單總額：</span>
+                    <strong style={{color: 'var(--primary-gold)', fontSize: '1.3rem'}}>NT$ {auditTarget.row[8]}</strong>
+                  </p>
+                  <p style={{margin: '0', display: 'flex', justifyContent: 'space-between'}}>
+                    <span style={{color: 'var(--text-muted)'}}>目前狀態：</span>
+                    <span style={{
+                      padding: '0.2rem 0.8rem', 
+                      borderRadius: '50px', 
+                      background: auditTarget.row[1] === '通過' ? 'rgba(39, 174, 96, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                      color: auditTarget.row[1] === '通過' ? '#2ecc71' : '#bbb',
+                      fontSize: '0.85rem'
+                    }}>{auditTarget.row[1] || '待審核'}</span>
+                  </p>
+                </div>
               </div>
-              <div className="modal-actions admin-login-actions" style={{flexDirection: 'column', gap: '0.8rem'}}>
+
+              <div className="modal-actions" style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <button 
                   onClick={() => {
                     handleVerifyPayment(auditTarget.index, '通過');
                     setShowAuditModal(false);
                   }} 
                   className="submit-btn" 
-                  style={{width: '100%', background: '#27ae60'}}
+                  style={{width: '100%', height: '55px', background: '#27ae60', fontSize: '1.1rem', boxShadow: '0 4px 15px rgba(39, 174, 96, 0.3)'}}
                 >
                   確認付款完成 (標記為通過)
                 </button>
                 <button 
                   onClick={() => setShowAuditModal(false)} 
                   className="cancel-btn" 
-                  style={{width: '100%'}}
+                  style={{width: '100%', height: '50px'}}
                 >
                   關閉
                 </button>
