@@ -786,7 +786,7 @@ function App() {
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <h3 className="form-section-title" style={{margin: 0}}>報名清單 (共 {totalRows} 筆)</h3>
                 <div className="admin-filter-bar" style={{display: 'flex', alignItems: 'center', gap: '1rem', background: '#333', padding: '0.8rem', borderRadius: '8px'}}>
-                  <span title="依遊玩日期篩選" style={{display: 'flex', alignItems: 'center', color: 'var(--primary-gold)', cursor: 'help'}}>
+                  <span title="依遊玩日期篩選" style={{display: 'flex', alignItems: 'center', color: 'var(--primary-gold)'}}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                       <line x1="16" y1="2" x2="16" y2="6"></line>
