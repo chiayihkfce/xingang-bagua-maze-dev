@@ -674,44 +674,44 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 /* 修改資料專用彈窗樣式 */
 .admin-edit-modal {
+  height: 80vh !important; /* 固定高度以利內部 Flex 計算 */
   max-height: 80vh !important;
   display: flex !important;
   flex-direction: column !important;
-  padding: 0 !important; /* 清除內距以讓內部 Header/Footer 貼邊 */
-  overflow: hidden !important; /* 彈窗本體不捲動 */
+  padding: 0 !important; 
+  overflow: hidden !important; 
   max-width: 800px !important;
 }
 
 .admin-edit-modal .form-section-title {
-  padding: 2.5rem 2.5rem 1rem !important;
+  padding: 2rem 2.5rem 1rem !important;
   margin: 0 !important;
-  flex: 0 0 auto;
+  flex: 0 0 auto; /* 標題高度固定 */
 }
 
 .admin-edit-modal form {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto; /* 表單佔滿剩餘空間 */
   overflow: hidden;
   height: 100%;
 }
 
 .admin-edit-modal .edit-form-grid {
-  flex: 1 1 auto;
-  overflow-y: auto;
+  flex: 1 1 auto; /* 表單格線區佔滿剩餘空間 */
+  overflow-y: auto; /* 只有這裡會捲動 */
   padding: 1rem 2.5rem;
-  /* 捲動條美化 */
   scrollbar-width: thin;
   scrollbar-color: var(--primary-gold) transparent;
 }
 
 .admin-edit-modal .admin-login-actions {
-  flex: 0 0 auto;
-  padding: 1.5rem 2.5rem 2.5rem !important;
+  flex: 0 0 auto; /* 按鈕區高度固定 */
+  padding: 1.5rem 2.5rem 2rem !important;
   margin: 0 !important;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--card-bg); /* 使用與彈窗相同的背景色避免透明 */
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  position: static !important; /* 取消 sticky，由 Flex 控制固定 */
-  box-shadow: 0 -10px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
 }
 
 /* 登入彈窗按鈕佈局 */
