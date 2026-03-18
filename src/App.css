@@ -893,11 +893,18 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 /* 編輯彈窗手機版優化 */
 @media (max-width: 768px) {
+  .modal-overlay {
+    padding: 2rem 1rem; /* 手機版稍微縮小 padding 但保留邊界 */
+    align-items: flex-start; /* 手機版靠上對齊，配合 padding 效果更好 */
+    overflow-y: auto; /* 允許遮罩層捲動 */
+  }
+
   .admin-login-modal {
     padding: 2rem 1.5rem !important;
     width: 95% !important;
-    max-height: 90vh;
-    overflow-y: auto; /* 允許垂直捲動 */
+    max-height: 85vh; /* 統一手機版的最大高度 */
+    margin: auto 0; /* 垂直置中並保有間距 */
+    overflow-y: auto; /* 允許內容捲動 */
   }
 
   .admin-nav {
