@@ -58,9 +58,9 @@ function App() {
 
   const formatDateTime = (date: Date) => {
     const pad = (n: number) => String(n).padStart(2, '0');
-    // 修改為 3/14/2026 11:42:21 格式
+    // 修改為 3/14/2026 11:42 格式
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ` +
-           `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+           `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
   // 1. 初始載入場次
@@ -219,7 +219,7 @@ function App() {
     setEditingRowIndex(index);
     let rawTime = row[12] || ''; // 欄位全部後移一位
     if (typeof rawTime === 'string' && rawTime.includes('T')) {
-      rawTime = formatDateTime(new Date(rawTime)).substring(0, 16);
+      rawTime = formatDateTime(new Date(rawTime));
     }
     setEditData({
       timestamp: row[0], status: row[1], email: row[2], name: row[3], phone: row[4], 
@@ -464,7 +464,7 @@ function App() {
       if (hours < 9 || hours > 15) date.setHours(9, 0, 0);
       
       // 改用統一的時間格式處理器
-      const formattedDate = formatDateTime(date).substring(0, 16); 
+      const formattedDate = formatDateTime(date); 
       setFormData(prev => ({ ...prev, pickupTime: formattedDate }));
     }
   };
