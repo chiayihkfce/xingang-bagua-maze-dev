@@ -792,8 +792,7 @@ function App() {
                       <line x1="16" y1="2" x2="16" y2="6"></line>
                       <line x1="8" y1="2" x2="8" y2="6"></line>
                       <line x1="3" y1="10" x2="21" y2="10"></line>
-                      <circle cx="11" cy="16" r="3"></circle>
-                      <path d="M14 19l2 2"></path>
+                      <path d="M10 14l2 2 4-4"></path>
                     </svg>
                   </span>
                   <DatePicker
@@ -807,32 +806,44 @@ function App() {
                   {adminFilterDate && (
                     <button 
                       onClick={() => handleDateFilter(null)} 
-                      className="cancel-btn" 
-                      style={{padding: '0.3rem 0.8rem', fontSize: '0.8rem'}}
+                      className="cancel-btn icon-btn" 
+                      title="清除篩選"
+                      style={{padding: '0.3rem', display: 'flex', alignItems: 'center'}}
                     >
-                      清除篩選
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
                     </button>
                   )}
                   
                   <div className="column-filter-container" style={{position: 'relative', marginLeft: 'auto'}}>
                     <button 
                       onClick={() => setShowShowColumnFilter(!showColumnFilter)} 
-                      className="edit-btn" 
-                      style={{background: '#444', border: '1px solid #666', fontSize: '0.8rem'}}
+                      className="edit-btn icon-btn" 
+                      title="顯示欄位設定"
+                      style={{
+                        background: '#444', border: '1px solid #666', padding: '0.5rem', 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        borderRadius: '4px', cursor: 'pointer', transition: 'all 0.2s'
+                      }}
                     >
-                      ⚙️ 顯示欄位設定
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="3" stroke="var(--primary-gold)" strokeWidth="1.5"/>
+                        <path d="M12 2V5M12 19V22M4.93 4.93L7.05 7.05M16.95 16.95L19.07 19.07M2 12H5M19 12H22M4.93 19.07L7.05 16.95M16.95 7.05L19.07 4.93" stroke="var(--primary-gold)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <path d="M12 8V10M12 14V16M8 12H10M14 12H16" stroke="var(--primary-gold)" strokeWidth="1" strokeLinecap="round"/>
+                      </svg>
                     </button>
                     {showColumnFilter && (
                       <div className="column-filter-dropdown" style={{
                         position: 'absolute', top: '100%', right: 0, zIndex: 100,
                         background: '#222', border: '1px solid #444', borderRadius: '8px',
-                        padding: '1rem', width: '200px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                        padding: '1rem', width: '180px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                         marginTop: '0.5rem'
                       }}>
-                        <h4 style={{margin: '0 0 0.8rem 0', fontSize: '0.9rem', color: 'var(--primary-gold)'}}>勾選欲顯示欄位</h4>
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto'}}>
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '300px', overflowY: 'auto'}}>
                           {submissions[0]?.map((h: any, i: number) => (
-                            <label key={i} style={{display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', cursor: 'pointer', color: '#ccc'}}>
+                            <label key={i} style={{display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', cursor: 'pointer', color: '#ccc'}}>
                               <input type="checkbox" checked={visibleColumns.includes(i)} onChange={() => toggleColumn(i)} />
                               {h}
                             </label>
@@ -840,10 +851,13 @@ function App() {
                         </div>
                         <button 
                           onClick={() => setShowShowColumnFilter(false)} 
-                          className="submit-btn" 
-                          style={{width: '100%', marginTop: '1rem', padding: '0.4rem', fontSize: '0.8rem'}}
+                          className="submit-btn icon-btn" 
+                          title="關閉選單"
+                          style={{width: '100%', marginTop: '1rem', padding: '0.4rem', display: 'flex', justifyContent: 'center'}}
                         >
-                          完成
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
                         </button>
                       </div>
                     )}
