@@ -1048,6 +1048,14 @@ function App() {
     setShowConfirmation(true);
   };
 
+  // 根據語言獲取領取地點顯示名稱
+  const getPickupLocationDisplay = (location: string) => {
+    if (lang === 'zh') return location;
+    if (location.includes('新港文教基金會')) return t.locFoundation;
+    if (location.includes('培桂堂')) return t.locPeiGui;
+    return location;
+  };
+
   const handleConfirmSubmit = async () => {
     // --- 機器人驗證 (Honeypot & Speed Check) ---
     if (formData.hp_field !== '') {
@@ -1701,10 +1709,10 @@ function App() {
               <p><strong>{t.phone}</strong>{formData.phone}</p>
               <p><strong>{t.email}</strong>{formData.email}</p>
               <p><strong>{t.session}</strong>{getSessionDisplayName(formData.session)}</p>
-              <p><strong>{t.qty}</strong>{formData.quantity} {t.playersVal}</p>
+              <p><strong>{t.qty}</strong>{formData.quantity} {t.kitVal}</p>
               <p><strong>{t.playerCount}</strong>{formData.players} {t.playersVal}</p>
               <p><strong>{t.expectedTime}</strong>{formData.pickupTime}</p>
-              <p><strong>{t.pickupLoc}</strong>{formData.pickupLocation}</p>
+              <p><strong>{t.pickupLoc}</strong>{getPickupLocationDisplay(formData.pickupLocation)}</p>
               <p><strong>{t.paymentMethod}</strong>{formData.paymentMethod.split(' (')[0]}</p>
               <p><strong>{t.total}</strong><span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
               {formData.notes && <p><strong>{t.notes}</strong>{formData.notes}</p>}
