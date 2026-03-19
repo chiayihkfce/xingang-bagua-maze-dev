@@ -25,7 +25,7 @@ function App() {
       toLinePay: '前往 Line Pay 付款 ➔',
       backToHome: '返回首頁',
       openingBagua: '正在開啟八卦時空',
-      traversingTime: '穿越清朝與昭和的交界...',
+      traversingTime: '穿越光緒與昭和的交界...',
       adminLogin: '管理員登入',
       passwordPlaceholder: '請輸入管理密碼',
       loadingData: '資料讀取中',
