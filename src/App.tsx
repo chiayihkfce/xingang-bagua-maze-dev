@@ -46,6 +46,39 @@ function App() {
     hp_field: '' // 陷阱欄位 (Honeypot)
   });
 
+  const [formErrors, setFormErrors] = useState({
+    email: '',
+    phone: '',
+    name: ''
+  });
+
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    if (name === 'email') {
+      if (value && !value.includes('@')) {
+        error = '請輸入正確的 Email 格式';
+      }
+    } else if (name === 'phone') {
+      if (value && value.length !== 10) {
+        error = '手機號碼應為 10 碼數字';
+      }
+    } else if (name === 'name') {
+      if (value && value.length < 2) {
+        error = '姓名長度太短';
+      }
+    }
+    setFormErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleCopyAccount = () => {
+    const accountNumber = '00817220606250';
+    navigator.clipboard.writeText(accountNumber).then(() => {
+      alert('匯款帳號已複製！');
+    }).catch(err => {
+      console.error('無法複製帳號: ', err);
+    });
+  };
+
   const [calculatedTotal, setCalculatedTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
@@ -551,6 +584,7 @@ function App() {
       const filteredValue = value.replace(/[0-9]/g, '');
       if (filteredValue.length > 20) return;
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
+      validateField(name, filteredValue);
       return;
     }
 
@@ -609,8 +643,15 @@ function App() {
 
     if (name === 'phone') {
       const filteredValue = value.replace(/\D/g, '');
-      if (filteredValue.length > 15) return;
+      if (filteredValue.length > 10) return;
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
+      validateField(name, filteredValue);
+      return;
+    }
+
+    if (name === 'email') {
+      setFormData(prev => ({ ...prev, [name]: value }));
+      validateField(name, value);
       return;
     }
     
@@ -642,6 +683,12 @@ function App() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 檢查即時驗證錯誤
+    if (formErrors.email || formErrors.phone || formErrors.name) {
+      alert('【送出失敗】請修正表單中的錯誤紅字後再試。');
+      return;
+    }
 
     // --- JavaScript 硬性驗證 (防範 F12 惡意修改 HTML) ---
     const requiredFields = [
@@ -760,6 +807,7 @@ function App() {
       bankLast5: '', pickupTime: '', pickupLocation: '新港文教基金會(閱讀館)',
       referral: [] as string[], notes: '', hp_field: ''
     });
+    setFormErrors({ email: '', phone: '', name: '' });
     setSubmitted(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1257,7 +1305,15 @@ function App() {
             <p><strong>預計遊玩時間：</strong>{formData.pickupTime}</p>
             <p><strong>訂單總額：</strong>NT$ {calculatedTotal}</p>
             <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
-            {formData.paymentMethod === '銀行轉帳/ATM' && <p className="bank-alert">請記得轉帳至：(617) 00817220606250</p>}
+            {formData.paymentMethod === '銀行轉帳/ATM' && (
+              <div className="bank-info" style={{marginTop: '1rem'}}>
+                <p>匯款銀行：新港鄉農會 (代碼 617)</p>
+                <div className="account-container">
+                  <span>帳號：00817220606250</span>
+                  <button onClick={handleCopyAccount} className="copy-btn">複製帳號</button>
+                </div>
+              </div>
+            )}
             {formData.paymentMethod.includes('Line Pay') && (
               <div className="linepay-box">
                 <p>請點擊下方連結完成 Line Pay 付款：</p>
@@ -1418,16 +1474,28 @@ function App() {
             <div className="form-card">
               <h3 className="form-section-title">基本資料</h3>
               <div className="form-group">
-                <label>報名人 姓名 *</label>
+                <label>
+                  報名人 姓名
+                  <span className="required-mark">*</span>
+                </label>
                 <input type="text" name="name" required value={formData.name} onChange={handleInputChange} placeholder="請輸入姓名" />
+                {formErrors.name && <span className="error-msg">{formErrors.name}</span>}
               </div>
               <div className="form-group">
-                <label>聯絡電話(手機為主) *</label>
+                <label>
+                  聯絡電話(手機為主)
+                  <span className="required-mark">*</span>
+                </label>
                 <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder="0912345678" />
+                {formErrors.phone && <span className="error-msg">{formErrors.phone}</span>}
               </div>
               <div className="form-group">
-                <label>Email (會寄送行前通知) *</label>
+                <label>
+                  Email (會寄送行前通知)
+                  <span className="required-mark">*</span>
+                </label>
                 <input type="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder="您的電子郵件" />
+                {formErrors.email && <span className="error-msg">{formErrors.email}</span>}
               </div>
             </div>
 
@@ -1435,7 +1503,10 @@ function App() {
               <h3 className="form-section-title">報名資訊</h3>
               
               <div className="form-group">
-                <label>【場次類型】 *</label>
+                <label>
+                  【場次類型】
+                  <span className="required-mark">*</span>
+                </label>
                 <select 
                   value={sessionType} 
                   required
@@ -1483,7 +1554,10 @@ function App() {
               {sessionType !== '' && (
                 <>
                   <div className="form-group">
-                    <label>【詳細場次】 *</label>
+                    <label>
+                      【詳細場次】
+                      <span className="required-mark">*</span>
+                    </label>
                     {sessionType === '一般預約' ? (
                       <div className="general-session-info" style={{ 
                         padding: '1rem', 
@@ -1519,11 +1593,17 @@ function App() {
                     )}
                   </div>
                   <div className="form-group">
-                    <label>份數 *</label>
+                    <label>
+                      份數
+                      <span className="required-mark">*</span>
+                    </label>
                     <input type="number" name="quantity" min="1" required value={formData.quantity} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
-                    <label>當天遊玩人數 (每份解謎包建議 1-4 人) *</label>
+                    <label>
+                      當天遊玩人數 (每份解謎包建議 1-4 人)
+                      <span className="required-mark">*</span>
+                    </label>
                     <select name="players" value={formData.players} onChange={handleInputChange}>
                       {Array.from({ length: Number(formData.quantity) * 4 }, (_, i) => i + 1).map(num => (
                         <option key={num} value={num}>{num}人</option>
@@ -1539,7 +1619,10 @@ function App() {
                 <div className="form-card">
                   <h3 className="form-section-title">繳費與取件</h3>
                   <div className="form-group">
-                    <label>繳費方式 *</label>
+                    <label>
+                      繳費方式
+                      <span className="required-mark">*</span>
+                    </label>
                     <div className="radio-group">
                       <label><input type="radio" name="paymentMethod" value="親至新港文教基金會繳費" checked={formData.paymentMethod === '親至新港文教基金會繳費'} onChange={handleInputChange} /> 親至新港文教基金會繳費</label>
                       <label><input type="radio" name="paymentMethod" value="銀行轉帳/ATM" checked={formData.paymentMethod === '銀行轉帳/ATM'} onChange={handleInputChange} /> 銀行轉帳/ATM</label>
@@ -1553,8 +1636,14 @@ function App() {
                   {formData.paymentMethod === '銀行轉帳/ATM' && (
                     <div className="form-group bank-info">
                       <p>匯款銀行：新港鄉農會 (代碼 617)</p>
-                      <p>帳號：00817220606250</p>
-                      <label>轉帳帳戶後五碼 *</label>
+                      <div className="account-container" style={{display: 'flex', alignItems: 'center', gap: '10px', margin: '0.5rem 0'}}>
+                        <p style={{margin: 0}}>帳號：00817220606250</p>
+                        <button type="button" onClick={handleCopyAccount} className="copy-btn">複製</button>
+                      </div>
+                      <label>
+                        轉帳帳戶後五碼
+                        <span className="required-mark">*</span>
+                      </label>
                       <input 
                         type="text" 
                         name="bankLast5" 
@@ -1569,7 +1658,10 @@ function App() {
                   )}
 
                   <div className="form-group">
-                    <label>預計遊玩日期 & 時間 (開放日 09:00-15:00，週一二不開放) *</label>
+                    <label>
+                      預計遊玩日期 & 時間 (開放日 09:00-15:00，週一二不開放)
+                      <span className="required-mark">*</span>
+                    </label>
                     
                     {/* 顯示固定場次或衝突告示 */}
                     {(() => {
@@ -1627,7 +1719,7 @@ function App() {
                         }
                         return now;
                       })()}
-                      // 特別預約場次：鎖定日期區間為當天
+                      // 特別預約場次：鎖定日期區區間為當天
                       maxDate={sessions.find(s => s.name === formData.session)?.fixedDate 
                         ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
                         : undefined}
@@ -1676,7 +1768,10 @@ function App() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>領取地點 *</label>
+                    <label>
+                      領取地點
+                      <span className="required-mark">*</span>
+                    </label>
                     <select name="pickupLocation" value={formData.pickupLocation} onChange={handleInputChange}>
                       <option value="新港文教基金會(閱讀館)">新港文教基金會(閱讀館)</option>
                       <option value="培桂堂(建議選此處，可同時參觀)">培桂堂</option>

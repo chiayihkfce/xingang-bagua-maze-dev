@@ -1326,19 +1326,67 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   }
 }
 
-/* 地址連結按鈕樣式 */
-.address-link {
+/* 必填標記 */
+.required-mark {
+  color: #ff4d4f;
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+/* 驗證錯誤訊息 */
+.error-msg {
+  color: #ff4d4f;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 銀行資訊區塊優化 */
+.bank-info {
+  background: rgba(212, 175, 55, 0.05);
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 1px dashed var(--primary-gold);
+  margin-bottom: 1.5rem;
+}
+
+.account-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
+}
+
+.copy-btn {
+  background: var(--primary-gold);
+  color: #1a1a1a;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
-  background: rgba(212, 175, 55, 0.1);
-  color: var(--primary-gold);
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  text-decoration: none;
-  font-size: 0.95rem;
-  margin: 0.5rem 0;
-  transition: all 0.3s ease;
+  gap: 4px;
+}
+
+.copy-btn:hover {
+  background: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .address-link:hover {
