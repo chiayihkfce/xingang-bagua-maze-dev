@@ -173,7 +173,7 @@ function App() {
       storyPara3: '—Yet for Bai Luan-qing, this is a world that shouldn’t exist.',
       storyPara4: 'A Qing Dynasty official tasked with surveying the town’s ley lines, he was suddenly struck by a wave of dizziness as the Bagua shifted—plunging him into darkness.',
       storyPara5: 'He awoke over seventy years in the future, trapped in the peak of the Japanese Colonial Era. A world of unfamiliar tongues, strange decrees, and a terrifying disease. Through the haze, he hears the clamor of local temples where thousands pray for salvation.',
-      storyPara6: 'The Bagua of Xingang is in chaos; the town’s guardian deity has vanished. History has fractured, weaving the Qing and Showa eras into a single, unstable reality.',
+      storyPara6: 'The Bagua of Xingang is in chaos; the town’s guardian deity has vanished. History has fractured, weaving the Guangxu and Showa eras into a single, unstable reality.',
       storyPara7: 'Unless the Bagua is mended, he will be lost in time forever. Unless the source of the plague is found, the people of Xingang will continue to wither away.',
       storyHighlight: 'Can you help him uncover the truth?',
       eventTitle: 'Event Details',
