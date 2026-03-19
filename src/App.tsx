@@ -1280,20 +1280,22 @@ function App() {
                       <option value="Line Pay">Line Pay</option>
                     </select>
                   </div>
-                  <div className="form-group"><label>轉帳帳戶(末五碼) *</label>
-                    <input 
-                      type="text" 
-                      maxLength={5}
-                      inputMode="numeric"
-                      pattern="\d*"
-                      value={editData.bankLast5} 
-                      onChange={e => {
-                        const val = e.target.value.replace(/\D/g, '').slice(0, 5);
-                        setEditData({...editData, bankLast5: val});
-                      }} 
-                    />
-                  </div>
-                  <div className="form-group"><label>遊玩日期時間</label><input type="text" value={editData.pickupTime} onChange={e => setEditData({...editData, pickupTime: e.target.value})} /></div>
+                  {editData.paymentMethod === '銀行轉帳/ATM' && (
+                    <div className="form-group"><label>轉帳帳戶(末五碼) *</label>
+                      <input 
+                        type="text" 
+                        maxLength={5}
+                        inputMode="numeric"
+                        pattern="\d*"
+                        required
+                        value={editData.bankLast5} 
+                        onChange={e => {
+                          const val = e.target.value.replace(/\D/g, '').slice(0, 5);
+                          setEditData({...editData, bankLast5: val});
+                        }} 
+                      />
+                    </div>
+                  )}                  <div className="form-group"><label>遊玩日期時間</label><input type="text" value={editData.pickupTime} onChange={e => setEditData({...editData, pickupTime: e.target.value})} /></div>
                   <div className="form-group"><label>領取地點</label>
                     <select value={editData.pickupLocation} onChange={e => setEditData({...editData, pickupLocation: e.target.value})}>
                       <option value="新港文教基金會(閱讀館)">新港文教基金會(閱讀館)</option>
