@@ -6,6 +6,247 @@ import './App.css'
 function App() {
   // --- 1. 狀態與變數定義 ---
 
+  const [lang, setLang] = useState<'zh' | 'en'>('zh');
+
+  const translations = {
+    zh: {
+      submitSuccess: '報名已送出！',
+      thanks: '感謝您的參與，',
+      received: '我們已收到您的報名資訊，請確認以下明細並完成繳費。',
+      session: '報名場次：',
+      playTime: '預計遊玩時間：',
+      orderTotal: '訂單總額：',
+      paymentMethod: '付款方式：',
+      bankInfo: '匯款銀行：新港鄉農會 (代碼 617)',
+      account: '帳號：00817220606250',
+      copyAccount: '複製帳號',
+      accountCopied: '匯款帳號已複製！',
+      linePayInfo: '請點擊下方連結完成 Line Pay 付款：',
+      toLinePay: '前往 Line Pay 付款 ➔',
+      backToHome: '返回首頁',
+      openingBagua: '正在開啟八卦時空',
+      traversingTime: '穿越清朝與昭和的交界...',
+      adminLogin: '管理員登入',
+      passwordPlaceholder: '請輸入管理密碼',
+      loadingData: '資料讀取中',
+      cancel: '取消',
+      login: '登入',
+      verifying: '驗證中...',
+      confirmTitle: '確認報名資訊',
+      registrant: '報名人：',
+      phone: '聯絡電話：',
+      email: 'Email：',
+      qty: '份數：',
+      playerCount: '當天遊玩人數：',
+      expectedTime: '預計遊玩日期時間：',
+      pickupLoc: '領取地點：',
+      total: '估計總額：',
+      notes: '備註：',
+      backToEdit: '返回修改',
+      confirmSubmit: '確認送出',
+      submitting: '正在送出...',
+      eraBadge: '光緒 x 昭和',
+      mainTitle: '【新港八卦謎蹤】',
+      subTitle: '實境解謎 活動報名',
+      storyTitle: '故事背景',
+      storyPara1: '昭和九年。一場疫病肆虐新港。',
+      storyPara2: '診療所裡人滿為患，哀嚎與咳嗽聲交織成一片不安。',
+      storyPara3: '——然而這一切，對白鸞卿來說，都不該存在。',
+      storyPara4: '身為清朝縣丞，他原在勘查新港水脈與風水。卻在卦相異動之際，頭暈目眩——',
+      storyPara5: '醒來時，已置身七十餘年後的日治時期。陌生的年號、陌生的語言、陌生的疫病。他看到印著不明政策的公文，聽到祈求平安的廟宇喧囂。',
+      storyPara6: '他發現——新港的卦象錯亂，守護神失蹤。八卦動盪，時空重疊，清朝與昭和，交錯於此。',
+      storyPara7: '若不修正卦象，他將永遠困在這個不屬於他的年代；若不找出疫病源頭，百姓將持續凋零。',
+      storyHighlight: '你，能協助他找出真相嗎？',
+      eventTitle: '活動內容',
+      eventIntro: '準備好踏上一場神秘又刺激的冒險了嗎？這場解謎將帶你穿梭在新港的巷弄間，解開織進文化與歷史中的謎團。',
+      itemPrice: '► 解謎包定價',
+      itemPriceVal: '$650 (配合活動享優惠)',
+      itemPlayers: '► 建議人數',
+      itemPlayersVal: '1份解謎包 1-4 人使用',
+      itemTime: '► 遊玩時間',
+      itemTimeVal: '約 2 小時',
+      itemContent: '► 內容物',
+      itemContentVal: '解謎道具、特製伴手禮',
+      basicInfo: '基本資料',
+      nameLabel: '報名人 姓名',
+      namePlaceholder: '請輸入姓名',
+      phoneLabel: '聯絡電話(手機為主)',
+      phonePlaceholder: '0912345678',
+      emailLabel: 'Email (會寄送行前通知)',
+      emailPlaceholder: '您的電子郵件',
+      regInfo: '報名資訊',
+      sessionType: '【場次類型】',
+      sessionTypePlaceholder: '-------請選擇場次類型--------',
+      generalReg: '📅 一般預約 (自由選擇遊玩時段)',
+      specialReg: '✨ 特別預約 (固定日期與特定時段)',
+      detailSession: '【詳細場次】',
+      autoSelected: '系統已自動選定：',
+      calculating: '正在計算中...',
+      discountHint: '★ 優惠提醒：一般預約滿 5 份(含)以上可享有團體優惠價唷!!!!!!',
+      loading: '載入中...',
+      quantity: '份數',
+      playersLabel: '當天遊玩人數 (每份解謎包建議 1-4 人)',
+      playersVal: '人',
+      paymentCard: '繳費與取件',
+      paymentMethodLabel: '繳費方式',
+      payInPerson: '親至新港文教基金會繳費',
+      bankTransfer: '銀行轉帳/ATM',
+      bankName: '匯款銀行：新港鄉農會 (代碼 617)',
+      bankAcc: '帳號：00817220606250',
+      copy: '複製',
+      bankLast5: '轉帳帳戶後五碼',
+      bankLast5Placeholder: '請輸入後五碼數字',
+      expectedDate: '預計遊玩日期 & 時間 (開放日 09:00-15:00，週一二不開放)',
+      fixedSessionHint: (date: string, times: string) => `★ 此場次固定於 ${date}，開放時段：${times}`,
+      conflictNotice: (times: string) => `★ 提醒：您目前選擇的日期有特別場，特別場次時段：${times} 不開放一般場次預約，如有這些時段需求請選擇特別場次。`,
+      datepickerPlaceholder: '請選擇遊玩時間',
+      timeCaption: '時間',
+      pickupLocation: '領取地點',
+      locFoundation: '新港文教基金會(閱讀館)',
+      locPeiGui: '培桂堂(建議選此處，可同時參觀)',
+      other: '其他',
+      referralLabel: '如何得知本活動內容? (可多選)',
+      referrals: ['基金會FB', '基金會LINE', '基金會電子報', '活動現場', '親友介紹', '其他FB社團', '海報/摺頁'],
+      notesLabel: '其他/備註',
+      submitBtn: '送出報名表單',
+      callTitle: '撥打電話諮詢 (分機 73)',
+      fbTitle: '前往臉書查看更多',
+      igTitle: '前往 IG 查看更多',
+      locTitle: '查看活動地點',
+      contactInfo: '聯絡資訊',
+      foundationName: '新港文教基金會',
+      address: '616嘉義縣新港鄉新中路305號',
+      phoneFull: '電話：05-3745074 分機 73 林先生',
+      refundTitle: '退費說明：',
+      refund1: '活動前 30 日取消：全額退費（扣除手續費 30 元）',
+      refund2: '活動前 7 日取消：退費 80%（扣除手續費 30 元）',
+      refund3: '活動當日取消：不予退費',
+      footerCopy: '© 2026 新港文教基金會 | 新港八卦謎蹤 製作團隊',
+      errorEmail: '請輸入正確的 Email 格式',
+      errorPhone: '手機號碼應為 10 碼數字',
+      errorName: '姓名長度太短'
+    },
+    en: {
+      submitSuccess: 'Registration Submitted!',
+      thanks: 'Thank you for participating, ',
+      received: 'We have received your registration. Please confirm the details below and complete the payment.',
+      session: 'Session:',
+      playTime: 'Play Time:',
+      orderTotal: 'Total Amount:',
+      paymentMethod: 'Payment Method:',
+      bankInfo: 'Bank: Hsinkang Township Farmers\' Association (Code 617)',
+      account: 'Account: 00817220606250',
+      copyAccount: 'Copy Account',
+      accountCopied: 'Account number copied!',
+      linePayInfo: 'Click the link below to pay via Line Pay:',
+      toLinePay: 'Pay via Line Pay ➔',
+      backToHome: 'Back to Home',
+      openingBagua: 'Opening Bagua Space-Time',
+      traversingTime: 'Traversing the boundary of Qing and Showa...',
+      adminLogin: 'Admin Login',
+      passwordPlaceholder: 'Enter admin password',
+      loadingData: 'Loading data...',
+      cancel: 'Cancel',
+      login: 'Login',
+      verifying: 'Verifying...',
+      confirmTitle: 'Confirm Registration',
+      registrant: 'Registrant:',
+      phone: 'Phone:',
+      email: 'Email:',
+      qty: 'Quantity:',
+      playerCount: 'Players:',
+      expectedTime: 'Expected Date & Time:',
+      pickupLoc: 'Pickup Location:',
+      total: 'Total Amount:',
+      notes: 'Notes:',
+      backToEdit: 'Back to Edit',
+      confirmSubmit: 'Confirm & Submit',
+      submitting: 'Submitting...',
+      eraBadge: 'Guangxu x Showa',
+      mainTitle: '【Xingang Bagua Mystery】',
+      subTitle: 'Real-world Puzzle Registration',
+      storyTitle: 'Story Background',
+      storyPara1: 'Showa 9th Year. An epidemic rages through Xingang.',
+      storyPara2: 'The clinic is overcrowded, filled with the sounds of moans and coughs.',
+      storyPara3: '—Yet none of this should exist for Bai Luan-qing.',
+      storyPara4: 'As a Qing dynasty official surveying the terrain, he felt dizzy as the Bagua shifted—',
+      storyPara5: 'He woke up in the Japanese colonial period over 70 years later. Strange eras, strange languages, strange diseases. He saw unfamiliar government documents and heard the clamor of temples praying for peace.',
+      storyPara6: 'He discovered—Xingang\'s Bagua is in chaos, the guardian deity is missing. Space-time overlaps, Qing and Showa intertwine here.',
+      storyPara7: 'If he cannot fix the Bagua, he will be trapped forever; if he cannot find the source of the disease, the people will continue to suffer.',
+      storyHighlight: 'Can you help him uncover the truth?',
+      eventTitle: 'Event Content',
+      eventIntro: 'Ready for a mysterious and exciting adventure? This puzzle will lead you through the alleys of Xingang, uncovering mysteries woven into culture and history.',
+      itemPrice: '► Puzzle Kit Price',
+      itemPriceVal: '$650 (Special discounts available)',
+      itemPlayers: '► Recommended Players',
+      itemPlayersVal: '1-4 players per kit',
+      itemTime: '► Play Time',
+      itemTimeVal: 'Approx. 2 hours',
+      itemContent: '► Contents',
+      itemContentVal: 'Puzzle tools, special souvenirs',
+      basicInfo: 'Basic Information',
+      nameLabel: 'Name',
+      namePlaceholder: 'Enter your name',
+      phoneLabel: 'Phone (Mobile)',
+      phonePlaceholder: '0912345678',
+      emailLabel: 'Email (For notification)',
+      emailPlaceholder: 'Your email address',
+      regInfo: 'Registration Info',
+      sessionType: '【Session Type】',
+      sessionTypePlaceholder: '-------Please select type--------',
+      generalReg: '📅 General (Choose your own time)',
+      specialReg: '✨ Special (Fixed date & time)',
+      detailSession: '【Detailed Session】',
+      autoSelected: 'Auto-selected:',
+      calculating: 'Calculating...',
+      discountHint: '★ Discount: Group rates apply for 5 or more general kits!',
+      loading: 'Loading...',
+      quantity: 'Quantity',
+      playersLabel: 'Players (1-4 per kit recommended)',
+      playersVal: ' people',
+      paymentCard: 'Payment & Pickup',
+      paymentMethodLabel: 'Payment Method',
+      payInPerson: 'Pay at HKFCE Office',
+      bankTransfer: 'Bank Transfer / ATM',
+      bankName: 'Bank: Hsinkang Township Farmers\' Association (Code 617)',
+      bankAcc: 'Account: 00817220606250',
+      copy: 'Copy',
+      bankLast5: 'Last 5 digits of your account',
+      bankLast5Placeholder: 'Enter 5 digits',
+      expectedDate: 'Expected Date & Time (09:00-15:00, closed Mon/Tue)',
+      fixedSessionHint: (date: string, times: string) => `★ Fixed on ${date}, available: ${times}`,
+      conflictNotice: (times: string) => `★ Note: Special sessions are on this date (${times}). General booking is restricted.`,
+      datepickerPlaceholder: 'Choose your time',
+      timeCaption: 'Time',
+      pickupLocation: 'Pickup Location',
+      locFoundation: 'HKFCE Office (Reading Room)',
+      locPeiGui: 'Pei-Gui Hall (Recommended)',
+      other: 'Other',
+      referralLabel: 'How did you hear about us? (Multiple)',
+      referrals: ['HKFCE FB', 'HKFCE LINE', 'Newsletter', 'At Event', 'Friends/Family', 'Other FB Groups', 'Poster/Flyer'],
+      notesLabel: 'Notes/Requests',
+      submitBtn: 'Submit Registration',
+      callTitle: 'Call for Inquiry (Ext. 73)',
+      fbTitle: 'Follow us on Facebook',
+      igTitle: 'Follow us on Instagram',
+      locTitle: 'View Event Location',
+      contactInfo: 'Contact Information',
+      foundationName: 'Hsinkang Foundation of Culture & Education (HKFCE)',
+      address: 'No. 305, Xinzhong Rd., Xingang Township, Chiayi County 616',
+      phoneFull: 'Tel: 05-3745074 Ext. 73 Mr. Lin',
+      refundTitle: 'Refund Policy:',
+      refund1: '30+ days before: Full refund (minus $30 fee)',
+      refund2: '7+ days before: 80% refund (minus $30 fee)',
+      refund3: 'Day of event: No refund',
+      footerCopy: '© 2026 HKFCE | Xingang Bagua Mystery Team',
+      errorEmail: 'Please enter a valid email',
+      errorPhone: 'Phone should be 10 digits',
+      errorName: 'Name is too short'
+    }
+  };
+
+  const t = translations[lang];
+
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sessions, setSessions] = useState<{name: string, price: number, fixedDate?: string, fixedTime?: string}[]>([]);
@@ -56,15 +297,15 @@ function App() {
     let error = '';
     if (name === 'email') {
       if (value && !value.includes('@')) {
-        error = '請輸入正確的 Email 格式';
+        error = t.errorEmail;
       }
     } else if (name === 'phone') {
       if (value && value.length !== 10) {
-        error = '手機號碼應為 10 碼數字';
+        error = t.errorPhone;
       }
     } else if (name === 'name') {
       if (value && value.length < 2) {
-        error = '姓名長度太短';
+        error = t.errorName;
       }
     }
     setFormErrors(prev => ({ ...prev, [name]: error }));
@@ -73,7 +314,7 @@ function App() {
   const handleCopyAccount = () => {
     const accountNumber = '00817220606250';
     navigator.clipboard.writeText(accountNumber).then(() => {
-      alert('匯款帳號已複製！');
+      alert(t.accountCopied);
     }).catch(err => {
       console.error('無法複製帳號: ', err);
     });
@@ -1297,33 +1538,33 @@ function App() {
       <div className="container">
         <div className="success-screen">
           <div className="check-icon">✓</div>
-          <h1>報名已送出！</h1>
-          <p>感謝您的參與，<strong>{formData.name}</strong>。</p>
-          <p>我們已收到您的報名資訊，請確認以下明細並完成繳費。</p>
+          <h1>{t.submitSuccess}</h1>
+          <p>{t.thanks} <strong>{formData.name}</strong>。</p>
+          <p>{t.received}</p>
           <div className="summary-box">
-            <p><strong>報名場次：</strong>{formData.session}</p>
-            <p><strong>預計遊玩時間：</strong>{formData.pickupTime}</p>
-            <p><strong>訂單總額：</strong>NT$ {calculatedTotal}</p>
-            <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
+            <p><strong>{t.session}</strong>{formData.session}</p>
+            <p><strong>{t.playTime}</strong>{formData.pickupTime}</p>
+            <p><strong>{t.orderTotal}</strong>NT$ {calculatedTotal}</p>
+            <p><strong>{t.paymentMethod}</strong>{formData.paymentMethod.split(' (')[0]}</p>
             {formData.paymentMethod === '銀行轉帳/ATM' && (
               <div className="bank-info" style={{marginTop: '1rem'}}>
-                <p>匯款銀行：新港鄉農會 (代碼 617)</p>
+                <p>{t.bankInfo}</p>
                 <div className="account-container">
-                  <span>帳號：00817220606250</span>
-                  <button onClick={handleCopyAccount} className="copy-btn">複製帳號</button>
+                  <span>{t.account}</span>
+                  <button onClick={handleCopyAccount} className="copy-btn">{t.copyAccount}</button>
                 </div>
               </div>
             )}
             {formData.paymentMethod.includes('Line Pay') && (
               <div className="linepay-box">
-                <p>請點擊下方連結完成 Line Pay 付款：</p>
+                <p>{t.linePayInfo}</p>
                 <a href="https://qrcodepay.line.me/qr/payment/t1pM7jY1P9C5oOEJ7gc7o%252FnGCvoXh75q7xD7BSn4lKJxf9hIkbwGfT9i8EeGD2QC" target="_blank" rel="noopener noreferrer" className="linepay-btn">
-                  前往 Line Pay 付款 ➔
+                  {t.toLinePay}
                 </a>
               </div>
             )}
           </div>
-          <button onClick={resetForm} className="cta-button">返回首頁</button>
+          <button onClick={resetForm} className="cta-button">{t.backToHome}</button>
         </div>
       </div>
     );
@@ -1347,8 +1588,8 @@ function App() {
               <div className="loading-glow"></div>
             </div>
             <div className="loading-text-container">
-              <p className="loading-main-text">正在開啟八卦時空</p>
-              <p className="loading-sub-text">穿越清朝與昭和的交界...</p>
+              <p className="loading-main-text">{t.openingBagua}</p>
+              <p className="loading-sub-text">{t.traversingTime}</p>
             </div>
           </div>
         </div>
@@ -1381,26 +1622,26 @@ function App() {
       {showConfirmation && (
         <div className="modal-overlay">
           <div className="admin-login-modal form-card" style={{maxWidth: '600px', width: '90%'}}>
-            <h2 className="form-section-title">確認報名資訊</h2>
+            <h2 className="form-section-title">{t.confirmTitle}</h2>
             <div className="confirmation-details" style={{textAlign: 'left', marginBottom: '2rem', lineHeight: '1.8'}}>
-              <p><strong>報名人：</strong>{formData.name}</p>
-              <p><strong>聯絡電話：</strong>{formData.phone}</p>
-              <p><strong>Email：</strong>{formData.email}</p>
-              <p><strong>場次：</strong>{formData.session}</p>
-              <p><strong>份數：</strong>{formData.quantity} 份</p>
-              <p><strong>當天遊玩人數：</strong>{formData.players} 人</p>
-              <p><strong>預計遊玩日期時間：</strong>{formData.pickupTime}</p>
-              <p><strong>領取地點：</strong>{formData.pickupLocation}</p>
-              <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
-              <p><strong>估計總額：</strong><span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
-              {formData.notes && <p><strong>備註：</strong>{formData.notes}</p>}
+              <p><strong>{t.registrant}</strong>{formData.name}</p>
+              <p><strong>{t.phone}</strong>{formData.phone}</p>
+              <p><strong>{t.email}</strong>{formData.email}</p>
+              <p><strong>{t.session}</strong>{formData.session}</p>
+              <p><strong>{t.qty}</strong>{formData.quantity} {t.playersVal}</p>
+              <p><strong>{t.playerCount}</strong>{formData.players} {t.playersVal}</p>
+              <p><strong>{t.expectedTime}</strong>{formData.pickupTime}</p>
+              <p><strong>{t.pickupLoc}</strong>{formData.pickupLocation}</p>
+              <p><strong>{t.paymentMethod}</strong>{formData.paymentMethod.split(' (')[0]}</p>
+              <p><strong>{t.total}</strong><span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
+              {formData.notes && <p><strong>{t.notes}</strong>{formData.notes}</p>}
             </div>
             <div className="modal-actions admin-login-actions">
               <button type="button" onClick={() => setShowConfirmation(false)} className="cancel-btn">
-                返回修改
+                {t.backToEdit}
               </button>
               <button type="button" onClick={handleConfirmSubmit} className="submit-btn" disabled={isSubmitting}>
-                {isSubmitting ? '正在送出...' : '確認送出'}
+                {isSubmitting ? t.submitting : t.confirmSubmit}
               </button>
             </div>
           </div>
@@ -1408,51 +1649,65 @@ function App() {
       )}
 
       <header className="header">
-        <div className="era-badge">光緒 x 昭和</div>
-        <h1>【新港八卦謎蹤】</h1>
-        <h2 className="main-title">實境解謎 活動報名</h2>
+        <div className="lang-switcher">
+          <button 
+            className={lang === 'zh' ? 'active' : ''} 
+            onClick={() => setLang('zh')}
+          >
+            中
+          </button>
+          <button 
+            className={lang === 'en' ? 'active' : ''} 
+            onClick={() => setLang('en')}
+          >
+            EN
+          </button>
+        </div>
+        <div className="era-badge">{t.eraBadge}</div>
+        <h1>{t.mainTitle}</h1>
+        <h2 className="main-title">{t.subTitle}</h2>
       </header>
 
       <main className="main-content">
         <div className="poster-container">
-          <img src="poster.jpg" alt="新港八卦謎蹤 海報" className="poster-image" />
+          <img src="poster.jpg" alt="Poster" className="poster-image" />
         </div>
 
         <section className="story-section">
           <div className="story-box">
-            <h2 className="section-title">故事背景</h2>
+            <h2 className="section-title">{t.storyTitle}</h2>
             <div className="story-text">
-              <p>昭和九年。一場疫病肆虐新港。</p>
-              <p>診療所裡人滿為患，哀嚎與咳嗽聲交織成一片不安。</p>
-              <p>——然而這一切，對白鸞卿來說，都不該存在。</p>
-              <p>身為清朝縣丞，他原在勘查新港水脈與風水。卻在卦相異動之際，頭暈目眩——</p>
-              <p>醒來時，已置身七十餘年後的日治時期。陌生的年號、陌生的語言、陌生的疫病。他看到印著不明政策的公文，聽到祈求平安的廟宇喧囂。</p>
-              <p>他發現——新港的卦象錯亂，守護神失蹤。八卦動盪，時空重疊，清朝與昭和，交錯於此。</p>
-              <p>若不修正卦象，他將永遠困在這個不屬於他的年代；若不找出疫病源頭，百姓將持續凋零。</p>
-              <p className="highlight">你，能協助他找出真相嗎？</p>
+              <p>{t.storyPara1}</p>
+              <p>{t.storyPara2}</p>
+              <p>{t.storyPara3}</p>
+              <p>{t.storyPara4}</p>
+              <p>{t.storyPara5}</p>
+              <p>{t.storyPara6}</p>
+              <p>{t.storyPara7}</p>
+              <p className="highlight">{t.storyHighlight}</p>
             </div>
           </div>
         </section>
 
         <section className="event-info">
-          <h2 className="section-title">活動內容</h2>
-          <p className="intro-p">準備好踏上一場神秘又刺激的冒險了嗎？這場解謎將帶你穿梭在新港的巷弄間，解開織進文化與歷史中的謎團。</p>
+          <h2 className="section-title">{t.eventTitle}</h2>
+          <p className="intro-p">{t.eventIntro}</p>
           <div className="info-grid">
             <div className="info-item">
-              <strong>► 解謎包定價</strong>
-              <span>$650 (配合活動享優惠)</span>
+              <strong>{t.itemPrice}</strong>
+              <span>{t.itemPriceVal}</span>
             </div>
             <div className="info-item">
-              <strong>► 建議人數</strong>
-              <span>1份解謎包 1-4 人使用</span>
+              <strong>{t.itemPlayers}</strong>
+              <span>{t.itemPlayersVal}</span>
             </div>
             <div className="info-item">
-              <strong>► 遊玩時間</strong>
-              <span>約 2 小時</span>
+              <strong>{t.itemTime}</strong>
+              <span>{t.itemTimeVal}</span>
             </div>
             <div className="info-item">
-              <strong>► 內容物</strong>
-              <span>解謎道具、特製伴手禮</span>
+              <strong>{t.itemContent}</strong>
+              <span>{t.itemContentVal}</span>
             </div>
           </div>
         </section>
@@ -1472,39 +1727,39 @@ function App() {
             </div>
 
             <div className="form-card">
-              <h3 className="form-section-title">基本資料</h3>
+              <h3 className="form-section-title">{t.basicInfo}</h3>
               <div className="form-group">
                 <label>
-                  報名人 姓名
+                  {t.nameLabel}
                   <span className="required-mark">*</span>
                 </label>
-                <input type="text" name="name" required value={formData.name} onChange={handleInputChange} placeholder="請輸入姓名" />
+                <input type="text" name="name" required value={formData.name} onChange={handleInputChange} placeholder={t.namePlaceholder} />
                 {formErrors.name && <span className="error-msg">{formErrors.name}</span>}
               </div>
               <div className="form-group">
                 <label>
-                  聯絡電話(手機為主)
+                  {t.phoneLabel}
                   <span className="required-mark">*</span>
                 </label>
-                <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder="0912345678" />
+                <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder={t.phonePlaceholder} />
                 {formErrors.phone && <span className="error-msg">{formErrors.phone}</span>}
               </div>
               <div className="form-group">
                 <label>
-                  Email (會寄送行前通知)
+                  {t.emailLabel}
                   <span className="required-mark">*</span>
                 </label>
-                <input type="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder="您的電子郵件" />
+                <input type="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder={t.emailPlaceholder} />
                 {formErrors.email && <span className="error-msg">{formErrors.email}</span>}
               </div>
             </div>
 
             <div className="form-card">
-              <h3 className="form-section-title">報名資訊</h3>
+              <h3 className="form-section-title">{t.regInfo}</h3>
               
               <div className="form-group">
                 <label>
-                  【場次類型】
+                  {t.sessionType}
                   <span className="required-mark">*</span>
                 </label>
                 <select 
@@ -1544,9 +1799,9 @@ function App() {
                     }
                   }}
                 >
-                  <option value="" disabled>-------請選擇場次類型--------</option>
-                  <option value="一般預約">📅 一般預約 (自由選擇遊玩時段)</option>
-                  <option value="特別預約">✨ 特別預約 (固定日期與特定時段)</option>
+                  <option value="" disabled>{t.sessionTypePlaceholder}</option>
+                  <option value="一般預約">{t.generalReg}</option>
+                  <option value="特別預約">{t.specialReg}</option>
                 </select>
               </div>
 
@@ -1555,7 +1810,7 @@ function App() {
                 <>
                   <div className="form-group">
                     <label>
-                      【詳細場次】
+                      {t.detailSession}
                       <span className="required-mark">*</span>
                     </label>
                     {sessionType === '一般預約' ? (
@@ -1569,10 +1824,10 @@ function App() {
                         lineHeight: '1.6'
                       }}>
                         <p style={{ margin: 0, fontWeight: 'bold' }}>
-                          系統已自動選定：{formData.session || '正在計算中...'}
+                          {t.autoSelected} {formData.session || t.calculating}
                         </p>
                         <div className="discount-hint" style={{ marginTop: '0.5rem', color: '#ccc', fontSize: '0.85rem' }}>
-                          ★ 優惠提醒：一般預約滿 5 份(含)以上可享有團體優惠價唷!!!!!!
+                          {t.discountHint}
                         </div>
                       </div>
                     ) : (
@@ -1587,26 +1842,26 @@ function App() {
                             .filter(s => (s.fixedDate || s.fixedTime))
                             .map(s => <option key={s.name} value={s.name}>{s.name} (${s.price})</option>)
                         ) : (
-                          <option disabled>載入中...</option>
+                          <option disabled>{t.loading}</option>
                         )}
                       </select>
                     )}
                   </div>
                   <div className="form-group">
                     <label>
-                      份數
+                      {t.quantity}
                       <span className="required-mark">*</span>
                     </label>
                     <input type="number" name="quantity" min="1" required value={formData.quantity} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label>
-                      當天遊玩人數 (每份解謎包建議 1-4 人)
+                      {t.playersLabel}
                       <span className="required-mark">*</span>
                     </label>
                     <select name="players" value={formData.players} onChange={handleInputChange}>
                       {Array.from({ length: Number(formData.quantity) * 4 }, (_, i) => i + 1).map(num => (
-                        <option key={num} value={num}>{num}人</option>
+                        <option key={num} value={num}>{num} {t.playersVal}</option>
                       ))}
                     </select>
                   </div>
@@ -1617,15 +1872,15 @@ function App() {
             {sessionType !== '' && (
               <>
                 <div className="form-card">
-                  <h3 className="form-section-title">繳費與取件</h3>
+                  <h3 className="form-section-title">{t.paymentCard}</h3>
                   <div className="form-group">
                     <label>
-                      繳費方式
+                      {t.paymentMethodLabel}
                       <span className="required-mark">*</span>
                     </label>
                     <div className="radio-group">
-                      <label><input type="radio" name="paymentMethod" value="親至新港文教基金會繳費" checked={formData.paymentMethod === '親至新港文教基金會繳費'} onChange={handleInputChange} /> 親至新港文教基金會繳費</label>
-                      <label><input type="radio" name="paymentMethod" value="銀行轉帳/ATM" checked={formData.paymentMethod === '銀行轉帳/ATM'} onChange={handleInputChange} /> 銀行轉帳/ATM</label>
+                      <label><input type="radio" name="paymentMethod" value="親至新港文教基金會繳費" checked={formData.paymentMethod === '親至新港文教基金會繳費'} onChange={handleInputChange} /> {t.payInPerson}</label>
+                      <label><input type="radio" name="paymentMethod" value="銀行轉帳/ATM" checked={formData.paymentMethod === '銀行轉帳/ATM'} onChange={handleInputChange} /> {t.bankTransfer}</label>
                       <label>
                         <input type="radio" name="paymentMethod" value="Line Pay (https://qrcodepay.line.me/qr/payment/t1pM7jY1P9C5oOEJ7gc7o%252FnGCvoXh75q7xD7BSn4lKJxf9hIkbwGfT9i8EeGD2QC)" checked={formData.paymentMethod.includes('Line Pay')} onChange={handleInputChange} /> 
                         Line Pay
@@ -1635,13 +1890,13 @@ function App() {
 
                   {formData.paymentMethod === '銀行轉帳/ATM' && (
                     <div className="form-group bank-info">
-                      <p>匯款銀行：新港鄉農會 (代碼 617)</p>
+                      <p>{t.bankName}</p>
                       <div className="account-container" style={{display: 'flex', alignItems: 'center', gap: '10px', margin: '0.5rem 0'}}>
-                        <p style={{margin: 0}}>帳號：00817220606250</p>
-                        <button type="button" onClick={handleCopyAccount} className="copy-btn">複製</button>
+                        <p style={{margin: 0}}>{t.bankAcc}</p>
+                        <button type="button" onClick={handleCopyAccount} className="copy-btn">{t.copy}</button>
                       </div>
                       <label>
-                        轉帳帳戶後五碼
+                        {t.bankLast5}
                         <span className="required-mark">*</span>
                       </label>
                       <input 
@@ -1652,14 +1907,14 @@ function App() {
                         pattern="\d*"
                         value={formData.bankLast5} 
                         onChange={handleInputChange} 
-                        placeholder="請輸入後五碼數字" 
+                        placeholder={t.bankLast5Placeholder} 
                       />
                     </div>
                   )}
 
                   <div className="form-group">
                     <label>
-                      預計遊玩日期 & 時間 (開放日 09:00-15:00，週一二不開放)
+                      {t.expectedDate}
                       <span className="required-mark">*</span>
                     </label>
                     
@@ -1674,8 +1929,7 @@ function App() {
                         if (displayDate.includes('T')) displayDate = displayDate.split('T')[0];
                         return (
                           <div className="fixed-session-hint">
-                            ★ 此場次固定於 {displayDate}，
-                            開放時段：{selectedSession.fixedTime ? selectedSession.fixedTime.replace(/,/g, '、') : '全時段'}
+                            {t.fixedSessionHint(displayDate, selectedSession.fixedTime ? selectedSession.fixedTime.replace(/,/g, '、') : '全時段')}
                           </div>
                         );
                       }
@@ -1692,7 +1946,7 @@ function App() {
                           const conflictTimes = conflicts.map(c => c.fixedTime?.replace(/,/g, '、')).join(' ; ');
                           return (
                             <div className="conflict-notice">
-                              ★ 提醒：您目前選擇的日期有特別場，特別場次時段：{conflictTimes} 不開放一般場次預約，如有這些時段需求請選擇特別場次。
+                              {t.conflictNotice(conflictTimes)}
                             </div>
                           );
                         }
@@ -1706,10 +1960,10 @@ function App() {
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={30}
-                      timeCaption="時間"
+                      timeCaption={t.timeCaption}
                       dateFormat="yyyy-MM-dd HH:mm"
                       className="date-picker-input"
-                      placeholderText="請選擇遊玩時間"
+                      placeholderText={t.datepickerPlaceholder}
                       required
                       minDate={(() => {
                         const now = new Date();
@@ -1769,39 +2023,39 @@ function App() {
                   </div>
                   <div className="form-group">
                     <label>
-                      領取地點
+                      {t.pickupLocation}
                       <span className="required-mark">*</span>
                     </label>
                     <select name="pickupLocation" value={formData.pickupLocation} onChange={handleInputChange}>
-                      <option value="新港文教基金會(閱讀館)">新港文教基金會(閱讀館)</option>
-                      <option value="培桂堂(建議選此處，可同時參觀)">培桂堂</option>
+                      <option value="新港文教基金會(閱讀館)">{t.locFoundation}</option>
+                      <option value="培桂堂(建議選此處，可同時參觀)">{t.locPeiGui}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="form-card">
-                  <h3 className="form-section-title">其他</h3>
+                  <h3 className="form-section-title">{t.other}</h3>
                   <div className="form-group">
-                    <label>如何得知本活動內容? (可多選)</label>
+                    <label>{t.referralLabel}</label>
                     <div className="checkbox-grid">
-                      {['基金會FB', '基金會LINE', '基金會電子報', '活動現場', '親友介紹', '其他FB社團', '海報/摺頁'].map(item => (
+                      {t.referrals.map(item => (
                         <label key={item}><input type="checkbox" value={item} checked={formData.referral.includes(item)} onChange={handleCheckboxChange} /> {item}</label>
                       ))}
                     </div>
                   </div>
                   <div className="form-group">
-                    <label>其他/備註</label>
+                    <label>{t.notesLabel}</label>
                     <textarea name="notes" value={formData.notes} onChange={handleInputChange} rows={3}></textarea>
                   </div>
                 </div>
 
                 <div className="submit-container">
                   <div className="total-display">
-                    <span>估計總額：</span>
+                    <span>{t.total}</span>
                     <span className="amount">NT$ {calculatedTotal}</span>
                   </div>
                   <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                    {isSubmitting ? '正在送出...' : '送出報名表單'}
+                    {isSubmitting ? t.submitting : t.submitBtn}
                   </button>
                 </div>
               </>
@@ -1815,7 +2069,7 @@ function App() {
         <a 
           href="tel:053745074,,73" 
           className="social-btn" 
-          title="撥打電話諮詢 (分機 73)"
+          title={t.callTitle}
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M6.62 10.79c1.44 2.83 3.76 5.21 6.59 6.65l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
@@ -1826,7 +2080,7 @@ function App() {
           target="_blank" 
           rel="noopener noreferrer" 
           className="social-btn" 
-          title="前往臉書查看更多"
+          title={t.fbTitle}
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z"/>
@@ -1837,7 +2091,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
           className="social-btn"
-          title="前往 IG 查看更多"
+          title={t.igTitle}
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.074 4.771 4.85 0 1.266.012 1.645.07 4.85.012 3.204.012 3.584.07 4.85-.148 3.252-1.074 4.771-4.85 4.771-1.266 0-1.645.012-4.85.07-3.204-.012-3.584-.012-4.85-.07-3.252-.148-4.771-1.074-4.771-4.85 0-1.266-.012-1.645-.07-4.85-.012-3.204-.012-3.584-.07-4.85.148-3.252 1.074-4.771 4.85-4.771 1.266 0 1.645-.012 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-5.838 2.435-5.838 5.838s2.435 5.838 5.838 5.838 5.838-2.435 5.838-5.838-2.435-5.838-5.838-5.838zm0 9.674c-2.119 0-3.836-1.717-3.836-3.836s1.717-3.836 3.836-3.836 3.836 1.717 3.836 3.836-1.717 3.836-3.836 3.836zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -1848,7 +2102,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
           className="social-btn"
-          title="查看活動地點"
+          title={t.locTitle}
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
@@ -1857,8 +2111,8 @@ function App() {
 
       <footer className="footer">
         <div className="footer-content">
-          <h3>聯絡資訊</h3>
-          <p>新港文教基金會</p>
+          <h3>{t.contactInfo}</h3>
+          <p>{t.foundationName}</p>
           <p>
             <a 
               href="https://www.google.com.tw/maps/place/%E8%B2%A1%E5%9C%98%E6%B3%95%E4%BA%BA%E6%96%B0%E6%B8%AF%E6%96%87%E6%95%99%E5%9F%BA%E9%87%91%E6%9C%83/@23.5600241,120.3436242,17z/data=!4m5!3m4!1s0x346ebd52d25d3f79:0xee3b4c7708b19c2e!8m2!3d23.5598989!4d120.3437709?hl=zh-TW&shorturl=1" 
@@ -1870,16 +2124,16 @@ function App() {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
-              616嘉義縣新港鄉新中路305號
+              {t.address}
             </a>
           </p>
-          <p>電話：05-3745074 分機 73 林先生</p>
+          <p>{t.phoneFull}</p>
           <div className="refund-policy">
-            <h4>退費說明：</h4>
+            <h4>{t.refundTitle}</h4>
             <ul>
-              <li>活動前 30 日取消：全額退費（扣除手續費 30 元）</li>
-              <li>活動前 7 日取消：退費 80%（扣除手續費 30 元）</li>
-              <li>活動當日取消：不予退費</li>
+              <li>{t.refund1}</li>
+              <li>{t.refund2}</li>
+              <li>{t.refund3}</li>
             </ul>
           </div>
         </div>
@@ -1888,7 +2142,7 @@ function App() {
           <div className="admin-trigger" onClick={() => setShowAdminLogin(true)}>
             <img src="footer-logo.svg" alt="HKFCE Logo" className="footer-admin-logo" />
           </div>
-          <p className="copy">&copy; 2026 新港文教基金會 | 新港八卦謎蹤 製作團隊</p>
+          <p className="copy">{t.footerCopy}</p>
         </div>
       </footer>
     </div>
