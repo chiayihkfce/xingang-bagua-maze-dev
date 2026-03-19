@@ -938,14 +938,22 @@ function App() {
       // 情況 A：如果是「固定特別場次」，帶入該場次的固定時間
       if (selectedSession?.fixedDate) {
         const times = selectedSession.fixedTime ? selectedSession.fixedTime.split(',') : [];
-        const timeToUse = times.length > 0 ? times[0] : '09:00';
+        let timeToUse = times.length > 0 ? times[0] : '09:00';
+        // 強制補零：如果是 "9:00" 則變為 "09:00"
+        if (timeToUse.length === 4 && timeToUse.includes(':')) {
+          timeToUse = '0' + timeToUse;
+        }
         newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
       } else if (selectedSession?.fixedTime) {
         // 如果只有固定時間（無固定日期），且目前只有一個時段時才自動帶入
         const times = selectedSession.fixedTime.split(',');
         if (times.length === 1) {
+          let timeToUse = times[0];
+          if (timeToUse.length === 4 && timeToUse.includes(':')) {
+            timeToUse = '0' + timeToUse;
+          }
           const todayStr = new Date().toISOString().split('T')[0];
-          newPickupTime = `${todayStr} ${times[0]}`;
+          newPickupTime = `${todayStr} ${timeToUse}`;
         }
       } else {
         // 情況 B：如果是「一般預約場次」 (沒有 fixedDate/fixedTime)，自動計算最早可用時段
