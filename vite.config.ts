@@ -7,18 +7,24 @@ export default defineConfig({
   plugins: [
     react(),
     javascriptObfuscator({
-      // 混淆選項配置
       options: {
         compact: true,
-        controlFlowFlattening: true, // 控制流扁平化，讓邏輯極難追蹤
-        controlFlowFlatteningThreshold: 0.75,
+        controlFlowFlattening: true, 
+        controlFlowFlatteningThreshold: 0.8,
+        deadCodeInjection: true, // 注入死代碼
+        deadCodeInjectionThreshold: 0.4,
+        debugProtection: true, // 防止開發者工具調試
+        debugProtectionInterval: 4000,
         numbersToExpressions: true,
+        selfDefending: true, // 自我防禦，防美化運行
         simplify: true,
-        stringArray: true, // 開啟字串陣列化，隱藏字串內容
-        stringArrayEncoding: ['base64'], // 使用 base64 加密字串
-        stringArrayThreshold: 0.75,
-        splitStrings: true, // 拆分長字串
-        unicodeEscapeSequence: true // 使用 Unicode 轉義序列
+        stringArray: true,
+        stringArrayEncoding: ['base64'],
+        stringArrayThreshold: 0.8,
+        splitStrings: true,
+        unicodeEscapeSequence: true,
+        rotateStringArray: true,
+        shuffleStringArray: true
       },
     })
   ],
