@@ -1274,10 +1274,86 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-color: var(--primary-gold);
 }
 
-.time-slot-btn.active {
-  background: var(--primary-gold);
-  color: black;
-  border-color: var(--primary-gold);
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
+/* 社交媒體浮動按鈕 - 八卦主題設計 */
+.social-float-container {
+  position: fixed;
+  bottom: 30px;
+  right: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.social-btn {
+  width: 54px;
+  height: 54px;
+  background: radial-gradient(circle, #2c3e50 0%, #1a1a1a 100%);
+  border: 2px solid var(--primary-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* 八角形切角設計 */
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  animation: socialFloat 4s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+}
+
+.social-btn:hover {
+  transform: scale(1.15) rotate(10deg);
+  filter: drop-shadow(0 0 12px var(--primary-gold));
+  border-color: #fff;
+}
+
+/* 按鈕內部的微妙卦象裝飾線 (偽元素) */
+.social-btn::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px solid rgba(241, 196, 15, 0.2);
+  clip-path: inherit;
+  pointer-events: none;
+}
+
+.social-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--primary-gold);
+  transition: fill 0.3s ease;
+}
+
+.social-btn:hover svg {
+  fill: white;
+}
+
+/* 漂浮動畫 */
+@keyframes socialFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 適應行動裝置 */
+@media (max-width: 600px) {
+  .social-float-container {
+    bottom: 20px;
+    right: 15px;
+    gap: 10px;
+  }
+  .social-btn {
+    width: 46px;
+    height: 46px;
+  }
+  .social-btn svg {
+    width: 20px;
+    height: 20px;
+  }
 }
