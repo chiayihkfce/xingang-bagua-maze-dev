@@ -1423,7 +1423,7 @@ function App() {
               </div>
               <div className="form-group">
                 <label>聯絡電話(手機為主) *</label>
-                <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder="0912-345-678" />
+                <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder="0912345678" />
               </div>
               <div className="form-group">
                 <label>Email (會寄送行前通知) *</label>
