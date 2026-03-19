@@ -163,6 +163,7 @@ function App() {
       backToEdit: 'Back to Edit',
       confirmSubmit: 'Confirm & Submit',
       submitting: 'Processing...',
+      kitVal: 'kits',
       eraBadge: 'Qing Dynasty x Showa Era',
       mainTitle: '【Xingang Bagua Mystery】',
       subTitle: 'Real-world Puzzle Registration',
