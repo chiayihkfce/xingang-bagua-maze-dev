@@ -891,7 +891,7 @@ function App() {
                       <option value="Line Pay">Line Pay</option>
                     </select>
                   </div>
-                  <div className="form-group"><label>轉帳帳戶(末五碼)</label><input type="text" value={editData.bankLast5} onChange={e => setEditData({...editData, bankLast5: e.target.value})} /></div>
+                  <div className="form-group"><label>轉帳帳戶(末五碼) *</label><input type="text" value={editData.bankLast5} onChange={e => setEditData({...editData, bankLast5: e.target.value})} /></div>
                   <div className="form-group"><label>遊玩日期時間</label><input type="text" value={editData.pickupTime} onChange={e => setEditData({...editData, pickupTime: e.target.value})} /></div>
                   <div className="form-group"><label>領取地點</label>
                     <select value={editData.pickupLocation} onChange={e => setEditData({...editData, pickupLocation: e.target.value})}>
