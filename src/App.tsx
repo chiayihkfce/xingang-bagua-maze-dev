@@ -249,7 +249,7 @@ function App() {
 
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [sessions, setSessions] = useState<{name: string, price: number, fixedDate?: string, fixedTime?: string}[]>([]);
+  const [sessions, setSessions] = useState<{name: string, price: number, fixedDate?: string, fixedTime?: string, enName?: string}[]>([]);
   
   // 進場動畫相關狀態
   const [isEntryAnimating, setIsEntryAnimating] = useState(true); 
@@ -376,6 +376,13 @@ function App() {
            `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
+  // 根據語言獲取場次顯示名稱
+  const getSessionDisplayName = (chineseName: string) => {
+    if (lang === 'zh') return chineseName;
+    const session = sessions.find(s => s.name === chineseName);
+    return session?.enName || chineseName;
+  };
+
   // 1. 初始載入場次 (優化進場動畫邏輯)
   useEffect(() => {
     const minEntryTime = 2500; // 恢復為 2.5 秒，確保動畫完整呈現
@@ -436,9 +443,9 @@ function App() {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
           console.warn('🛠️ [Local Dev] 偵測到本地開發環境且連線失敗，自動載入測試場次資料。');
           const mockData = [
-            { name: '【測試】一般場次 A', price: 650 },
-            { name: '【測試】團體優惠場次', price: 600 },
-            { name: '【測試】特別場次 B (固定日期)', price: 750, fixedDate: '2026-05-20', fixedTime: '09:00,13:00' }
+            { name: '【測試】一般場次 A', price: 650, enName: 'General Session A' },
+            { name: '【測試】團體優惠場次', price: 600, enName: 'Group Discount Session' },
+            { name: '【測試】特別場次 B (固定日期)', price: 750, fixedDate: '2026-05-20', fixedTime: '09:00,13:00', enName: 'Special Session B' }
           ];
           setSessions(mockData);
           localStorage.setItem('bagua_maze_sessions', JSON.stringify(mockData));
@@ -1542,7 +1549,7 @@ function App() {
           <p>{t.thanks} <strong>{formData.name}</strong>。</p>
           <p>{t.received}</p>
           <div className="summary-box">
-            <p><strong>{t.session}</strong>{formData.session}</p>
+            <p><strong>{t.session}</strong>{getSessionDisplayName(formData.session)}</p>
             <p><strong>{t.playTime}</strong>{formData.pickupTime}</p>
             <p><strong>{t.orderTotal}</strong>NT$ {calculatedTotal}</p>
             <p><strong>{t.paymentMethod}</strong>{formData.paymentMethod.split(' (')[0]}</p>
@@ -1627,7 +1634,7 @@ function App() {
               <p><strong>{t.registrant}</strong>{formData.name}</p>
               <p><strong>{t.phone}</strong>{formData.phone}</p>
               <p><strong>{t.email}</strong>{formData.email}</p>
-              <p><strong>{t.session}</strong>{formData.session}</p>
+              <p><strong>{t.session}</strong>{getSessionDisplayName(formData.session)}</p>
               <p><strong>{t.qty}</strong>{formData.quantity} {t.playersVal}</p>
               <p><strong>{t.playerCount}</strong>{formData.players} {t.playersVal}</p>
               <p><strong>{t.expectedTime}</strong>{formData.pickupTime}</p>
@@ -1824,7 +1831,7 @@ function App() {
                         lineHeight: '1.6'
                       }}>
                         <p style={{ margin: 0, fontWeight: 'bold' }}>
-                          {t.autoSelected} {formData.session || t.calculating}
+                          {t.autoSelected} {getSessionDisplayName(formData.session) || t.calculating}
                         </p>
                         <div className="discount-hint" style={{ marginTop: '0.5rem', color: '#ccc', fontSize: '0.85rem' }}>
                           {t.discountHint}
@@ -1840,7 +1847,7 @@ function App() {
                         {sessions.length > 0 ? (
                           sessions
                             .filter(s => (s.fixedDate || s.fixedTime))
-                            .map(s => <option key={s.name} value={s.name}>{s.name} (${s.price})</option>)
+                            .map(s => <option key={s.name} value={s.name}>{lang === 'en' ? (s.enName || s.name) : s.name} (${s.price})</option>)
                         ) : (
                           <option disabled>{t.loading}</option>
                         )}
