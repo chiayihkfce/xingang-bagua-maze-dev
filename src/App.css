@@ -1274,7 +1274,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-color: var(--primary-gold);
 }
 
-/* 社交媒體浮動按鈕 - 八卦主題設計 */
+/* 社交媒體浮動按鈕 - 八卦主題完美金邊設計 */
 .social-float-container {
   position: fixed;
   bottom: 30px;
@@ -1289,8 +1289,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 .social-btn {
   width: 54px;
   height: 54px;
-  background: radial-gradient(circle, #2c3e50 0%, #1a1a1a 100%);
-  border: 2px solid var(--primary-gold);
+  background: var(--primary-gold); /* 作為邊框底色 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1298,41 +1297,49 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   text-decoration: none;
   position: relative;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  /* 八角形切角設計 */
+  /* 八角形裁切 - 確保外層裁切 */
   clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
   animation: socialFloat 4s ease-in-out infinite;
   animation-delay: var(--delay, 0s);
-  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
+
+/* 內層背景：透過 top/left/right/bottom 縮放來露出外層的金色，形成 8 邊金邊 */
+.social-btn::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: radial-gradient(circle, #2c3e50 0%, #1a1a1a 100%);
+  clip-path: inherit; /* 繼承父層的八角形裁切 */
+  z-index: 1;
+  transition: background 0.3s ease;
 }
 
 .social-btn:hover {
   transform: scale(1.15) rotate(10deg);
-  filter: drop-shadow(0 0 12px var(--primary-gold));
-  border-color: #fff;
+  background: #fff; /* 懸停時邊框變亮白色 */
+  filter: drop-shadow(0 0 15px var(--primary-gold));
 }
 
-/* 按鈕內部的微妙卦象裝飾線 (偽元素) */
-.social-btn::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  right: 4px;
-  bottom: 4px;
-  border: 1px solid rgba(241, 196, 15, 0.2);
-  clip-path: inherit;
-  pointer-events: none;
+.social-btn:hover::after {
+  background: radial-gradient(circle, #34495e 0%, #2c3e50 100%);
 }
 
 .social-btn svg {
   width: 24px;
   height: 24px;
   fill: var(--primary-gold);
-  transition: fill 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 2; /* 確保在 ::after 之上 */
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
 }
 
 .social-btn:hover svg {
   fill: white;
+  transform: scale(1.1);
 }
 
 /* 漂浮動畫 */
