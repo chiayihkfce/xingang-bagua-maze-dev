@@ -190,7 +190,7 @@ function App() {
       phoneLabel: 'Phone Number (Mobile preferred)',
       phonePlaceholder: '0912345678',
       emailLabel: 'Email Address (For pre-event notifications)',
-      emailPlaceholder: 'yourname@example.com',
+      emailPlaceholder: 'email@example.com',
       regInfo: 'Booking Details',
       sessionType: '【Booking Type】',
       sessionTypePlaceholder: '--- Select your booking type ---',
@@ -374,6 +374,68 @@ function App() {
   const formatDateTimeMinute = (date: Date) => {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
            `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
+  // 找出最近一個可用的遊玩時段 (考慮營業時間、休館日、特別場衝突)
+  const findEarliestSlot = (currentSessions: any[]) => {
+    let checkDate = new Date();
+    
+    // 1. 基礎時間調整
+    if (checkDate.getHours() >= 15) {
+      // 超過 15:00，移到隔天 09:00
+      checkDate.setDate(checkDate.getDate() + 1);
+      checkDate.setHours(9, 0, 0, 0);
+    } else if (checkDate.getHours() < 9) {
+      // 早於 09:00，設定為今天 09:00
+      checkDate.setHours(9, 0, 0, 0);
+    } else {
+      // 在營業時間內，四捨五入到下一個 30 分鐘間隔
+      const mins = checkDate.getMinutes();
+      if (mins > 0 && mins <= 30) {
+        checkDate.setMinutes(30, 0, 0);
+      } else if (mins > 30) {
+        checkDate.setHours(checkDate.getHours() + 1, 0, 0, 0);
+      }
+    }
+
+    // 安全搜尋限制 (最多往後找 30 天)
+    for (let i = 0; i < 1440; i++) { 
+      const day = checkDate.getDay();
+      
+      // 2. 休館日避開 (週一 1, 週二 2)
+      if (day === 1 || day === 2) {
+        checkDate.setDate(checkDate.getDate() + (day === 1 ? 2 : 1));
+        checkDate.setHours(9, 0, 0, 0);
+        continue;
+      }
+
+      // 3. 營業時間範圍檢查 (09:00 - 15:00)
+      const hours = checkDate.getHours();
+      const mins = checkDate.getMinutes();
+      if (hours > 15 || (hours === 15 && mins > 0)) {
+        checkDate.setDate(checkDate.getDate() + 1);
+        checkDate.setHours(9, 0, 0, 0);
+        continue;
+      }
+
+      // 4. 特別場次衝突檢查
+      const dateStr = `${checkDate.getFullYear()}-${pad(checkDate.getMonth() + 1)}-${pad(checkDate.getDate())}`;
+      const timeStr = `${pad(checkDate.getHours())}:${pad(checkDate.getMinutes())}`;
+      
+      const hasConflict = currentSessions.some(s => {
+        let sDate = s.fixedDate || '';
+        if (sDate.includes('T')) sDate = sDate.split('T')[0];
+        return sDate === dateStr && s.fixedTime?.split(',').includes(timeStr);
+      });
+
+      if (!hasConflict) {
+        return formatDateTimeMinute(checkDate);
+      }
+
+      // 有衝突，往後跳 30 分鐘繼續找
+      checkDate.setMinutes(checkDate.getMinutes() + 30);
+    }
+    return '';
   };
 
   // 根據語言獲取場次顯示名稱
@@ -868,10 +930,10 @@ function App() {
     if (name === 'session') {
       const selectedSession = sessions.find(s => s.name === value);
       
-      // 1. 預設先清空日期時間，避免舊場次的殘留值 (解決從特別場切換回一般場的 BUG)
+      // 1. 根據場次類型決定預設時間
       let newPickupTime = ''; 
 
-      // 2. 只有如果是「固定特別場次」，才根據規則自動帶入時間
+      // 情況 A：如果是「固定特別場次」，帶入該場次的固定時間
       if (selectedSession?.fixedDate) {
         const times = selectedSession.fixedTime ? selectedSession.fixedTime.split(',') : [];
         const timeToUse = times.length > 0 ? times[0] : '09:00';
@@ -883,6 +945,9 @@ function App() {
           const todayStr = new Date().toISOString().split('T')[0];
           newPickupTime = `${todayStr} ${times[0]}`;
         }
+      } else {
+        // 情況 B：如果是「一般預約場次」 (沒有 fixedDate/fixedTime)，自動計算最早可用時段
+        newPickupTime = findEarliestSlot(sessions);
       }
 
       setFormData(prev => ({ ...prev, session: value, pickupTime: newPickupTime }));
