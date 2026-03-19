@@ -206,7 +206,7 @@ function App() {
       playersVal: ' people',
       paymentCard: 'Payment & Pickup',
       paymentMethodLabel: 'Payment Method',
-      payInPerson: 'Pay in person at HKFCE Office',
+      payInPerson: 'Pay in person at Hsinkang Foundation of Culture and Education Office',
       bankTransfer: 'Bank Transfer / ATM',
       bankName: 'Bank: Hsinkang Township Farmers\' Association (Code: 617)',
       bankAcc: 'Account: 00817220606250',
@@ -219,11 +219,11 @@ function App() {
       datepickerPlaceholder: 'Select your time',
       timeCaption: 'Time',
       pickupLocation: 'Pickup Location',
-      locFoundation: 'HKFCE Office (Reading Room)',
+      locFoundation: 'Hsinkang Foundation of Culture and Education Office (Reading Room)',
       locPeiGui: 'Pei-Gui Hall (Recommended - visit the historic site)',
       other: 'Other Details',
       referralLabel: 'How did you hear about us? (Select all that apply)',
-      referrals: ['HKFCE Facebook', 'HKFCE LINE', 'Email Newsletter', 'At an Event', 'Friends/Family', 'Other Facebook Groups', 'Poster/Flyer'],
+      referrals: ['Foundation Facebook', 'Foundation LINE', 'Email Newsletter', 'At an Event', 'Friends/Family', 'Other Facebook Groups', 'Poster/Flyer'],
       notesLabel: 'Additional Notes / Requests',
       submitBtn: 'Submit Registration',
       callTitle: 'Call for Inquiry (Ext. 73)',
@@ -231,14 +231,14 @@ function App() {
       igTitle: 'Follow us on Instagram',
       locTitle: 'View Event Location',
       contactInfo: 'Contact Information',
-      foundationName: 'Hsinkang Foundation of Culture and Education (HKFCE)',
+      foundationName: 'Hsinkang Foundation of Culture and Education',
       address: 'No. 305, Xinzhong Rd., Xingang Township, Chiayi County 616, Taiwan',
       phoneFull: 'Tel: 05-3745074 Ext. 73 (Mr. Lin)',
       refundTitle: 'Refund Policy:',
       refund1: '30+ days before event: Full refund (minus NT$30 processing fee)',
       refund2: '7-29 days before event: 80% refund (minus NT$30 processing fee)',
       refund3: 'Within 7 days or No-show: No refund',
-      footerCopy: '© 2026 HKFCE | Xingang Bagua Mystery Production Team',
+      footerCopy: '© 2026 Hsinkang Foundation of Culture and Education | Xingang Bagua Mystery Production Team',
       errorEmail: 'Please enter a valid email address',
       errorPhone: 'Phone number must be 10 digits',
       errorName: 'Name is too short'
@@ -2147,7 +2147,7 @@ function App() {
         
         <div className="footer-bottom">
           <div className="admin-trigger" onClick={() => setShowAdminLogin(true)}>
-            <img src="footer-logo.svg" alt="HKFCE Logo" className="footer-admin-logo" />
+            <img src="footer-logo.svg" alt="Hsinkang Foundation Logo" className="footer-admin-logo" />
           </div>
           <p className="copy">{t.footerCopy}</p>
         </div>
