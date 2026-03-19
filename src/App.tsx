@@ -45,6 +45,7 @@ function App() {
       backToEdit: '返回修改',
       confirmSubmit: '確認送出',
       submitting: '正在送出...',
+      kitVal: '份',
       eraBadge: '光緒 x 昭和',
       mainTitle: '【新港八卦謎蹤】',
       subTitle: '實境解謎 活動報名',
