@@ -1597,7 +1597,7 @@ function App() {
                     </td>
                     {row.map((cell: any, j: number) => visibleColumns.includes(j) && (
                       <td key={j}>
-                        {j === 0 && cell && cell.includes('T') 
+                        {j === 0 && cell 
                           ? formatFullDateTime(new Date(cell)) 
                           : (j === 1 ? (
                               <span style={{
