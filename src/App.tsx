@@ -608,7 +608,10 @@ function App() {
     }
 
     if (name === 'phone') {
-      if (value.length > 15) return;
+      const filteredValue = value.replace(/\D/g, '');
+      if (filteredValue.length > 15) return;
+      setFormData(prev => ({ ...prev, [name]: filteredValue }));
+      return;
     }
     
     setFormData(prev => ({ ...prev, [name]: value }));
