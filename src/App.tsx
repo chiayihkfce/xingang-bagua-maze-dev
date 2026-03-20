@@ -1796,9 +1796,9 @@ function App() {
               <p><strong>{t.session}</strong>{getSessionDisplayName(formData.session)}</p>
               <p><strong>{t.qty}</strong>{formData.quantity} {t.kitVal}</p>
               <p><strong>{t.playerCount}</strong>{formData.players} {t.playersVal}</p>
-              <p><strong>{t.expectedTime}</strong>{formData.pickupTime}</p>
-              <p><strong>{t.pickupLoc}</strong>{getPickupLocationDisplay(formData.pickupLocation)}</p>
-              <p><strong>{t.paymentMethod}</strong>{formData.paymentMethod.split(' (')[0]}</p>
+              <p><strong>{t.expectedTime}</strong> {formData.pickupTime}</p>
+              <p><strong>{t.pickupLoc}</strong> {getPickupLocationDisplay(formData.pickupLocation)}</p>
+              <p><strong>{t.paymentMethod}</strong> {getPaymentMethodDisplay(formData.paymentMethod)}</p>
               <p><strong>{t.total}</strong><span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
               {formData.notes && <p><strong>{t.notes}</strong>{formData.notes}</p>}
             </div>
