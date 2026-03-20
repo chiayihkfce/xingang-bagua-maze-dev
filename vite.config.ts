@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import javascriptObfuscator from 'vite-plugin-javascript-obfuscator'
+import { viteSingleFile } from "vite-plugin-singlefile"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,12 +12,12 @@ export default defineConfig({
         compact: true,
         controlFlowFlattening: true, 
         controlFlowFlatteningThreshold: 0.8,
-        deadCodeInjection: true, // 注入死代碼
+        deadCodeInjection: true,
         deadCodeInjectionThreshold: 0.4,
-        debugProtection: true, // 防止開發者工具調試
+        debugProtection: true,
         debugProtectionInterval: 4000,
         numbersToExpressions: true,
-        selfDefending: true, // 自我防禦，防美化運行
+        selfDefending: true,
         simplify: true,
         stringArray: true,
         stringArrayEncoding: ['base64'],
@@ -26,10 +27,19 @@ export default defineConfig({
         rotateStringArray: true,
         shuffleStringArray: true
       },
-    })
+    }),
+    viteSingleFile()
   ],
   base: './', // Ensures relative paths for GitHub Pages
   build: {
-    sourcemap: false
+    sourcemap: false,
+    assetsInlineLimit: 100000000, // 確保所有資產都被嵌入
+    chunkSizeWarningLimit: 100000000,
+    cssCodeSplit: false,
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true,
+      },
+    },
   }
 })
