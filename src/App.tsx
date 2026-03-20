@@ -1874,26 +1874,35 @@ function App() {
                   {t.phoneLabel}
                   <span className="required-mark">*</span>
                 </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  border: '1px solid var(--primary-gold)', 
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  background: 'rgba(255, 255, 255, 0.05)'
+                }}>
                   <select 
                     name="countryCode" 
                     value={formData.countryCode} 
                     onChange={handleInputChange}
                     style={{ 
-                      width: '120px', 
+                      width: '130px', 
                       flexShrink: 0,
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid var(--primary-gold)',
-                      borderRadius: '8px',
+                      background: 'transparent',
+                      border: 'none',
+                      borderRight: '1px solid var(--primary-gold)',
                       color: 'white',
-                      padding: '8px'
+                      padding: '10px 8px',
+                      cursor: 'pointer',
+                      fontSize: '0.95rem',
+                      outline: 'none'
                     }}
                   >
-                    <option value="+886">🇹🇼 +886</option>
-                    <option value="+852">🇭🇰 +852</option>
-                    <option value="+853">🇲🇴 +853</option>
-                    <option value="+65">🇸🇬 +65</option>
-                    <option value="+60">🇲🇾 +60</option>
+                    <option value="+886" style={{ color: 'black' }}>台灣 (+886)</option>
+                    <option value="+852" style={{ color: 'black' }}>香港 (+852)</option>
+                    <option value="+853" style={{ color: 'black' }}>澳門 (+853)</option>
+                    <option value="+65" style={{ color: 'black' }}>新加坡 (+65)</option>
+                    <option value="+60" style={{ color: 'black' }}>馬來西亞 (+60)</option>
                   </select>
                   <input 
                     type="tel" 
@@ -1902,7 +1911,15 @@ function App() {
                     value={formData.phone} 
                     onChange={handleInputChange} 
                     placeholder={t.phonePlaceholder}
-                    style={{ flex: 1 }}
+                    style={{ 
+                      flex: 1,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: '10px 12px',
+                      color: 'white',
+                      fontSize: '1rem',
+                      outline: 'none'
+                    }}
                   />
                 </div>
                 {formErrors.phone && <span className="error-msg">{formErrors.phone}</span>}
