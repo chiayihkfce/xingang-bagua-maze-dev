@@ -132,7 +132,8 @@ function App() {
         '+852': '香港 (+852)',
         '+853': '澳門 (+853)',
         '+65': '新加坡 (+65)',
-        '+60': '馬來西亞 (+60)'
+        '+60': '馬來西亞 (+60)',
+        'landline': '市內電話'
       }
     },
     en: {
@@ -258,7 +259,8 @@ function App() {
         '+852': 'Hong Kong (+852)',
         '+853': 'Macau (+853)',
         '+65': 'Singapore (+65)',
-        '+60': 'Malaysia (+60)'
+        '+60': 'Malaysia (+60)',
+        'landline': 'Landline'
       }
     }
   };
@@ -327,10 +329,11 @@ function App() {
           '+852': [8],
           '+853': [8],
           '+60': [9, 10, 11],
-          '+65': [8]
+          '+65': [8],
+          'landline': [9, 10]
         };
         const allowedLengths = rules[currentCode] || [6, 15];
-        if (!allowedLengths.includes(value.length)) {
+        if (!allowedLengths.includes(value.length) || (currentCode === 'landline' && !value.startsWith('0'))) {
           error = t.errorPhone;
         }
       }
@@ -1006,7 +1009,8 @@ function App() {
         '+852': 8,
         '+853': 8,
         '+60': 11,
-        '+65': 8
+        '+65': 8,
+        'landline': 10
       };
       const maxLen = rules[formData.countryCode] || 15;
       if (filteredValue.length > maxLen) return;
@@ -1144,8 +1148,14 @@ function App() {
     setShowConfirmation(false);
 
     const bankLast5 = formData.paymentMethod === '銀行轉帳/ATM' ? formData.bankLast5 : '無';
+    
+    // 合併電話與國碼/標籤
+    const displayCountryName = formData.countryCode === 'landline' ? '市內電話' : formData.countryCode;
+    const combinedPhone = `${displayCountryName} ${formData.phone}`;
+
     const submissionData: any = {
       ...formData,
+      phone: combinedPhone, // 使用合併後的電話資訊覆蓋原有的 phone 欄位
       players: formData.players.trim() || '1',
       notes: formData.notes.trim() || '無',
       paymentMethod: formData.paymentMethod.split(' (')[0],
@@ -1922,6 +1932,7 @@ function App() {
                     <option value="+853" style={{ color: 'black' }}>{t.countryNames['+853']}</option>
                     <option value="+65" style={{ color: 'black' }}>{t.countryNames['+65']}</option>
                     <option value="+60" style={{ color: 'black' }}>{t.countryNames['+60']}</option>
+                    <option value="landline" style={{ color: 'black' }}>{t.countryNames['landline']}</option>
                   </select>
                   <input 
                     type="tel" 
