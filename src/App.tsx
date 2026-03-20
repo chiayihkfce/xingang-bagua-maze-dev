@@ -124,8 +124,9 @@ function App() {
       refund3: '活動當日取消：不予退費',
       footerCopy: '© 2026 新港文教基金會 | 新港八卦謎蹤 製作團隊',
       errorEmail: '請輸入正確的 Email 格式',
-      errorPhone: '手機號碼應為 10 碼數字',
-      errorName: '姓名長度太短'
+      errorPhone: '請輸入有效的電話號碼',
+      errorName: '姓名長度太短',
+      countryCodeLabel: '國碼'
     },
     en: {
       submitSuccess: 'Registration Confirmed!',
@@ -242,8 +243,9 @@ function App() {
       refund3: 'Same-day cancellation: No refund',
       footerCopy: '© 2026 Hsinkang Foundation of Culture and Education | Xingang Bagua Mystery Production Team',
       errorEmail: 'Please enter a valid email address',
-      errorPhone: 'Phone number must be 10 digits',
-      errorName: 'Name is too short'
+      errorPhone: 'Please enter a valid phone number',
+      errorName: 'Name is too short',
+      countryCodeLabel: 'Code'
     }
   };
 
@@ -274,6 +276,7 @@ function App() {
   const [formData, setFormData] = useState({
     email: '',
     name: '',
+    countryCode: '+886',
     phone: '',
     contactEmail: '',
     session: '',
@@ -295,15 +298,27 @@ function App() {
     name: ''
   });
 
-  const validateField = (name: string, value: string) => {
+  const validateField = (name: string, value: string, code?: string) => {
     let error = '';
+    const currentCode = code || formData.countryCode;
+
     if (name === 'email') {
       if (value && !value.includes('@')) {
         error = t.errorEmail;
       }
     } else if (name === 'phone') {
-      if (value && value.length !== 10) {
-        error = t.errorPhone;
+      if (value) {
+        const rules: { [key: string]: number[] } = {
+          '+886': [9, 10],
+          '+852': [8],
+          '+853': [8],
+          '+60': [9, 10, 11],
+          '+65': [8]
+        };
+        const allowedLengths = rules[currentCode] || [6, 15];
+        if (!allowedLengths.includes(value.length)) {
+          error = t.errorPhone;
+        }
       }
     } else if (name === 'name') {
       if (value && value.length < 2) {
@@ -964,9 +979,23 @@ function App() {
       return;
     }
 
+    if (name === 'countryCode') {
+      setFormData(prev => ({ ...prev, [name]: value }));
+      validateField('phone', formData.phone, value);
+      return;
+    }
+
     if (name === 'phone') {
       const filteredValue = value.replace(/\D/g, '');
-      if (filteredValue.length > 10) return;
+      const rules: { [key: string]: number } = {
+        '+886': 10,
+        '+852': 8,
+        '+853': 8,
+        '+60': 11,
+        '+65': 8
+      };
+      const maxLen = rules[formData.countryCode] || 15;
+      if (filteredValue.length > maxLen) return;
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
       validateField(name, filteredValue);
       return;
