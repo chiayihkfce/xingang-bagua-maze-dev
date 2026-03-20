@@ -1708,10 +1708,10 @@ function App() {
           <p>{t.thanks} <strong>{formData.name}</strong>。</p>
           <p>{t.received}</p>
           <div className="summary-box">
-            <p><strong>{t.session}</strong>{getSessionDisplayName(formData.session)}</p>
-            <p><strong>{t.playTime}</strong>{formData.pickupTime}</p>
-            <p><strong>{t.orderTotal}</strong>NT$ {calculatedTotal}</p>
-            <p><strong>{t.paymentMethod}</strong>{formData.paymentMethod.split(' (')[0]}</p>
+            <p><strong>{t.session}</strong> {getSessionDisplayName(formData.session)}</p>
+            <p><strong>{t.playTime}</strong> {formData.pickupTime}</p>
+            <p><strong>{t.orderTotal}</strong> NT$ {calculatedTotal}</p>
+            <p><strong>{t.paymentMethod}</strong> {getPaymentMethodDisplay(formData.paymentMethod)}</p>
             {formData.paymentMethod === '銀行轉帳/ATM' && (
               <div className="bank-info" style={{marginTop: '1rem'}}>
                 <p>{t.bankInfo}</p>
