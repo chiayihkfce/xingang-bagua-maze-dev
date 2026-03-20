@@ -1758,7 +1758,7 @@ function App() {
             <h2 className="form-section-title">{t.confirmTitle}</h2>
             <div className="confirmation-details" style={{textAlign: 'left', marginBottom: '2rem', lineHeight: '1.8'}}>
               <p><strong>{t.registrant}</strong>{formData.name}</p>
-              <p><strong>{t.phone}</strong>{formData.phone}</p>
+              <p><strong>{t.phone}</strong>{formData.countryCode} {formData.phone}</p>
               <p><strong>{t.email}</strong>{formData.email}</p>
               <p><strong>{t.session}</strong>{getSessionDisplayName(formData.session)}</p>
               <p><strong>{t.qty}</strong>{formData.quantity} {t.kitVal}</p>
@@ -1874,7 +1874,37 @@ function App() {
                   {t.phoneLabel}
                   <span className="required-mark">*</span>
                 </label>
-                <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} placeholder={t.phonePlaceholder} />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <select 
+                    name="countryCode" 
+                    value={formData.countryCode} 
+                    onChange={handleInputChange}
+                    style={{ 
+                      width: '120px', 
+                      flexShrink: 0,
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid var(--primary-gold)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      padding: '8px'
+                    }}
+                  >
+                    <option value="+886">🇹🇼 +886</option>
+                    <option value="+852">🇭🇰 +852</option>
+                    <option value="+853">🇲🇴 +853</option>
+                    <option value="+65">🇸🇬 +65</option>
+                    <option value="+60">🇲🇾 +60</option>
+                  </select>
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    required 
+                    value={formData.phone} 
+                    onChange={handleInputChange} 
+                    placeholder={t.phonePlaceholder}
+                    style={{ flex: 1 }}
+                  />
+                </div>
                 {formErrors.phone && <span className="error-msg">{formErrors.phone}</span>}
               </div>
               <div className="form-group">
