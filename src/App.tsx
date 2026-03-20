@@ -126,7 +126,14 @@ function App() {
       errorEmail: '請輸入正確的 Email 格式',
       errorPhone: '請輸入有效的電話號碼',
       errorName: '姓名長度太短',
-      countryCodeLabel: '國碼'
+      countryCodeLabel: '國碼',
+      countryNames: {
+        '+886': '台灣 (+886)',
+        '+852': '香港 (+852)',
+        '+853': '澳門 (+853)',
+        '+65': '新加坡 (+65)',
+        '+60': '馬來西亞 (+60)'
+      }
     },
     en: {
       submitSuccess: 'Registration Confirmed!',
