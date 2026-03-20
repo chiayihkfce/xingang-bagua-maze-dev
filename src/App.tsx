@@ -1940,7 +1940,17 @@ function App() {
                     required 
                     value={formData.phone} 
                     onChange={handleInputChange} 
-                    placeholder={t.phonePlaceholder}
+                    placeholder={(() => {
+                      const placeholders: { [key: string]: string } = {
+                        '+886': '0912345678',
+                        '+852': '91234567',
+                        '+853': '61234567',
+                        '+65': '91234567',
+                        '+60': '0123456789',
+                        'landline': '053745074'
+                      };
+                      return placeholders[formData.countryCode] || t.phonePlaceholder;
+                    })()}
                     style={{ 
                       flex: 1,
                       background: 'transparent',
