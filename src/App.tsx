@@ -1883,33 +1883,38 @@ function App() {
                 </label>
                 <div style={{ 
                   display: 'flex', 
-                  border: '1px solid var(--primary-gold)', 
+                  width: '100%',
+                  background: '#0006',
+                  border: '1px solid rgba(255, 255, 255, .2)',
                   borderRadius: '8px',
-                  overflow: 'hidden',
-                  background: 'rgba(255, 255, 255, 0.05)'
+                  transition: 'all .3s ease',
+                  boxSizing: 'border-box'
                 }}>
                   <select 
                     name="countryCode" 
                     value={formData.countryCode} 
                     onChange={handleInputChange}
                     style={{ 
-                      width: '130px', 
+                      width: 'auto', 
+                      minWidth: '130px',
                       flexShrink: 0,
                       background: 'transparent',
                       border: 'none',
-                      borderRight: '1px solid var(--primary-gold)',
-                      color: 'white',
-                      padding: '10px 8px',
+                      borderRight: '1px solid rgba(255, 255, 255, .1)',
+                      color: '#fff',
+                      padding: '1rem',
                       cursor: 'pointer',
-                      fontSize: '0.95rem',
-                      outline: 'none'
+                      fontSize: '16px',
+                      outline: 'none',
+                      appearance: 'none',
+                      WebkitAppearance: 'none'
                     }}
                   >
-                    <option value="+886" style={{ color: 'black' }}>台灣 (+886)</option>
-                    <option value="+852" style={{ color: 'black' }}>香港 (+852)</option>
-                    <option value="+853" style={{ color: 'black' }}>澳門 (+853)</option>
-                    <option value="+65" style={{ color: 'black' }}>新加坡 (+65)</option>
-                    <option value="+60" style={{ color: 'black' }}>馬來西亞 (+60)</option>
+                    <option value="+886" style={{ color: 'black' }}>{t.countryNames['+886']}</option>
+                    <option value="+852" style={{ color: 'black' }}>{t.countryNames['+852']}</option>
+                    <option value="+853" style={{ color: 'black' }}>{t.countryNames['+853']}</option>
+                    <option value="+65" style={{ color: 'black' }}>{t.countryNames['+65']}</option>
+                    <option value="+60" style={{ color: 'black' }}>{t.countryNames['+60']}</option>
                   </select>
                   <input 
                     type="tel" 
@@ -1922,10 +1927,11 @@ function App() {
                       flex: 1,
                       background: 'transparent',
                       border: 'none',
-                      padding: '10px 12px',
-                      color: 'white',
-                      fontSize: '1rem',
-                      outline: 'none'
+                      padding: '1rem',
+                      color: '#fff',
+                      fontSize: '16px',
+                      outline: 'none',
+                      width: '100%'
                     }}
                   />
                 </div>
