@@ -2259,8 +2259,16 @@ function App() {
                   <div className="form-group">
                     <label>{t.referralLabel}</label>
                     <div className="checkbox-grid">
-                      {t.referrals.map(item => (
-                        <label key={item}><input type="checkbox" value={item} checked={formData.referral.includes(item)} onChange={handleCheckboxChange} /> {item}</label>
+                      {t.referrals.map((item, index) => (
+                        <label key={item}>
+                          <input 
+                            type="checkbox" 
+                            value={translations.zh.referrals[index]} 
+                            checked={formData.referral.includes(translations.zh.referrals[index])} 
+                            onChange={handleCheckboxChange} 
+                          /> 
+                          {item}
+                        </label>
                       ))}
                     </div>
                   </div>
