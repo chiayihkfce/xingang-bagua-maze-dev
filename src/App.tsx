@@ -1162,10 +1162,22 @@ function App() {
 
   const resetForm = () => {
     setFormData({
-      email: '', name: '', phone: '', contactEmail: '', session: sessions[0]?.name || '',
-      quantity: '1', players: '1', totalAmount: '', paymentMethod: '親至新港文教基金會繳費',
-      bankLast5: '', pickupTime: '', pickupLocation: '新港文教基金會(閱讀館)',
-      referral: [] as string[], notes: '', hp_field: ''
+      email: '', 
+      name: '', 
+      countryCode: '+886',
+      phone: '', 
+      contactEmail: '', 
+      session: sessions[0]?.name || '',
+      quantity: '1', 
+      players: '1', 
+      totalAmount: '', 
+      paymentMethod: '親至新港文教基金會繳費',
+      bankLast5: '', 
+      pickupTime: '', 
+      pickupLocation: '新港文教基金會(閱讀館)',
+      referral: [] as string[], 
+      notes: '', 
+      hp_field: ''
     });
     setFormErrors({ email: '', phone: '', name: '' });
     setSubmitted(false);
