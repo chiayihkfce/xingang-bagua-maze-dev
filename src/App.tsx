@@ -252,7 +252,14 @@ function App() {
       errorEmail: 'Please enter a valid email address',
       errorPhone: 'Please enter a valid phone number',
       errorName: 'Name is too short',
-      countryCodeLabel: 'Code'
+      countryCodeLabel: 'Code',
+      countryNames: {
+        '+886': 'Taiwan (+886)',
+        '+852': 'Hong Kong (+852)',
+        '+853': 'Macau (+853)',
+        '+65': 'Singapore (+65)',
+        '+60': 'Malaysia (+60)'
+      }
     }
   };
 
