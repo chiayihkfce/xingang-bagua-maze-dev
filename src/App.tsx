@@ -1184,6 +1184,15 @@ function App() {
     }
   };
 
+  // 根據語言獲取繳費方式顯示名稱
+  const getPaymentMethodDisplay = (method: string) => {
+    if (lang === 'zh') return method.split(' (')[0];
+    if (method.includes('親至新港文教基金會')) return t.payInPerson;
+    if (method.includes('銀行轉帳')) return t.bankTransfer;
+    if (method.includes('Line Pay')) return 'Line Pay';
+    return method;
+  };
+
   const resetForm = () => {
     setFormData({
       email: '', 
