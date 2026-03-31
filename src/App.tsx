@@ -400,11 +400,6 @@ function App() {
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
 
   // --- 2. 工具與常數 ---
-  const TIME_SLOTS = [
-    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
-    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'
-  ];
-
   const pad = (n: number) => String(n).padStart(2, '0');
 
   // --- 時間段管理工具函數 ---
@@ -480,8 +475,8 @@ function App() {
   // 找出最近一個可用的遊玩時段 (考慮營業時間、休館日、特別場衝突、動態時段配置)
   const findEarliestSlot = (currentSessions: any[]) => {
     let checkDate = new Date();
-    const startH = timeslotConfig.startHour;
-    const endH = timeslotConfig.endHour;
+    const startH = parseInt(timeslotConfig.generalStart.split(':')[0]);
+    const endH = parseInt(timeslotConfig.generalEnd.split(':')[0]);
     
     // 1. 基礎時間調整
     if (checkDate.getHours() >= endH) {
@@ -525,8 +520,15 @@ function App() {
       const dateStr = `${checkDate.getFullYear()}-${pad(checkDate.getMonth() + 1)}-${pad(checkDate.getDate())}`;
       const timeStr = `${pad(checkDate.getHours())}:${pad(checkDate.getMinutes())}`;
       
-      const special = specialTimeSlots.find(s => s.date === dateStr);
-      const allowedSlots = special ? special.slots : generalTimeSlots;
+      // 判斷該日期是否有「特別場次」佔用全天或特定時段
+      const isTakenBySpecial = sessions.some(s => {
+        let sDate = s.fixedDate || '';
+        if (sDate.includes('T')) sDate = sDate.split('T')[0];
+        return sDate === dateStr;
+      });
+
+      // 根據是否有特別場次，決定使用哪種時段列表
+      const allowedSlots = isTakenBySpecial ? specialTimeSlots : generalTimeSlots;
       
       if (!allowedSlots.includes(timeStr)) {
         // 不在允許時段內，往後跳 30 分鐘
