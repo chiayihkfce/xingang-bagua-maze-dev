@@ -97,7 +97,7 @@ function App() {
       copy: '複製',
       bankLast5: '轉帳帳戶後五碼',
       bankLast5Placeholder: '請輸入後五碼數字',
-      expectedDate: '預計遊玩日期 & 時間 (開放日 09:00-15:00，週一二不開放)',
+      expectedDate: (start: string, end: string) => `預計遊玩日期 & 時間 (開放日 ${start}-${end}，週一二不開放)`,
       fixedSessionHint: (date: string, times: string) => `★ 此場次固定於 ${date}，開放時段：${times}`,
       conflictNotice: (times: string) => `★ 提醒：您目前選擇的日期有特別場，特別場次時段：${times} 不開放一般場次預約，如有這些時段需求請選擇特別場次。`,
       datepickerPlaceholder: '請選擇遊玩時間',
@@ -224,7 +224,7 @@ function App() {
       copy: 'Copy',
       bankLast5: 'Last 5 Digits of Your Account',
       bankLast5Placeholder: 'Enter 5 digits',
-      expectedDate: 'Preferred Pickup Date & Time (Open Wed-Sun, 09:00-15:00)',
+      expectedDate: (start: string, end: string) => `Preferred Pickup Date & Time (Open Wed-Sun, ${start}-${end})`,
       fixedSessionHint: (date: string, times: string) => `★ This session is exclusive to ${date}. Available times: ${times}`,
       conflictNotice: (times: string) => `★ Note: A Special Event is scheduled for this date at ${times}. General booking is restricted during these hours.`,
       datepickerPlaceholder: 'Select your time',
@@ -279,13 +279,22 @@ function App() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [submissions, setSubmissions] = useState<any[][]>([]);
-  const [adminTab, setAdminTab] = useState<'sessions' | 'submissions'>('sessions');
+  const [adminTab, setAdminTab] = useState<'sessions' | 'submissions' | 'timeslots'>('sessions');
   const [newSession, setNewSession] = useState({ name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false });
   const [isEditing, setIsEditing] = useState(false);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>(null);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
+
+  // --- 時間段管理相關狀態 ---
+  const [generalTimeSlots, setGeneralTimeSlots] = useState<string[]>(['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00']);
+  const [specialTimeSlots, setSpecialTimeSlots] = useState<string[]>(['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00']);
+  const [timeslotConfig, setTimeslotConfig] = useState({
+    generalStart: '09:00', generalEnd: '15:00', generalInterval: 30,
+    specialStart: '09:00', specialEnd: '15:00', specialInterval: 30
+  });
+  const [newManualTime, setNewManualTime] = useState('');
 
   const [sessionType, setSessionType] = useState<'一般預約' | '特別預約' | ''>('');
 
@@ -398,6 +407,64 @@ function App() {
 
   const pad = (n: number) => String(n).padStart(2, '0');
 
+  // --- 時間段管理工具函數 ---
+  const generateTimeSlots = (start: string, end: string, interval: number) => {
+    const slots = [];
+    let current = new Date(`2026-01-01T${start}:00`);
+    const last = new Date(`2026-01-01T${end}:00`);
+    while (current <= last) {
+      slots.push(`${pad(current.getHours())}:${pad(current.getMinutes())}`);
+      current.setMinutes(current.getMinutes() + interval);
+    }
+    return slots;
+  };
+
+  const handleManualTimeAdd = (type: 'general' | 'special') => {
+    if (!newManualTime || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(newManualTime)) {
+      alert('請輸入正確的時間格式 (HH:mm)');
+      return;
+    }
+    if (type === 'general') {
+      if (generalTimeSlots.includes(newManualTime)) return;
+      setGeneralTimeSlots([...generalTimeSlots, newManualTime].sort());
+    } else {
+      if (specialTimeSlots.includes(newManualTime)) return;
+      setSpecialTimeSlots([...specialTimeSlots, newManualTime].sort());
+    }
+    setNewManualTime('');
+  };
+
+  const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
+    if (type === 'general') {
+      setGeneralTimeSlots(generalTimeSlots.filter(s => s !== slot));
+    } else {
+      setSpecialTimeSlots(specialTimeSlots.filter(s => s !== slot));
+    }
+  };
+
+  const saveTimeSlotsConfig = async () => {
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        action: 'saveTimeSlots',
+        pw: adminPassword,
+        config: timeslotConfig,
+        generalSlots: generalTimeSlots,
+        specialSlots: specialTimeSlots
+      };
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(payload)
+      });
+      alert('時間段設定已儲存');
+    } catch (err) {
+      alert('儲存失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // 格式 A: 2026-03-11 13:26:05 (用於時間戳記)
   const formatFullDateTime = (date: Date) => {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
@@ -410,18 +477,20 @@ function App() {
            `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
-  // 找出最近一個可用的遊玩時段 (考慮營業時間、休館日、特別場衝突)
+  // 找出最近一個可用的遊玩時段 (考慮營業時間、休館日、特別場衝突、動態時段配置)
   const findEarliestSlot = (currentSessions: any[]) => {
     let checkDate = new Date();
+    const startH = timeslotConfig.startHour;
+    const endH = timeslotConfig.endHour;
     
     // 1. 基礎時間調整
-    if (checkDate.getHours() >= 15) {
-      // 超過 15:00，移到隔天 09:00
+    if (checkDate.getHours() >= endH) {
+      // 超過結束時間，移到隔天開始時間
       checkDate.setDate(checkDate.getDate() + 1);
-      checkDate.setHours(9, 0, 0, 0);
-    } else if (checkDate.getHours() < 9) {
-      // 早於 09:00，設定為今天 09:00
-      checkDate.setHours(9, 0, 0, 0);
+      checkDate.setHours(startH, 0, 0, 0);
+    } else if (checkDate.getHours() < startH) {
+      // 早於開始時間，設定為今天開始時間
+      checkDate.setHours(startH, 0, 0, 0);
     } else {
       // 在營業時間內，四捨五入到下一個 30 分鐘間隔
       const mins = checkDate.getMinutes();
@@ -439,23 +508,33 @@ function App() {
       // 2. 休館日避開 (週一 1, 週二 2)
       if (day === 1 || day === 2) {
         checkDate.setDate(checkDate.getDate() + (day === 1 ? 2 : 1));
-        checkDate.setHours(9, 0, 0, 0);
+        checkDate.setHours(startH, 0, 0, 0);
         continue;
       }
 
-      // 3. 營業時間範圍檢查 (09:00 - 15:00)
+      // 3. 營業時間範圍檢查
       const hours = checkDate.getHours();
       const mins = checkDate.getMinutes();
-      if (hours > 15 || (hours === 15 && mins > 0)) {
+      if (hours > endH || (hours === endH && mins > 0)) {
         checkDate.setDate(checkDate.getDate() + 1);
-        checkDate.setHours(9, 0, 0, 0);
+        checkDate.setHours(startH, 0, 0, 0);
         continue;
       }
 
-      // 4. 特別場次衝突檢查
+      // 4. 動態時段檢查
       const dateStr = `${checkDate.getFullYear()}-${pad(checkDate.getMonth() + 1)}-${pad(checkDate.getDate())}`;
       const timeStr = `${pad(checkDate.getHours())}:${pad(checkDate.getMinutes())}`;
       
+      const special = specialTimeSlots.find(s => s.date === dateStr);
+      const allowedSlots = special ? special.slots : generalTimeSlots;
+      
+      if (!allowedSlots.includes(timeStr)) {
+        // 不在允許時段內，往後跳 30 分鐘
+        checkDate.setMinutes(checkDate.getMinutes() + 30);
+        continue;
+      }
+
+      // 5. 特別場次衝突檢查
       const hasConflict = currentSessions.some(s => {
         let sDate = s.fixedDate || '';
         if (sDate.includes('T')) sDate = sDate.split('T')[0];
@@ -509,47 +588,46 @@ function App() {
     };
     
     const fetchSessions = async () => {
-      console.time('🚀 [Performance] 初始載入場次');
+      console.time('🚀 [Performance] 初始載入場次與時段');
       
       // 優先從快取讀取
-      const cached = localStorage.getItem('bagua_maze_sessions');
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          setSessions(parsed);
-          // 重要：如果有快取，且已經過了最小等待時間，就直接進場 (背景繼續抓更新)
-          triggerExitAnimation();
-        } catch (e) { console.error('❌ 快取解析失敗'); }
+      const cachedSessions = localStorage.getItem('bagua_maze_sessions');
+      const cachedSlots = localStorage.getItem('bagua_maze_slots');
+      
+      if (cachedSessions) setSessions(JSON.parse(cachedSessions));
+      if (cachedSlots) {
+        const slots = JSON.parse(cachedSlots);
+        if (slots.general) setGeneralTimeSlots(slots.general);
+        if (slots.special) setSpecialTimeSlots(slots.special);
+        if (slots.config) setTimeslotConfig(slots.config);
       }
 
       try {
-        console.log('🌐 [Network] 正在從 GAS 抓取資料...', `${GOOGLE_SCRIPT_URL}?action=getSessions`);
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
-        console.log('📡 [Network] 回應狀態:', res.status);
-        const newData = await res.json();
-        console.log('✅ [Network] 抓取成功，資料筆數:', newData.length);
+        // 同步抓取場次與時段設定
+        const [resSessions, resSlots] = await Promise.all([
+          fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`),
+          fetch(`${GOOGLE_SCRIPT_URL}?action=getTimeSlots`)
+        ]);
+
+        const newData = await resSessions.json();
+        const newSlots = await resSlots.json();
+
         if (Array.isArray(newData) && newData.length > 0) {
           setSessions(newData);
           localStorage.setItem('bagua_maze_sessions', JSON.stringify(newData));
         }
-      } catch (err) {
-        console.error('❌ [Error] 抓取失敗，原因:', err);
-        
-        // --- 本地測試開發補丁：如果抓取失敗且在 localhost，載入測試資料 ---
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          console.warn('🛠️ [Local Dev] 偵測到本地開發環境且連線失敗，自動載入測試場次資料。');
-          const mockData = [
-            { name: '【測試】一般場次 A', price: 650, enName: 'General Session A' },
-            { name: '【測試】團體優惠場次', price: 600, enName: 'Group Discount Session' },
-            { name: '【測試】特別場次 B (固定日期)', price: 750, fixedDate: '2026-05-20', fixedTime: '09:00,13:00', enName: 'Special Session B' }
-          ];
-          setSessions(mockData);
-          localStorage.setItem('bagua_maze_sessions', JSON.stringify(mockData));
+
+        if (newSlots && newSlots.general) {
+          setGeneralTimeSlots(newSlots.general);
+          setSpecialTimeSlots(newSlots.special);
+          setTimeslotConfig(newSlots.config);
+          localStorage.setItem('bagua_maze_slots', JSON.stringify(newSlots));
         }
+      } catch (err) {
+        console.error('❌ [Error] 抓取失敗:', err);
       } finally {
-        // 無論成功失敗，或是沒有快取，最後都要確保動畫關閉
         triggerExitAnimation();
-        console.timeEnd('🚀 [Performance] 初始載入場次');
+        console.timeEnd('🚀 [Performance] 初始載入場次與時段');
       }
     };
     fetchSessions();
@@ -647,6 +725,20 @@ function App() {
           setSessions(result.sessions);
           localStorage.setItem('bagua_maze_sessions', JSON.stringify(result.sessions));
         }
+        
+        // --- 新增：將後端存儲的時間段設定同步到前端狀態 ---
+        if (result.timeSlots) {
+          if (result.timeSlots.general && result.timeSlots.general.length > 0) {
+            setGeneralTimeSlots(result.timeSlots.general);
+          }
+          if (result.timeSlots.special && result.timeSlots.special.length > 0) {
+            setSpecialTimeSlots(result.timeSlots.special);
+          }
+          if (result.timeSlots.config && result.timeSlots.config.generalStart) {
+            setTimeslotConfig(result.timeSlots.config);
+          }
+        }
+
         setTotalRows(result.totalRows);
         setCurrentPage(1);
         setIsAdmin(true);
@@ -773,13 +865,13 @@ function App() {
   // 管理操作：切換固定時間多選
   const toggleFixedTime = (time: string, isEdit: boolean) => {
     if (isEdit) {
-      const currentTimes = editingSession.fixedTime ? editingSession.fixedTime.split(',') : [];
+      const currentTimes = editingSession.fixedTime ? editingSession.fixedTime.split(',').filter(Boolean) : [];
       const newTimes = currentTimes.includes(time) 
         ? currentTimes.filter(t => t !== time) 
         : [...currentTimes, time].sort();
       setEditingSession({ ...editingSession, fixedTime: newTimes.join(',') });
     } else {
-      const currentTimes = newSession.fixedTime ? newSession.fixedTime.split(',') : [];
+      const currentTimes = newSession.fixedTime ? newSession.fixedTime.split(',').filter(Boolean) : [];
       const newTimes = currentTimes.includes(time) 
         ? currentTimes.filter(t => t !== time) 
         : [...currentTimes, time].sort();
@@ -815,13 +907,24 @@ function App() {
 
   // 4.5 管理操作：開啟修改場次視窗
   const startEditSession = (session: any) => {
+    // 清理可能存在的亂碼 (1899... 或 轉錯的 23:30)
+    const cleanedTime = (session.fixedTime || '').split(',').map((t: string) => {
+      const p = t.trim();
+      if (p.includes('T')) return p.split('T')[1].substring(0, 5);
+      if (p.length > 10) {
+        const m = p.match(/(\d{2}:\d{2})/);
+        return m ? m[1] : "";
+      }
+      return p;
+    }).filter((t: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(t) && t !== "23:30").join(',');
+
     setEditingSession({ 
       oldName: session.name, 
       newName: session.name, 
       newPrice: String(session.price),
       fixedDate: session.fixedDate || '',
-      fixedTime: session.fixedTime || '',
-      isSpecial: !!(session.fixedDate || session.fixedTime)
+      fixedTime: cleanedTime,
+      isSpecial: !!(session.fixedDate || cleanedTime)
     });
     setIsEditingSession(true);
   };
@@ -1032,8 +1135,12 @@ function App() {
     if (date) {
       const day = date.getDay();
       if (day === 1 || day === 2) return;
+      
+      const startH = parseInt(timeslotConfig.generalStart.split(':')[0]);
+      const endH = parseInt(timeslotConfig.generalEnd.split(':')[0]);
+      
       const hours = date.getHours();
-      if (hours < 9 || hours > 15) date.setHours(9, 0, 0);
+      if (hours < startH || hours > endH) date.setHours(startH, 0, 0);
       
       // 改用不含秒的時間格式處理器 (YYYY-MM-DD HH:mm)
       const formattedDate = formatDateTimeMinute(date); 
@@ -1437,7 +1544,7 @@ function App() {
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
                       <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
                       <div className="time-slot-grid">
-                        {TIME_SLOTS.map(t => (
+                        {specialTimeSlots.map(t => (
                           <button 
                             key={t} 
                             type="button"
@@ -1464,6 +1571,7 @@ function App() {
           <h1>管理後台</h1>
           <div className="admin-nav">
             <button onClick={() => setAdminTab('sessions')} className={adminTab === 'sessions' ? 'active' : ''}>場次管理</button>
+            <button onClick={() => setAdminTab('timeslots')} className={adminTab === 'timeslots' ? 'active' : ''}>時間段管理</button>
             <button onClick={() => setAdminTab('submissions')} className={adminTab === 'submissions' ? 'active' : ''}>報名清單</button>
             <button onClick={() => setIsAdmin(false)}>登出後台</button>
           </div>
@@ -1532,7 +1640,7 @@ function App() {
                     <div className="form-group" style={{gridColumn: '1 / -1'}}>
                       <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
                       <div className="time-slot-grid">
-                        {TIME_SLOTS.map(t => (
+                        {specialTimeSlots.map(t => (
                           <button 
                             key={t} 
                             type="button"
@@ -1552,7 +1660,7 @@ function App() {
               </button>
             </div>
           </section>
-        ) : (
+        ) : adminTab === 'submissions' ? (
           <section className="admin-section form-card submissions-table-container">
             <div className="admin-section-header">
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
@@ -1693,6 +1801,54 @@ function App() {
                 ))}
               </tbody>
             </table>
+          </section>
+        ) : (
+          <section className="admin-section form-card">
+            <h3 className="form-section-title">開放時間段管理</h3>
+            <div className="timeslot-admin-grid">
+              <div className="timeslot-config-box">
+                <h4>📅 一般預約時段</h4>
+                <div className="generator-box">
+                    <input type="time" className="admin-time-input" value={timeslotConfig.generalStart} onChange={e => setTimeslotConfig({...timeslotConfig, generalStart: e.target.value})} />
+                  <span>至</span>
+                  <input type="time" className="admin-time-input" value={timeslotConfig.generalEnd} onChange={e => setTimeslotConfig({...timeslotConfig, generalEnd: e.target.value})} />
+                  <span>間隔時間 : </span>
+                  <input type="number" className="admin-time-input" style={{ width: '100px' }} placeholder="間隔(分)" value={timeslotConfig.generalInterval} onChange={e => setTimeslotConfig({...timeslotConfig, generalInterval: parseInt(e.target.value)})} />
+                  <button onClick={() => setGeneralTimeSlots(generateTimeSlots(timeslotConfig.generalStart, timeslotConfig.generalEnd, timeslotConfig.generalInterval))}>自動新增</button>
+                </div>
+                <div className="manual-add">
+                  <input type="text" placeholder="HH:mm" value={newManualTime} onChange={e => setNewManualTime(e.target.value)} />
+                  <button onClick={() => handleManualTimeAdd('general')}>手動新增</button>
+                </div>
+                <div className="slot-list">
+                  {generalTimeSlots.map(s => (
+                    <span key={s} className="slot-tag">{s} <i onClick={() => removeTimeSlot('general', s)}>×</i></span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="timeslot-config-box">
+                <h4>✨ 特別預約時段</h4>
+                <div className="generator-box">
+                  <input type="time" className="admin-time-input" value={timeslotConfig.specialStart} onChange={e => setTimeslotConfig({...timeslotConfig, specialStart: e.target.value})} />
+                  <span>至</span>
+                  <input type="time" className="admin-time-input" value={timeslotConfig.specialEnd} onChange={e => setTimeslotConfig({...timeslotConfig, specialEnd: e.target.value})} />
+                  <span>間隔時間 : </span>
+                  <input type="number" placeholder="間隔(分)" value={timeslotConfig.specialInterval} onChange={e => setTimeslotConfig({...timeslotConfig, specialInterval: parseInt(e.target.value)})} />
+                  <button onClick={() => setSpecialTimeSlots(generateTimeSlots(timeslotConfig.specialStart, timeslotConfig.specialEnd, timeslotConfig.specialInterval))}>自動新增</button>
+                </div>
+                <div className="manual-add">
+                  <input type="text" placeholder="HH:mm" value={newManualTime} onChange={e => setNewManualTime(e.target.value)} />
+                  <button onClick={() => handleManualTimeAdd('special')}>手動新增</button>
+                </div>
+                <div className="slot-list">
+                  {specialTimeSlots.map(s => (
+                    <span key={s} className="slot-tag">{s} <i onClick={() => removeTimeSlot('special', s)}>×</i></span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <button onClick={saveTimeSlotsConfig} className="submit-btn" style={{width: '100%', marginTop: '2rem'}}>儲存所有時間段設定</button>
           </section>
         )}
       </div>
@@ -2144,7 +2300,7 @@ function App() {
 
                   <div className="form-group">
                     <label>
-                      {t.expectedDate}
+                      {t.expectedDate(timeslotConfig.generalStart, timeslotConfig.generalEnd)}
                       <span className="required-mark">*</span>
                     </label>
                     
@@ -2189,7 +2345,7 @@ function App() {
                       onChange={handleDateChange}
                       showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={30}
+                      timeIntervals={1}
                       timeCaption={t.timeCaption}
                       dateFormat="yyyy-MM-dd HH:mm"
                       className="date-picker-input"
@@ -2197,13 +2353,12 @@ function App() {
                       required
                       minDate={(() => {
                         const now = new Date();
-                        // 如果現在已經過 15:00，今天已經沒有可選時段，最小日期直接設為明天
-                        if (now.getHours() >= 15) {
+                        const endHour = parseInt(timeslotConfig.generalEnd.split(':')[0]);
+                        if (now.getHours() >= endHour) {
                           now.setDate(now.getDate() + 1);
                         }
                         return now;
                       })()}
-                      // 特別預約場次：鎖定日期區區間為當天
                       maxDate={sessions.find(s => s.name === formData.session)?.fixedDate 
                         ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
                         : undefined}
@@ -2217,37 +2372,47 @@ function App() {
                         }
                         return date.getDay() !== 1 && date.getDay() !== 2;
                       }}
-                      minTime={new Date(new Date().setHours(9, 0, 0))}
-                      maxTime={new Date(new Date().setHours(15, 0, 0))}
+                      // 修正：確保 minTime/maxTime 抓到的是選定日期的邊界
+                      minTime={(() => {
+                        const d = formData.pickupTime ? new Date(formData.pickupTime) : new Date();
+                        const [h, m] = (sessionType === '特別預約' ? timeslotConfig.specialStart : timeslotConfig.generalStart).split(':');
+                        d.setHours(parseInt(h), parseInt(m), 0);
+                        return d;
+                      })()}
+                      maxTime={(() => {
+                        const d = formData.pickupTime ? new Date(formData.pickupTime) : new Date();
+                        const [h, m] = (sessionType === '特別預約' ? timeslotConfig.specialEnd : timeslotConfig.generalEnd).split(':');
+                        d.setHours(parseInt(h), parseInt(m), 0);
+                        return d;
+                      })()}
                       filterTime={(time) => {
-                        // 0. 安全檢查：如果是今天，不能選擇過去的時間
-                        if (time.getTime() < new Date().getTime()) return false;
+                        const now = new Date();
+                        if (time.getTime() < now.getTime()) return false;
 
+                        const timeStr = `${pad(time.getHours())}:${pad(time.getMinutes())}`;
                         const selectedSession = sessions.find(s => s.name === formData.session);
-                        const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
                         
-                        // 1. 如果目前選的是特別場次 -> 只允許顯示固定的那幾個時段
-                        if (selectedSession?.fixedDate || selectedSession?.fixedTime) {
-                          const fixedTimes = selectedSession.fixedTime ? selectedSession.fixedTime.split(',') : [];
-                          return fixedTimes.includes(timeStr);
+                        // 1. 如果是固定日期的特別場次，只顯示該場次指定的 fixedTime
+                        if (selectedSession?.fixedDate && selectedSession?.fixedTime) {
+                          return selectedSession.fixedTime.split(',').includes(timeStr);
                         }
                         
-                        // 2. 如果目前選的是普通場次 -> 過濾掉「任何」其他場次的固定時段
-                        const currentDateStr = formData.pickupTime.split(' ')[0];
-                        const isTakenBySpecial = sessions.some(s => {
-                          let sDate = s.fixedDate || '';
-                          if (sDate.includes('T')) sDate = sDate.split('T')[0];
-                          return sDate === currentDateStr && s.fixedTime?.split(',').includes(timeStr);
-                        });
-                        
-                        if (isTakenBySpecial) return false;
+                        // 2. 根據目前場次類型選擇對應的「開放時段陣列」
+                        const allowedSlots = sessionType === '特別預約' ? specialTimeSlots : generalTimeSlots;
+                        if (!allowedSlots.includes(timeStr)) return false;
 
-                        // 3. 基礎時段限制 09:00 - 15:00
-                        const hours = time.getHours();
-                        const minutes = time.getMinutes();
-                        if (hours >= 9 && hours < 15) return true;
-                        if (hours === 15 && minutes === 0) return true;
-                        return false;
+                        // 3. 額外檢查：如果是「一般預約」，要避開該日期被其他「特別場次」佔用的時段
+                        if (sessionType === '一般預約') {
+                          const currentDateStr = formData.pickupTime.split(' ')[0];
+                          const isTakenByOtherSpecial = sessions.some(s => {
+                            let sDate = s.fixedDate || '';
+                            if (sDate.includes('T')) sDate = sDate.split('T')[0];
+                            return sDate === currentDateStr && s.fixedTime?.split(',').includes(timeStr);
+                          });
+                          if (isTakenByOtherSpecial) return false;
+                        }
+
+                        return true;
                       }}
                     />
                   </div>
@@ -2386,6 +2551,5 @@ function App() {
     </div>
   )
 }
-
-
 export default App
+
