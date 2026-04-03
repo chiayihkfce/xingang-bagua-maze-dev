@@ -1685,7 +1685,7 @@ function App() {
             <div className="admin-section-header">
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <h3 className="form-section-title" style={{margin: 0}}>報名清單 (共 {totalRows} 筆)</h3>
-                <div className="admin-filter-bar" style={{display: 'flex', alignItems: 'center', gap: '1rem', background: '#333', padding: '0.8rem', borderRadius: '8px'}}>
+                <div className="admin-filter-bar" style={{display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--input-bg)', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--input-border)'}}>
                   <span title="依遊玩日期篩選" style={{display: 'flex', alignItems: 'center', color: 'var(--primary-gold)'}}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1723,7 +1723,7 @@ function App() {
                       className="edit-btn icon-btn" 
                       title="顯示欄位設定"
                       style={{
-                        background: '#444', border: '1px solid #666', padding: '0.5rem', 
+                        background: 'var(--card-bg)', border: '1px solid var(--input-border)', padding: '0.5rem', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         borderRadius: '4px', cursor: 'pointer', transition: 'all 0.2s'
                       }}
@@ -1736,7 +1736,7 @@ function App() {
                     {showColumnFilter && (
                       <div className="column-filter-dropdown" style={{
                         position: 'absolute', top: '100%', right: 0, zIndex: 100,
-                        background: '#222', border: '1px solid #444', borderRadius: '8px',
+                        background: 'var(--card-bg)', border: '1px solid var(--input-border)', borderRadius: '8px',
                         padding: '1rem', width: '180px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                         marginTop: '0.5rem'
                       }}>
