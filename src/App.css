@@ -3,19 +3,41 @@
 :root {
   --primary-gold: #f1c40f;
   --accent-orange: #e67e22;
-  --dark-bg: #1a1a1a;
+  --line-green: #00b900;
+  
+  /* Default: Dark Theme */
+  --bg-color: #1a1a1a;
   --card-bg: #2c3e50;
   --text-light: #ecf0f1;
   --text-muted: #bdc3c7;
-  --line-green: #00b900;
+  --container-bg: linear-gradient(145deg, rgba(44, 62, 80, 0.8), rgba(26, 37, 47, 0.9));
+  --border-subtle: rgba(241, 196, 15, 0.3);
+  --input-bg: rgba(0, 0, 0, 0.4);
+  --input-border: rgba(255, 255, 255, 0.2);
+  --input-text: white;
+  --dark-bg: #1a1a1a; /* Maintain for compatibility if needed */
+}
+
+body.light-theme {
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-light: #2c3e50;
+  --text-muted: #7f8c8d;
+  --container-bg: #ffffff;
+  --border-subtle: rgba(44, 62, 80, 0.15);
+  --input-bg: #fdfdfd;
+  --input-border: #ccd1d9;
+  --input-text: #2c3e50;
+  --dark-bg: #f8f9fa;
 }
 
 body {
-  background-color: var(--dark-bg);
+  background-color: var(--bg-color);
   color: var(--text-light);
   font-family: 'Noto Sans TC', sans-serif;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -85,11 +107,11 @@ body {
 
 /* 區塊容器樣式 */
 .story-box, .event-info {
-  background: linear-gradient(145deg, rgba(44, 62, 80, 0.8), rgba(26, 37, 47, 0.9));
+  background: var(--container-bg);
   padding: 2rem;
   border-radius: 20px;
   margin-bottom: 3rem;
-  border: 2px solid rgba(241, 196, 15, 0.3);
+  border: 2px solid var(--border-subtle);
   box-shadow: 0 15px 35px rgba(0,0,0,0.4);
 }
 
@@ -134,7 +156,7 @@ body {
 }
 
 .info-item {
-  background: rgba(0,0,0,0.4);
+  background: var(--input-bg);
   padding: 1.5rem 1rem;
   border-radius: 15px;
   text-align: center;
@@ -171,6 +193,7 @@ body {
   padding: 1.5rem;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: background-color 0.3s ease;
 }
 
 @media (min-width: 768px) {
@@ -208,10 +231,10 @@ select,
 textarea {
   width: 100%;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 8px;
-  color: white;
+  color: var(--input-text);
   font-size: 16px !important;
   box-sizing: border-box;
   transition: all 0.3s ease;
@@ -228,13 +251,13 @@ textarea {
 .react-datepicker {
   background-color: var(--card-bg) !important;
   border: 1px solid var(--primary-gold) !important;
-  color: white !important;
+  color: var(--text-light) !important;
   font-family: inherit !important;
 }
 
 .react-datepicker__header {
-  background-color: rgba(0,0,0,0.3) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  background-color: var(--input-bg) !important;
+  border-bottom: 1px solid var(--input-border) !important;
 }
 
 .react-datepicker__current-month, 
@@ -244,7 +267,7 @@ textarea {
 }
 
 .react-datepicker__day {
-  color: white;
+  color: var(--text-light);
 }
 
 .react-datepicker__day:hover {
@@ -259,19 +282,19 @@ textarea {
 
 /* 禁用日期的樣式 */
 .react-datepicker__day--disabled {
-  color: #666 !important;
+  color: var(--text-muted) !important;
   background-color: transparent !important;
   cursor: default !important;
 }
 
 .react-datepicker__day--disabled:hover {
   background-color: transparent !important;
-  color: #666 !important;
+  color: var(--text-muted) !important;
 }
 
 .react-datepicker__time-container {
   background-color: var(--card-bg) !important;
-  border-left: 1px solid rgba(255,255,255,0.1) !important;
+  border-left: 1px solid var(--input-border) !important;
 }
 
 .react-datepicker__time-box {
@@ -279,7 +302,7 @@ textarea {
 }
 
 .react-datepicker__time-list-item {
-  color: white;
+  color: var(--text-light);
 }
 
 /* 禁用時段的樣式：完全隱藏 */
@@ -295,15 +318,15 @@ textarea {
 input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   outline: none;
   border-color: var(--primary-gold);
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--input-bg);
   box-shadow: 0 0 10px rgba(241, 196, 15, 0.2);
 }
 
 .fixed-readonly {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: var(--input-bg) !important;
   color: var(--text-muted) !important;
   cursor: not-allowed !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: var(--input-border) !important;
 }
 
 .fixed-session-hint {
@@ -346,10 +369,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--input-bg);
   padding: 1.2rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--input-border);
 }
 
 .radio-group label {
@@ -368,10 +391,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--input-bg);
   padding: 1.2rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--input-border);
 }
 
 /* 銀行資訊區塊 */
@@ -397,6 +420,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border: 2px solid var(--primary-gold);
   z-index: 100;
   margin: 1rem 0;
+  transition: background-color 0.3s ease;
 }
 
 @media (max-width: 500px) {
@@ -465,7 +489,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .summary-box {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--input-bg);
   padding: 2rem;
   border-radius: 20px;
   margin: 2rem auto;
@@ -473,7 +497,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   width: 100%;
   box-sizing: border-box;
   text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--input-border);
   overflow-wrap: break-word;
 }
 
@@ -519,7 +543,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 .cta-button {
   background: var(--card-bg);
-  color: white;
+  color: var(--text-light);
   border: 1px solid var(--primary-gold);
   padding: 0.8rem 2rem;
   border-radius: 50px;
@@ -532,7 +556,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   margin-top: 5rem;
   border-top: 1px solid rgba(255,255,255,0.1);
   padding: 4rem 1rem;
-  background: rgba(0,0,0,0.3);
+  background: var(--input-bg);
 }
 
 .footer-content {
@@ -601,7 +625,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--dark-bg);
+  background: var(--bg-color);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -843,9 +867,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .admin-nav button {
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--input-bg);
   color: var(--text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--input-border);
   padding: 0.8rem 2rem;
   border-radius: 50px;
   font-family: 'Noto Serif TC', serif;
@@ -894,8 +918,8 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   padding: 1.2rem;
   font-size: 1.2rem;
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(241, 196, 15, 0.3);
+  background: var(--input-bg);
+  border: 1px solid var(--border-subtle);
   margin-top: 0.8rem;
   width: 100%;
   box-sizing: border-box;
@@ -1007,7 +1031,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-collapse: separate;
   border-spacing: 0;
   margin-top: 1.5rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--input-bg);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -1016,7 +1040,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   position: sticky;
   top: 0;
   z-index: 5;
-  background: rgba(30, 41, 51, 0.95) !important;
+  background: var(--card-bg) !important;
   color: var(--primary-gold);
   padding: 1.2rem 1rem;
   text-align: center;
@@ -1030,9 +1054,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 .submissions-table td {
   padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--input-border);
   font-size: 0.9rem;
   text-align: center;
+  color: var(--text-light);
 }
 
 /* 操作按鈕單元格 */
@@ -1071,11 +1096,11 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--input-bg);
   padding: 1.2rem;
   border-radius: 10px;
   margin-bottom: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--input-border);
 }
 
 .edit-form-grid {
@@ -1126,9 +1151,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .pagination button {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  color: var(--text-light);
+  border: 1px solid var(--input-border);
   padding: 0.4rem 1rem;
   border-radius: 5px;
   cursor: pointer;
@@ -1156,7 +1181,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--input-bg);
   border-radius: 12px;
   margin-top: 1rem;
   box-sizing: border-box;
@@ -1206,7 +1231,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 .submissions-table td {
   padding: 0.8rem;
   text-align: center !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--input-border);
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -1235,9 +1260,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .time-slot-btn {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  color: var(--text-light);
+  border: 1px solid var(--input-border);
   padding: 0.6rem 0.4rem;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -1412,16 +1437,25 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   z-index: 100;
 }
 
-.lang-switcher button {
-  background: rgba(0, 0, 0, 0.4);
+.lang-switcher button, .theme-toggle {
+  background: var(--input-bg);
   color: var(--text-muted);
-  border: 1px solid rgba(241, 196, 15, 0.3);
+  border: 1px solid var(--border-subtle);
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.3s ease;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle {
+  font-size: 1.1rem;
+  padding: 0.4rem;
+  min-width: 40px;
 }
 
 .lang-switcher button.active {
@@ -1430,7 +1464,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-color: var(--primary-gold);
 }
 
-.lang-switcher button:hover:not(.active) {
+.lang-switcher button:hover:not(.active), .theme-toggle:hover {
   background: rgba(241, 196, 15, 0.1);
   border-color: var(--primary-gold);
 }
@@ -1482,10 +1516,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .timeslot-config-box {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--input-bg);
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--input-border);
   text-align: left;
 }
 
@@ -1497,10 +1531,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .admin-time-input {
-  background: rgba(0, 0, 0, 0.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
   border-radius: 8px !important;
-  color: #fff !important;
+  color: var(--input-text) !important;
   padding: 0.5rem 0.8rem !important;
   font-size: 14px !important;
   outline: none !important;
@@ -1531,10 +1565,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .generator-box input {
-  background: rgba(0, 0, 0, 0.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
   border-radius: 8px !important;
-  color: #fff !important;
+  color: var(--input-text) !important;
   padding: 0 0.8rem !important;
   font-size: 14px !important;
   outline: none !important;
@@ -1585,10 +1619,10 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   font-size: 0.85rem !important;
   height: 42px !important; /* 高度一致 */
   box-sizing: border-box !important;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 8px;
-  color: white;
+  color: var(--input-text);
 }
 
 /* 統一兩種類型按鈕的尺寸與外觀 */
@@ -1615,9 +1649,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .manual-add button {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  color: var(--text-light);
+  border: 1px solid var(--input-border);
 }
 
 .generator-box button:hover {
@@ -1626,7 +1660,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .manual-add button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   border-color: var(--primary-gold);
 }
 
@@ -1646,14 +1680,14 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   max-height: 200px;
   overflow-y: auto;
   padding: 0.5rem;
-  background: rgba(0,0,0,0.2);
+  background: var(--input-bg);
   border-radius: 8px;
 }
 
 .slot-tag {
   background: rgba(241, 196, 15, 0.1);
   color: var(--primary-gold);
-  border: 1px solid rgba(241, 196, 15, 0.3);
+  border: 1px solid var(--border-subtle);
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
   font-size: 0.8rem;

@@ -7,9 +7,23 @@ function App() {
   // --- 1. 狀態與變數定義 ---
 
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const translations = {
     zh: {
+      themeToggle: '切換配色',
       submitSuccess: '報名已送出！',
       thanks: '感謝您的參與，',
       received: '我們已收到您的報名資訊，請確認以下明細並完成繳費。',
@@ -104,7 +118,7 @@ function App() {
       timeCaption: '時間',
       pickupLocation: '領取地點',
       locFoundation: '新港文教基金會(閱讀館)',
-      locPeiGui: '培桂堂(建議選此處，可同時參觀)',
+      locPeiGui: '培桂堂(建議選此處，此處為解謎起點)',
       other: '其他',
       referralLabel: '如何得知本活動內容? (可多選)',
       referrals: ['基金會FB', '基金會LINE', '基金會電子報', '活動現場', '親友介紹', '其他FB社團', '海報/摺頁'],
@@ -253,6 +267,7 @@ function App() {
       errorEmail: 'Please enter a valid email address',
       errorPhone: 'Please enter a valid phone number',
       errorName: 'Name is too short',
+      themeToggle: 'Toggle Theme',
       countryCodeLabel: 'Code',
       countryNames: {
         '+886': 'Taiwan (+886)',
@@ -1482,7 +1497,7 @@ function App() {
                   <div className="form-group"><label>領取地點</label>
                     <select value={editData.pickupLocation} onChange={e => setEditData({...editData, pickupLocation: e.target.value})}>
                       <option value="新港文教基金會(閱讀館)">新港文教基金會(閱讀館)</option>
-                      <option value="培桂堂(建議選此處，可同時參觀)">培桂堂</option>
+                      <option value="培桂堂(建議選此處，此處為解謎起點)">培桂堂</option>
                     </select>
                   </div>
                   <div className="form-group" style={{gridColumn: '1 / -1'}}><label>如何得知本活動內容?</label><input type="text" value={editData.referral} onChange={e => setEditData({...editData, referral: e.target.value})} /></div>
@@ -1724,7 +1739,7 @@ function App() {
                       }}>
                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '300px', overflowY: 'auto'}}>
                           {submissions[0]?.map((h: any, i: number) => (
-                            <label key={i} style={{display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', cursor: 'pointer', color: '#ccc'}}>
+                            <label key={i} style={{display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--text-light)'}}>
                               <input type="checkbox" checked={visibleColumns.includes(i)} onChange={() => toggleColumn(i)} />
                               {h}
                             </label>
@@ -1985,6 +2000,9 @@ function App() {
             onClick={() => setLang('en')}
           >
             EN
+          </button>
+          <button className="theme-toggle" onClick={toggleTheme} title={t.themeToggle}>
+            {theme === 'dark' ? '🌙' : '☀️'}
           </button>
         </div>
         <div className="era-badge">{t.eraBadge}</div>
@@ -2425,7 +2443,7 @@ function App() {
                     </label>
                     <select name="pickupLocation" value={formData.pickupLocation} onChange={handleInputChange}>
                       <option value="新港文教基金會(閱讀館)">{t.locFoundation}</option>
-                      <option value="培桂堂(建議選此處，可同時參觀)">{t.locPeiGui}</option>
+                      <option value="培桂堂(建議選此處，此處為解謎起點)">{t.locPeiGui}</option>
                     </select>
                   </div>
                 </div>
