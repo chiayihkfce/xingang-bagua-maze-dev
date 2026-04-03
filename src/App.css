@@ -1014,9 +1014,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .cancel-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  background: var(--input-bg);
+  color: var(--text-light);
+  border: 2px solid var(--input-border) !important;
 }
 
 .admin-login-actions .submit-btn {
