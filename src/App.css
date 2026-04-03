@@ -380,7 +380,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 .radio-group label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   cursor: pointer;
   font-size: 0.95rem;
 }
@@ -400,6 +400,14 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   display: inline-grid;
   place-content: center;
   margin: 0;
+  flex-shrink: 0;
+}
+
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
 }
 
 /* 勾選框圓角 */
