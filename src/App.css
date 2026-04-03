@@ -554,7 +554,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 /* 頁尾樣式 */
 .footer {
   margin-top: 5rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--border-subtle);
   padding: 4rem 1rem;
   background: var(--input-bg);
 }
@@ -567,10 +567,11 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 .refund-policy {
   text-align: left;
-  background: rgba(255,255,255,0.05);
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 12px;
   margin: 2rem 0;
+  border: 1px solid var(--border-subtle);
 }
 
 .refund-policy h4 { color: var(--accent-orange); }
