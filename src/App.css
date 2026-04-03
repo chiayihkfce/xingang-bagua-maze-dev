@@ -388,11 +388,73 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 .radio-group input[type="radio"],
 .checkbox-grid input[type="checkbox"],
 .column-filter-dropdown input[type="checkbox"] {
-  width: 1.2rem;
-  height: 1.2rem;
-  accent-color: var(--accent-orange);
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border-subtle);
+  background: transparent !important;
   cursor: pointer;
-  filter: var(--theme-filter);
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-grid;
+  place-content: center;
+  margin: 0;
+}
+
+/* 勾選框圓角 */
+.checkbox-grid input[type="checkbox"],
+.column-filter-dropdown input[type="checkbox"] {
+  border-radius: 4px;
+}
+
+/* 點選框圓形 */
+.radio-group input[type="radio"] {
+  border-radius: 50%;
+}
+
+/* 選取後的邊框顏色 */
+.radio-group input[type="radio"]:checked,
+.checkbox-grid input[type="checkbox"]:checked,
+.column-filter-dropdown input[type="checkbox"]:checked {
+  border-color: var(--accent-orange);
+  background: transparent !important;
+}
+
+/* 勾選框的 勾勾 (使用虛擬元素繪製) */
+.checkbox-grid input[type="checkbox"]::before,
+.column-filter-dropdown input[type="checkbox"]::before {
+  content: "";
+  width: 0.65rem;
+  height: 0.65rem;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  background-color: var(--accent-orange);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+/* 點選框的 圓點 */
+.radio-group input[type="radio"]::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  background-color: var(--accent-orange);
+}
+
+.radio-group input[type="radio"]:checked::before,
+.checkbox-grid input[type="checkbox"]:checked::before,
+.column-filter-dropdown input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+/* 懸停效果 */
+.radio-group input[type="radio"]:hover,
+.checkbox-grid input[type="checkbox"]:hover {
+  border-color: var(--primary-gold);
+  box-shadow: 0 0 8px rgba(241, 196, 15, 0.2);
 }
 
 .checkbox-grid {
