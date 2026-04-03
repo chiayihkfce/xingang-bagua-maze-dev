@@ -1661,14 +1661,14 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   opacity: 1;
 }
 
-/* 佈景主題變數新增：更精準的日曆圖標濾鏡 */
+/* 佈景主題變數新增：超高亮度日曆圖標濾鏡 */
 :root {
-  /* 深色模式：金黃色感 */
-  --calendar-filter: invert(80%) sepia(50%) saturate(1000%) hue-rotate(10deg);
+  /* 深色模式：更亮的金黃色，增加亮度與對比 */
+  --calendar-filter: invert(90%) sepia(100%) saturate(2000%) hue-rotate(10deg) brightness(1.5);
 }
 
 body.light-theme {
-  /* 淺色模式：深橘色/咖啡色感 */
+  /* 淺色模式：維持清晰的深橘色 */
   --calendar-filter: invert(30%) sepia(80%) saturate(500%) hue-rotate(0deg);
 }
 
