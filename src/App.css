@@ -902,6 +902,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   text-align: center;
   box-shadow: 0 30px 60px rgba(0,0,0,0.8);
   box-sizing: border-box;
+  color: var(--text-light);
 }
 
 @media (max-width: 600px) {
@@ -919,7 +920,8 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   font-size: 1.2rem;
   border-radius: 12px;
   background: var(--input-bg);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
   margin-top: 0.8rem;
   width: 100%;
   box-sizing: border-box;
