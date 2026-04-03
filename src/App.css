@@ -1644,19 +1644,30 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   outline: none !important;
   transition: all 0.3s ease !important;
   cursor: pointer !important;
-    height: 42px !important; /* 統一高度 */
+  height: 42px !important; /* 統一高度 */
   box-sizing: border-box !important;
-}
-
-.admin-time-input:focus {
-  border-color: var(--primary-gold) !important;
-  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3) !important;
+  position: relative;
 }
 
 /* 針對 time input 的圖標顏色調整 (Chrome/Edge) */
 .admin-time-input::-webkit-calendar-picker-indicator {
-  filter: invert(1);
   cursor: pointer;
+  filter: var(--calendar-filter);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.admin-time-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* 佈景主題變數新增：日曆濾鏡 */
+:root {
+  --calendar-filter: invert(0.8); /* 深色主題下偏白 */
+}
+
+body.light-theme {
+  --calendar-filter: invert(0.2); /* 淺色主題下偏黑 */
 }
 
 .generator-box {
