@@ -414,6 +414,28 @@ function App() {
     );
   };
 
+  const handleDownloadExcel = () => {
+    if (submissions.length === 0) return;
+    
+    // 建立 CSV 內容
+    const csvRows = submissions.map(row => 
+      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    );
+    const csvString = csvRows.join('\n');
+    
+    // 加入 BOM 以確保 Excel 正確辨識 UTF-8 中文
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `新港八卦謎蹤_報名清單_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // 請在此處填入您部署後的 Google Apps Script URL
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
 
@@ -1691,6 +1713,24 @@ function App() {
               <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                 <h3 className="form-section-title" style={{margin: 0}}>報名清單 (共 {totalRows} 筆)</h3>
                 <div className="admin-filter-bar" style={{display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--input-bg)', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--input-border)'}}>
+                  <button 
+                    onClick={handleDownloadExcel} 
+                    className="submit-btn icon-btn" 
+                    title="下載 Excel 檔案"
+                    style={{
+                      background: '#27ae60', padding: '0.5rem 1rem', 
+                      display: 'flex', alignItems: 'center', gap: '6px',
+                      borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem'
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    下載 Excel
+                  </button>
+                  <div style={{width: '1px', height: '24px', background: 'var(--input-border)', margin: '0 0.5rem'}}></div>
                   <span title="依遊玩日期篩選" style={{display: 'flex', alignItems: 'center', color: 'var(--primary-gold)'}}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
