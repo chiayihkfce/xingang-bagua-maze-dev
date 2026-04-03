@@ -1429,17 +1429,17 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 /* 語言切換按鈕 */
 .lang-switcher {
-  position: absolute;
+  position: fixed;
   top: 1rem;
   right: 1.5rem;
   display: flex;
   gap: 0.5rem;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .lang-switcher button, .theme-toggle {
-  background: var(--input-bg);
-  color: var(--text-muted);
+  background: var(--card-bg);
+  color: var(--text-light);
   border: 1px solid var(--border-subtle);
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
@@ -1450,6 +1450,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .theme-toggle {
@@ -1465,7 +1466,8 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 }
 
 .lang-switcher button:hover:not(.active), .theme-toggle:hover {
-  background: rgba(241, 196, 15, 0.1);
+  background: var(--primary-gold);
+  color: black;
   border-color: var(--primary-gold);
 }
 
@@ -1473,6 +1475,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   .lang-switcher {
     top: 0.8rem;
     right: 0.8rem;
+  }
+  .lang-switcher button {
+    padding: 0.3rem 0.6rem;
   }
 }
 

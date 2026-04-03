@@ -2232,7 +2232,7 @@ function App() {
                         <p style={{ margin: 0, fontWeight: 'bold' }}>
                           {t.autoSelected} {getSessionDisplayName(formData.session) || t.calculating}
                         </p>
-                        <div className="discount-hint" style={{ marginTop: '0.5rem', color: '#ccc', fontSize: '0.85rem' }}>
+                        <div className="discount-hint" style={{ marginTop: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                           {t.discountHint}
                         </div>
                       </div>
