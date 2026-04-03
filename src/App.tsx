@@ -7,7 +7,9 @@ function App() {
   // --- 1. 狀態與變數定義 ---
 
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark';
+  });
 
   useEffect(() => {
     if (theme === 'light') {
@@ -15,6 +17,7 @@ function App() {
     } else {
       document.body.classList.remove('light-theme');
     }
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
