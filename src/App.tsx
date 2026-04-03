@@ -1588,6 +1588,11 @@ function App() {
         )}
 
         <header className="header">
+          <div className="lang-switcher">
+            <button className="theme-toggle" onClick={toggleTheme} title={t.themeToggle}>
+              {theme === 'dark' ? '🌙' : '☀️'}
+            </button>
+          </div>
           <h1>管理後台</h1>
           <div className="admin-nav">
             <button onClick={() => setAdminTab('sessions')} className={adminTab === 'sessions' ? 'active' : ''}>場次管理</button>
