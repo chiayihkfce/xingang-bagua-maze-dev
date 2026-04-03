@@ -2112,12 +2112,12 @@ function App() {
                       WebkitAppearance: 'none'
                     }}
                   >
-                    <option value="+886" style={{ color: 'var(--bg-color)', background: 'var(--card-bg)' }}>{t.countryNames['+886']}</option>
-                    <option value="+852" style={{ color: 'var(--bg-color)', background: 'var(--card-bg)' }}>{t.countryNames['+852']}</option>
-                    <option value="+853" style={{ color: 'var(--bg-color)', background: 'var(--card-bg)' }}>{t.countryNames['+853']}</option>
-                    <option value="+65" style={{ color: 'var(--bg-color)', background: 'var(--card-bg)' }}>{t.countryNames['+65']}</option>
-                    <option value="+60" style={{ color: 'var(--bg-color)', background: 'var(--card-bg)' }}>{t.countryNames['+60']}</option>
-                    <option value="landline" style={{ color: 'var(--bg-color)', background: 'var(--card-bg)' }}>{t.countryNames['landline']}</option>
+                    <option value="+886" style={{ color: 'var(--text-light)', background: 'var(--card-bg)' }}>{t.countryNames['+886']}</option>
+                    <option value="+852" style={{ color: 'var(--text-light)', background: 'var(--card-bg)' }}>{t.countryNames['+852']}</option>
+                    <option value="+853" style={{ color: 'var(--text-light)', background: 'var(--card-bg)' }}>{t.countryNames['+853']}</option>
+                    <option value="+65" style={{ color: 'var(--text-light)', background: 'var(--card-bg)' }}>{t.countryNames['+65']}</option>
+                    <option value="+60" style={{ color: 'var(--text-light)', background: 'var(--card-bg)' }}>{t.countryNames['+60']}</option>
+                    <option value="landline" style={{ color: 'var(--text-light)', background: 'var(--card-bg)' }}>{t.countryNames['landline']}</option>
                   </select>
                   <input 
                     type="tel" 
