@@ -2373,7 +2373,7 @@ function App() {
                       onChange={handleDateChange}
                       showTimeSelect
                       timeFormat="HH:mm"
-                      timeIntervals={1}
+                      timeIntervals={30}
                       timeCaption={t.timeCaption}
                       dateFormat="yyyy-MM-dd HH:mm"
                       className="date-picker-input"
