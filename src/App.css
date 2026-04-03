@@ -270,28 +270,36 @@ textarea {
 
 .react-datepicker__day {
   color: var(--text-light);
+  font-weight: bold; /* 加粗可選日期 */
+  transition: all 0.2s ease;
 }
 
 .react-datepicker__day:hover {
   background-color: var(--primary-gold) !important;
   color: black !important;
+  border-radius: 50%;
+  transform: scale(1.1);
 }
 
 .react-datepicker__day--selected {
   background-color: var(--accent-orange) !important;
   color: white !important;
+  border-radius: 50%;
 }
 
-/* 禁用日期的樣式 */
+/* 禁用日期的樣式：使其更淡、不加粗 */
 .react-datepicker__day--disabled {
   color: var(--text-muted) !important;
   background-color: transparent !important;
   cursor: default !important;
+  font-weight: normal !important; /* 不加粗 */
+  opacity: 0.25; /* 非常淡 */
 }
 
 .react-datepicker__day--disabled:hover {
   background-color: transparent !important;
   color: var(--text-muted) !important;
+  transform: none;
 }
 
 .react-datepicker__time-container {
