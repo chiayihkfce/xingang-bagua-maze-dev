@@ -554,9 +554,12 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 /* 頁尾樣式 */
 .footer {
   margin-top: 5rem;
-  border-top: 1px solid var(--border-subtle);
-  padding: 4rem 1rem;
-  background: var(--input-bg);
+  background: var(--container-bg);
+  padding: 3rem 1.5rem;
+  border-radius: 20px;
+  border: 2px solid var(--border-subtle);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  margin-bottom: 3rem;
 }
 
 .footer-content {
@@ -565,9 +568,15 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   text-align: center;
 }
 
+.footer-content h3 {
+  color: var(--primary-gold);
+  font-family: 'Noto Serif TC', serif;
+  margin-bottom: 1.5rem;
+}
+
 .refund-policy {
   text-align: left;
-  background: var(--card-bg);
+  background: var(--input-bg);
   padding: 1.5rem;
   border-radius: 12px;
   margin: 2rem 0;
