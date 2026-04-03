@@ -383,8 +383,14 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   font-size: 0.95rem;
 }
 
-.radio-group input[type="radio"] {
-  width: auto;
+.radio-group input[type="radio"],
+.checkbox-grid input[type="checkbox"],
+.column-filter-dropdown input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--accent-orange);
+  cursor: pointer;
+  filter: var(--theme-filter);
 }
 
 .checkbox-grid {
