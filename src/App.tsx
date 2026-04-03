@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
+import * as XLSX from 'xlsx'
 import './App.css'
 
 function App() {
@@ -417,23 +418,16 @@ function App() {
   const handleDownloadExcel = () => {
     if (submissions.length === 0) return;
     
-    // 建立 CSV 內容
-    const csvRows = submissions.map(row => 
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    );
-    const csvString = csvRows.join('\n');
+    // 將資料轉換為 XLSX 工作表
+    const ws = XLSX.utils.aoa_to_sheet(submissions);
     
-    // 加入 BOM 以確保 Excel 正確辨識 UTF-8 中文
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    // 建立新的活頁簿並加入工作表
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "報名清單");
     
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `新港八卦謎蹤_報名清單_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // 產生並下載檔案
+    const fileName = `新港八卦謎蹤_報名清單_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   };
 
   // 請在此處填入您部署後的 Google Apps Script URL
