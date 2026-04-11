@@ -1305,6 +1305,8 @@ const formatDateTimeMinute = (date: any) => {
   const handleVerifyPayment = async (rowIndex: number, status: string) => {
     const target = submissions[rowIndex];
     const docId = target[15];
+    const currentStatus = target[1]; // 取得目前資料庫中的狀態
+    
     if (!docId) return;
 
     showConfirm(`確定要將此筆報名標記為「${status}」嗎？`, async () => {
@@ -1312,10 +1314,10 @@ const formatDateTimeMinute = (date: any) => {
       try {
         const docRef = doc(db, "registrations", docId);
         await updateDoc(docRef, { status });
-        addLog('審核付款', `將「${target[2]}」的狀態變更為 [${status}]`);
+        addLog('審核付款', `將「${target[2]}」的狀態由 [${currentStatus}] 變更為 [${status}]`);
         
-        // 如果狀態變更為「通過」，則自動發送 Email
-        if (status === '通過') {
+        // [核心修正]：只有在原本不是「通過」，且新狀態是「通過」時才發信
+        if (status === '通過' && currentStatus !== '通過') {
           await sendPaymentSuccessEmail(target);
         }
         
