@@ -6,12 +6,18 @@
   border-radius: 50%;
   pointer-events: none;
   z-index: 99999;
+  opacity: 0;
   /* 移除原本的 left/top transition，改用 JS 控制 transform */
   transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
               height 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
-              background-color 0.3s ease;
+              background-color 0.3s ease,
+              opacity 0.3s ease;
   box-shadow: 0 0 10px var(--primary-gold);
-  will-change: transform; /* 核心優化：提示瀏覽器預先加速 */
+  will-change: transform, opacity;
+}
+
+.custom-cursor-dot.visible {
+  opacity: 1;
 }
 
 .custom-cursor-dot.hover {
@@ -27,11 +33,15 @@
   height: 36px;
   pointer-events: none;
   z-index: 99998;
+  opacity: 0;
   transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
               height 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
               opacity 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.custom-cursor-ring.visible {
   opacity: 0.6;
-  will-change: transform; /* 核心優化 */
 }
 
 .custom-cursor-ring svg {
@@ -43,7 +53,7 @@
 .custom-cursor-ring.hover {
   width: 50px;
   height: 50px;
-  opacity: 1;
+  opacity: 1 !important;
 }
 
 .custom-cursor-ring.hover svg {

@@ -1,33 +1,32 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './CustomCursor.css';
 
 const CustomCursor: React.FC = () => {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const cursorVisible = useRef(false);
+  const isTouch = useRef(false);
 
   useEffect(() => {
-    // 偵測是否為觸控裝置
-    const checkTouch = () => {
-      setIsTouchDevice(
-        'ontouchstart' in window || 
-        navigator.maxTouchPoints > 0 || 
-        window.matchMedia('(hover: none)').matches
-      );
-    };
-    
-    checkTouch();
+    // 1. 偵測是否為觸控裝置 (僅執行一次)
+    isTouch.current = (
+      'ontouchstart' in window || 
+      navigator.maxTouchPoints > 0 || 
+      window.matchMedia('(hover: none)').matches
+    );
 
-    if (isTouchDevice) return;
+    if (isTouch.current) return;
 
+    // 2. 核心移動邏輯 (使用 requestAnimationFrame 並直接操作樣式)
     const onMouseMove = (e: MouseEvent) => {
-      if (!isVisible) setIsVisible(true);
+      if (!cursorVisible.current) {
+        cursorVisible.current = true;
+        dotRef.current?.classList.add('visible');
+        ringRef.current?.classList.add('visible');
+      }
       
       const { clientX: x, clientY: y } = e;
       
-      // 使用 requestAnimationFrame 確保同步螢幕刷新率
       requestAnimationFrame(() => {
         if (dotRef.current) {
           dotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
@@ -38,53 +37,47 @@ const CustomCursor: React.FC = () => {
       });
     };
 
+    // 3. 核心 Hover 邏輯
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target.closest('button') ||
-        target.closest('a') ||
-        target.closest('input') ||
-        target.closest('select') ||
-        target.closest('textarea') ||
-        target.closest('.radio-group label') ||
-        target.closest('.checkbox-grid label') ||
-        target.closest('.clickable') ||
-        target.closest('.admin-trigger') ||
-        target.closest('.close-btn')
-      ) {
-        setIsHovering(true);
+      const isClickable = !!target.closest('button, a, input, select, textarea, .radio-group label, .checkbox-grid label, .clickable, .admin-trigger, .close-btn, .slot-tag i');
+      
+      if (isClickable) {
+        dotRef.current?.classList.add('hover');
+        ringRef.current?.classList.add('hover');
       } else {
-        setIsHovering(false);
+        dotRef.current?.classList.remove('hover');
+        ringRef.current?.classList.remove('hover');
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseover', onMouseOver);
-    document.addEventListener('mouseenter', () => setIsVisible(true));
-    document.addEventListener('mouseleave', () => setIsVisible(false));
+    const onMouseLeave = () => {
+      cursorVisible.current = false;
+      dotRef.current?.classList.remove('visible');
+      ringRef.current?.classList.remove('visible');
+    };
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('mouseover', onMouseOver, { passive: true });
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseenter', () => {
+      cursorVisible.current = true;
+      dotRef.current?.classList.add('visible');
+      ringRef.current?.classList.add('visible');
+    });
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseover', onMouseOver);
+      document.removeEventListener('mouseleave', onMouseLeave);
     };
-  }, [isVisible, isTouchDevice]);
-
-  if (isTouchDevice || !isVisible) return null;
+  }, []);
 
   return (
     <>
-      <div 
-        ref={dotRef}
-        className={`custom-cursor-dot ${isHovering ? 'hover' : ''}`}
-        style={{ left: 0, top: 0 }}
-      />
-      <div 
-        ref={ringRef}
-        className={`custom-cursor-ring ${isHovering ? 'hover' : ''}`}
-        style={{ left: 0, top: 0 }}
-      >
+      <div ref={dotRef} className="custom-cursor-dot" style={{ left: 0, top: 0 }} />
+      <div ref={ringRef} className="custom-cursor-ring" style={{ left: 0, top: 0 }}>
         <svg viewBox="0 0 100 100">
-          {/* 八角形外框 */}
           <path 
             className="bagua-octagon"
             d="M 50 5 L 82 18 L 95 50 L 82 82 L 50 95 L 18 82 L 5 50 L 18 18 Z"
@@ -93,61 +86,17 @@ const CustomCursor: React.FC = () => {
             strokeWidth="1.2"
             opacity="0.8"
           />
-          
-          {/* 太極中心 */}
           <circle cx="50" cy="50" r="10" stroke="var(--primary-gold)" fill="none" strokeWidth="0.3" opacity="0.3"/>
           <path d="M 50 40 A 5 5 0 0 1 50 50 A 5 5 0 0 0 50 60" stroke="var(--primary-gold)" fill="none" strokeWidth="0.3" opacity="0.3"/>
-          
-          {/* 八卦符號 (完整八方位) */}
           <g className="trigrams" stroke="var(--primary-gold)" strokeWidth="0.4">
-            {/* 0度 (北) - 乾 ☰ */}
-            <g transform="rotate(0 50 50)">
-              <line x1="42" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 45度 (東北) - 巽 ☴ */}
-            <g transform="rotate(45 50 50)">
-              <line x1="42" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 90度 (東) - 坎 ☵ */}
-            <g transform="rotate(90 50 50)">
-              <line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 135度 (東南) - 艮 ☶ */}
-            <g transform="rotate(135 50 50)">
-              <line x1="42" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 180度 (南) - 坤 ☷ */}
-            <g transform="rotate(180 50 50)">
-              <line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 225度 (西南) - 震 ☳ */}
-            <g transform="rotate(225 50 50)">
-              <line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 270度 (西) - 離 ☲ */}
-            <g transform="rotate(270 50 50)">
-              <line x1="42" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="58" y2="21" />
-            </g>
-            {/* 315度 (西北) - 兌 ☱ */}
-            <g transform="rotate(315 50 50)">
-              <line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" />
-              <line x1="42" y1="16" x2="58" y2="16" />
-              <line x1="42" y1="21" x2="58" y2="21" />
-            </g>
+            <g transform="rotate(0 50 50)"><line x1="42" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(45 50 50)"><line x1="42" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(90 50 50)"><line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(135 50 50)"><line x1="42" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(180 50 50)"><line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="48" y2="21" /><line x1="52" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(225 50 50)"><line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(270 50 50)"><line x1="42" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="48" y2="16" /><line x1="52" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="58" y2="21" /></g>
+            <g transform="rotate(315 50 50)"><line x1="42" y1="11" x2="48" y2="11" /><line x1="52" y1="11" x2="58" y2="11" /><line x1="42" y1="16" x2="58" y2="16" /><line x1="42" y1="21" x2="58" y2="21" /></g>
           </g>
         </svg>
       </div>
