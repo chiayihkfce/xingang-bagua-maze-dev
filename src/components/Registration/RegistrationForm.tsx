@@ -451,6 +451,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     return d;
                   })()}
                   filterTime={(time) => {
+                    const now = new Date();
+                    const selectedDate = formData.pickupTime ? new Date(formData.pickupTime.replace(/-/g, '/')) : new Date();
+                    
+                    // 如果是今天，過濾掉過去的時間
+                    if (selectedDate.toDateString() === now.toDateString()) {
+                      // 這裡判斷：如果時段的時間小於等於現在時間，則不顯示
+                      if (time.getTime() <= now.getTime()) {
+                        return false;
+                      }
+                    }
+
                     const timeStr = `${pad(time.getHours())}:${pad(time.getMinutes())}`;
                     const selectedSession = sessions.find(s => s.name === formData.session);
                     
