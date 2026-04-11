@@ -82,7 +82,7 @@ interface AdminDashboardProps {
   setNewManualTime: (time: string) => void;
   handleManualTimeAdd: (type: 'general' | 'special') => void;
   removeTimeSlot: (type: 'general' | 'special', slot: string) => void;
-  saveTimeSlotsConfig: () => void;
+  saveTimeSlotsConfig: (type: 'general' | 'special', config: TimeslotConfig, slots: string[]) => void;
   formatFullDateTime: (date: Date) => string;
   dbStatus: 'connecting' | 'connected' | 'error';
   paymentMethods: PaymentMethod[];
