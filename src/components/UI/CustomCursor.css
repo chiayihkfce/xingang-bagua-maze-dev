@@ -67,10 +67,13 @@
 
 /* 行動裝置隱藏邏輯保持不變 */
 
-/* 在行動裝置上隱藏客製鼠標 */
-@media (hover: none) and (pointer: coarse) {
-  .custom-cursor-dot, .custom-cursor-ring {
-    display: none;
+/* 在行動裝置、小螢幕或觸控裝置上徹底隱藏客製鼠標 */
+@media (max-width: 1024px), (hover: none), (pointer: coarse) {
+  .custom-cursor-dot, 
+  .custom-cursor-ring {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 }
 
