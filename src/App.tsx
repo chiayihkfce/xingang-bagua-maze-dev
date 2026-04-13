@@ -68,7 +68,7 @@ function App() {
 
   // 路由狀態
   const [currentPath, setCurrentPath] = useState(window.location.hash.replace(/^#\/?/, '') || '/');
-  const SECRET_ADMIN_PATH = (import.meta.env.VITE_ADMIN_SECRET_PATH || 'admin').replace(/^\//, '');
+  const SECRET_ADMIN_PATH = (import.meta.env.VITE_ADMIN_SECRET_PATH || '').replace(/^\//, '');
 
   // 監聽網址變化
   useEffect(() => {
