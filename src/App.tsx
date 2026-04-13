@@ -67,19 +67,18 @@ function App() {
   // --- 1. 狀態與變數定義 ---
 
   // 路由狀態
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentPath, setCurrentPath] = useState(window.location.hash.slice(1) || '/');
   const SECRET_ADMIN_PATH = import.meta.env.VITE_ADMIN_SECRET_PATH;
 
   // 監聽網址變化
   useEffect(() => {
-    const handlePopState = () => setCurrentPath(window.location.pathname);
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    const handleHashChange = () => setCurrentPath(window.location.hash.slice(1) || '/');
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const navigate = (to: string) => {
-    window.history.pushState({}, '', to);
-    setCurrentPath(to);
+    window.location.hash = to;
   };
 
   useEffect(() => {
