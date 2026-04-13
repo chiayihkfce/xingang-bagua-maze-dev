@@ -68,7 +68,7 @@ function App() {
 
   // 路由狀態
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const SECRET_ADMIN_PATH = import.meta.env.VITE_ADMIN_SECRET_PATH || '/xk_admin_panel_6688';
+  const SECRET_ADMIN_PATH = import.meta.env.VITE_ADMIN_SECRET_PATH;
 
   // 監聽網址變化
   useEffect(() => {
@@ -140,11 +140,6 @@ function App() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   // 控制登入視窗：如果在秘密路徑且未登入，則顯示
-  const showAdminLogin = currentPath === SECRET_ADMIN_PATH && !isAdmin;
-  const setShowAdminLogin = (val: boolean) => {
-    // 只有在「關閉登入視窗」且「並非位於管理路徑」且「未登入」時，才導向首頁
-    if (!val && currentPath !== SECRET_ADMIN_PATH && !isAdmin) navigate('/');
-  };
   const [adminUser, setAdminUser] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [currentAdmin, setCurrentAdmin] = useState<AdminAccount | null>(null);
