@@ -1731,7 +1731,7 @@ const formatDateTimeMinute = (date: any) => {
   };
 
   // 判斷是否顯示管理員後台
-  if (currentPath === SECRET_ADMIN_PATH) {
+  if (SECRET_ADMIN_PATH && SECRET_ADMIN_PATH !== '/' && currentPath === SECRET_ADMIN_PATH) {
     if (isAdmin) {
       return (
         <>
