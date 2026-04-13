@@ -64,8 +64,25 @@ function App() {
   // --- 0. 版本控管與快取清理 ---
   const APP_VERSION = '1.3.0'; // 每次重大更新或修改設定後，請調升此版本號
 
-  useEffect(() => {
+  // --- 1. 狀態與變數定義 ---
 
+  // 路由狀態
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const SECRET_ADMIN_PATH = '/xk_admin_panel_6688';
+
+  // 監聽網址變化
+  useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigate = (to: string) => {
+    window.history.pushState({}, '', to);
+    setCurrentPath(to);
+  };
+
+  useEffect(() => {
     const savedVersion = localStorage.getItem('app_version');
     if (savedVersion !== APP_VERSION) {
       console.log(`[系統] 偵測到版本更新 (${savedVersion} -> ${APP_VERSION})，正在清理過時快取...`);
@@ -83,18 +100,6 @@ function App() {
       if (savedVersion) {
         window.location.reload();
       }
-    }
-  }, []);
-
-  // --- 1. 狀態與變數定義 ---
-
-  // 監聽混淆網址
-  useEffect(() => {
-    const secretPath = '/xk_admin_panel_6688';
-    if (window.location.pathname === secretPath) {
-      setShowAdminLogin(true);
-      // 可選擇是否要隱藏路徑以增加安全性
-      window.history.replaceState({}, '', '/');
     }
   }, []);
 
@@ -134,7 +139,12 @@ function App() {
   const [shouldRenderEntry, setShouldRenderEntry] = useState(true);
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  // 控制登入視窗：如果在秘密路徑且未登入，則顯示
+  const showAdminLogin = currentPath === SECRET_ADMIN_PATH && !isAdmin;
+  const setShowAdminLogin = (val: boolean) => {
+    // 只有在「關閉登入視窗」且「並非位於管理路徑」且「未登入」時，才導向首頁
+    if (!val && currentPath !== SECRET_ADMIN_PATH && !isAdmin) navigate('/');
+  };
   const [adminUser, setAdminUser] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [currentAdmin, setCurrentAdmin] = useState<AdminAccount | null>(null);
@@ -1086,7 +1096,6 @@ const formatDateTimeMinute = (date: any) => {
 
         setCurrentAdmin(adminData);
         setIsAdmin(true);
-        setShowAdminLogin(false);
 
         // 更新最後登入時間
         await updateDoc(doc(db, "admins", adminDoc.id), {
@@ -1724,13 +1733,33 @@ const formatDateTimeMinute = (date: any) => {
     });
   };
 
-  if (isAdmin) {
+  // 判斷是否顯示管理員後台
+  if (currentPath === SECRET_ADMIN_PATH) {
+    if (isAdmin) {
+      return (
+        <>
+          <CustomCursor />
+          <AdminDashboard 
+            {...{ t, theme, toggleTheme, setIsAdmin: (val) => { setIsAdmin(val); if(!val) navigate('/'); }, adminTab, setAdminTab, currentAdmin, setCurrentAdmin, dashboardStats: getDisplayStats(), logs, sessions, startEditSession, handleDeleteSession, newSession, setNewSession, handleAddSession, isSubmitting, toggleFixedTime, specialTimeSlots, totalRows, handleDownloadExcel, handleImportExcel, handleImportSessionsExcel, adminFilterDate, handleDateFilter, adminSearchKeyword, setAdminSearchKeyword, showColumnFilter, setShowShowColumnFilter, submissions, visibleColumns, toggleColumn, currentPage, isDataLoading, loadPage, handleSort, sortConfig, setAuditTarget, setShowAuditModal, showAuditModal, auditTarget, handleVerifyPayment, startEditSubmission, isEditing, setIsEditing, editData, setEditData, handleUpdateSubmission, handleDeleteSubmission, isEditingSession, setIsEditingSession, editingSession, setEditingSession, handleUpdateSession, timeslotConfig, setTimeslotConfig, generalTimeSlots, setGeneralTimeSlots, setSpecialTimeSlots, generateTimeSlots, newManualTime, setNewManualTime, handleManualTimeAdd, removeTimeSlot, saveTimeSlotsConfig, formatFullDateTime, deletedSubmissions, showRecycleBin, setShowRecycleBin, handleRestoreSubmission, dbStatus, paymentMethods, addPaymentMethod, deletePaymentMethod, handleClearLogs, handleClearRecycleBin, showAlert, showConfirm }}
+          />
+          <SystemModal 
+            show={sysModal.show}
+            type={sysModal.type}
+            title={sysModal.title}
+            message={sysModal.message}
+            onConfirm={sysModal.onConfirm}
+            onCancel={sysModal.onCancel}
+            confirmText={sysModal.confirmText}
+            cancelText={sysModal.cancelText}
+          />
+        </>
+      );
+    }
+    
     return (
-      <>
+      <div className="admin-only-page">
         <CustomCursor />
-        <AdminDashboard 
-          {...{ t, theme, toggleTheme, setIsAdmin, adminTab, setAdminTab, currentAdmin, setCurrentAdmin, dashboardStats: getDisplayStats(), logs, sessions, startEditSession, handleDeleteSession, newSession, setNewSession, handleAddSession, isSubmitting, toggleFixedTime, specialTimeSlots, totalRows, handleDownloadExcel, handleImportExcel, handleImportSessionsExcel, adminFilterDate, handleDateFilter, adminSearchKeyword, setAdminSearchKeyword, showColumnFilter, setShowShowColumnFilter, submissions, visibleColumns, toggleColumn, currentPage, isDataLoading, loadPage, handleSort, sortConfig, setAuditTarget, setShowAuditModal, showAuditModal, auditTarget, handleVerifyPayment, startEditSubmission, isEditing, setIsEditing, editData, setEditData, handleUpdateSubmission, handleDeleteSubmission, isEditingSession, setIsEditingSession, editingSession, setEditingSession, handleUpdateSession, timeslotConfig, setTimeslotConfig, generalTimeSlots, setGeneralTimeSlots, setSpecialTimeSlots, generateTimeSlots, newManualTime, setNewManualTime, handleManualTimeAdd, removeTimeSlot, saveTimeSlotsConfig, formatFullDateTime, deletedSubmissions, showRecycleBin, setShowRecycleBin, handleRestoreSubmission, dbStatus, paymentMethods, addPaymentMethod, deletePaymentMethod, handleClearLogs, handleClearRecycleBin, showAlert, showConfirm }}
-        />
+        <AdminLogin {...{ t, showAdminLogin: true, setShowAdminLogin: () => navigate('/'), adminUser, setAdminUser, adminPassword, setAdminPassword, handleAdminLogin, isDataLoading }} />
         <SystemModal 
           show={sysModal.show}
           type={sysModal.type}
@@ -1741,7 +1770,7 @@ const formatDateTimeMinute = (date: any) => {
           confirmText={sysModal.confirmText}
           cancelText={sysModal.cancelText}
         />
-      </>
+      </div>
     );
   }
 
@@ -1770,7 +1799,6 @@ const formatDateTimeMinute = (date: any) => {
     <div className="container">
       <CustomCursor />
       <EntryAnimation {...{ t, isEntryAnimating, shouldRenderEntry }} />
-      <AdminLogin {...{ t, showAdminLogin, setShowAdminLogin, adminUser, setAdminUser, adminPassword, setAdminPassword, handleAdminLogin, isDataLoading }} />
       <ConfirmationModal {...{ t, lang, showConfirmation, setShowConfirmation, formData, calculatedTotal, handleConfirmSubmit, isSubmitting, getSessionDisplayName, getPickupLocationDisplay, getPaymentMethodDisplay }} />
       <Header {...{ lang, setLang, theme, toggleTheme, t }} />
       <main className="main-content">
