@@ -8,7 +8,7 @@ import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDi
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { validateFieldLogic } from './utils/validationUtils'
-import { sortSubmissions, calculateDashboardStats } from './utils/dataUtils'
+import { sortSubmissions, calculateDashboardStats, filterSubmissions } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
@@ -553,12 +553,7 @@ function App() {
 
       // 即時模糊搜尋過濾
       if (adminSearchKeyword.trim()) {
-        const kw = adminSearchKeyword.toLowerCase();
-        data = data.filter(row => 
-          String(row[2]).toLowerCase().includes(kw) || 
-          String(row[3]).includes(kw) || 
-          String(row[4]).toLowerCase().includes(kw)
-        );
+        data = filterSubmissions(data, adminSearchKeyword);
       }
 
       setSubmissions([header, ...data]);
