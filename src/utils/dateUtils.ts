@@ -275,3 +275,19 @@ export const adjustSelectedDate = (
   return adjusted;
 };
 
+/**
+ * 清洗場次時間字串，統一轉為 HH:mm 格式並移除無效時段
+ */
+export const cleanSessionTimeFormat = (fixedTime: string): string => {
+  return (fixedTime || '').split(',').map((t: string) => {
+    const p = t.trim();
+    if (p.includes('T')) return p.split('T')[1].substring(0, 5);
+    if (p.length > 10) {
+      const m = p.match(/(\d{2}:\d{2})/);
+      return m ? m[1] : "";
+    }
+    return p;
+  }).filter((t: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(t) && t !== "23:30").join(',');
+};
+
+
