@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 import { registerLocale } from "react-datepicker";
 
-import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, generateTimeSlots, adjustSelectedDate, cleanSessionTimeFormat } from './utils/dateUtils'
+import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, generateTimeSlots, adjustSelectedDate, cleanSessionTimeFormat, toggleTimeInString } from './utils/dateUtils'
 import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
@@ -736,13 +736,11 @@ function App() {
 
   const toggleFixedTime = (time: string, isEdit: boolean) => {
     if (isEdit) {
-      const currentTimes = editingSession.fixedTime ? editingSession.fixedTime.split(',').filter(Boolean) : [];
-      const newTimes = currentTimes.includes(time) ? currentTimes.filter(t => t !== time) : [...currentTimes, time].sort();
-      setEditingSession({ ...editingSession, fixedTime: newTimes.join(',') });
+      const newTimes = toggleTimeInString(editingSession.fixedTime, time);
+      setEditingSession({ ...editingSession, fixedTime: newTimes });
     } else {
-      const currentTimes = newSession.fixedTime ? newSession.fixedTime.split(',').filter(Boolean) : [];
-      const newTimes = currentTimes.includes(time) ? currentTimes.filter(t => t !== time) : [...currentTimes, time].sort();
-      setNewSession({ ...newSession, fixedTime: newTimes.join(',') });
+      const newTimes = toggleTimeInString(newSession.fixedTime, time);
+      setNewSession({ ...newSession, fixedTime: newTimes });
     }
   };
 

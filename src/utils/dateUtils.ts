@@ -290,4 +290,16 @@ export const cleanSessionTimeFormat = (fixedTime: string): string => {
   }).filter((t: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(t) && t !== "23:30").join(',');
 };
 
+/**
+ * 在逗號分隔的時間字串中切換特定的時間點 (加入或移除)，並保持排序
+ */
+export const toggleTimeInString = (timeString: string, timeToToggle: string): string => {
+  const currentTimes = timeString ? timeString.split(',').filter(Boolean) : [];
+  const newTimes = currentTimes.includes(timeToToggle) 
+    ? currentTimes.filter(t => t !== timeToToggle) 
+    : [...currentTimes, timeToToggle].sort();
+  return newTimes.join(',');
+};
+
+
 
