@@ -70,3 +70,18 @@ export const calculateDashboardStats = (
   };
 };
 
+/**
+ * 根據關鍵字過濾報名資料 (模糊搜尋姓名、電話、Email)
+ */
+export const filterSubmissions = (data: any[][], keyword: string): any[][] => {
+  const kw = keyword.trim().toLowerCase();
+  if (!kw) return data;
+
+  return data.filter(row => 
+    String(row[2] || '').toLowerCase().includes(kw) || 
+    String(row[3] || '').includes(kw) || 
+    String(row[4] || '').toLowerCase().includes(kw)
+  );
+};
+
+
