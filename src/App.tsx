@@ -8,6 +8,7 @@ import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDi
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { validateFieldLogic } from './utils/validationUtils'
+import { sortSubmissions } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
@@ -522,25 +523,11 @@ function App() {
       direction = 'desc';
     }
     setSortConfig({ key: index, direction });
+    
     const header = submissions[0];
     const data = submissions.slice(1);
-    const sortedData = [...data].sort((a, b) => {
-      let valA = a[index];
-      let valB = b[index];
-      if (index === 0) {
-        const dateA = new Date(valA).getTime();
-        const dateB = new Date(valB).getTime();
-        return direction === 'asc' ? dateA - dateB : dateB - dateA;
-      }
-      if (!isNaN(Number(valA)) && !isNaN(Number(valB))) {
-        return direction === 'asc' ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
-      }
-      valA = String(valA).toLowerCase();
-      valB = String(valB).toLowerCase();
-      if (valA < valB) return direction === 'asc' ? -1 : 1;
-      if (valA > valB) return direction === 'asc' ? 1 : -1;
-      return 0;
-    });
+    const sortedData = sortSubmissions(data, index, direction);
+    
     setSubmissions([header, ...sortedData]);
   };
 
