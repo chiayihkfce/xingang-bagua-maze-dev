@@ -8,6 +8,7 @@ import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDi
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { validateFieldLogic } from './utils/validationUtils'
+import { formatName, formatBankLast5, formatPhone } from './utils/formatUtils'
 import { sortSubmissions, calculateDashboardStats, filterSubmissions } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
@@ -890,14 +891,13 @@ function App() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === 'name') {
-      const filteredValue = value.replace(/[0-9]/g, '');
-      if (filteredValue.length > 20) return;
+      const filteredValue = formatName(value);
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
       validateField(name, filteredValue);
       return;
     }
     if (name === 'bankLast5') {
-      const filteredValue = value.replace(/\D/g, '').slice(0, 5);
+      const filteredValue = formatBankLast5(value);
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
       return;
     }
@@ -939,10 +939,7 @@ function App() {
       return;
     }
     if (name === 'phone') {
-      const filteredValue = value.replace(/\D/g, '');
-      const rules: { [key: string]: number } = { '+886': 10, '+852': 8, '+853': 8, '+60': 11, '+65': 8, 'landline': 10 };
-      const maxLen = rules[formData.countryCode] || 15;
-      if (filteredValue.length > maxLen) return;
+      const filteredValue = formatPhone(value, formData.countryCode);
       setFormData(prev => ({ ...prev, [name]: filteredValue }));
       validateField(name, filteredValue);
       return;
