@@ -31,3 +31,42 @@ export const sortSubmissions = (data: any[][], index: number, direction: 'asc' |
     return 0;
   });
 };
+
+/**
+ * 計算儀表板動態統計數據 (針對篩選日期進行精確計算)
+ */
+export const calculateDashboardStats = (
+  submissions: any[][],
+  adminFilterDate: Date | null,
+  dashboardStats: any
+) => {
+  const baseStats = dashboardStats || { pendingCount: 0, totalRevenue: 0, todayKits: 0, todayPlayers: 0 };
+  
+  // 如果沒有選日期，直接顯示從 Firebase 監聽到的全域統計 (包含今日數據)
+  if (!adminFilterDate) {
+    return baseStats;
+  }
+
+  // 當有選特定日期時，必須「精確計算」該日清單
+  let kits = 0;
+  let players = 0;
+  
+  const formattedFilterDate = `${adminFilterDate.getFullYear()}-${String(adminFilterDate.getMonth() + 1).padStart(2, '0')}-${String(adminFilterDate.getDate()).padStart(2, '0')}`;
+  
+  // 從索引 1 開始 (跳過標題列)
+  for (let i = 1; i < submissions.length; i++) {
+    const rowPickupTime = String(submissions[i][11] || '');
+    // 只有當該列的預約日期與篩選日期相符時才計入
+    if (rowPickupTime.startsWith(formattedFilterDate)) {
+      kits += parseInt(submissions[i][6]) || 0;
+      players += parseInt(submissions[i][7]) || 0;
+    }
+  }
+
+  return {
+    ...baseStats,
+    todayKits: kits,
+    todayPlayers: players
+  };
+};
+

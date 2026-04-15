@@ -8,7 +8,7 @@ import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDi
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { validateFieldLogic } from './utils/validationUtils'
-import { sortSubmissions } from './utils/dataUtils'
+import { sortSubmissions, calculateDashboardStats } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
@@ -234,34 +234,7 @@ function App() {
 
   // [補回] 計算動態統計
   const getDisplayStats = (): DashboardStats => {
-    const baseStats = dashboardStats || { pendingCount: 0, totalRevenue: 0, todayKits: 0, todayPlayers: 0 };
-    
-    // 如果沒有選日期，直接顯示全域統計 (包含今日數據)
-    if (!adminFilterDate) {
-      return baseStats;
-    }
-
-    // 當有選特定日期時，必須「精確計算」該日清單
-    let kits = 0;
-    let players = 0;
-    
-    // 檢查目前清單是否真的屬於篩選日期（避免載入中的舊資料干擾）
-    const formattedFilterDate = `${adminFilterDate.getFullYear()}-${String(adminFilterDate.getMonth() + 1).padStart(2, '0')}-${String(adminFilterDate.getDate()).padStart(2, '0')}`;
-    
-    for (let i = 1; i < submissions.length; i++) {
-      const rowPickupTime = String(submissions[i][11] || '');
-      // 只有當該列的預約日期與篩選日期相符時才計入
-      if (rowPickupTime.startsWith(formattedFilterDate)) {
-        kits += parseInt(submissions[i][6]) || 0;
-        players += parseInt(submissions[i][7]) || 0;
-      }
-    }
-
-    return {
-      ...baseStats,
-      todayKits: kits,
-      todayPlayers: players
-    };
+    return calculateDashboardStats(submissions, adminFilterDate, dashboardStats);
   };
 
   // [補回] 下載 Excel 邏輯
