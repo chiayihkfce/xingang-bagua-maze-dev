@@ -7,6 +7,7 @@ import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, gener
 import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil } from './utils/displayUtils'
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
+import { validateFieldLogic } from './utils/validationUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
@@ -226,33 +227,7 @@ function App() {
 
   // [補回] 欄位驗證邏輯
   const validateField = (name: string, value: string, code?: string) => {
-    let error = '';
-    const currentCode = code || formData.countryCode;
-
-    if (name === 'email') {
-      if (value && !value.includes('@')) {
-        error = t.errorEmail;
-      }
-    } else if (name === 'phone') {
-      if (value) {
-        const rules: { [key: string]: number[] } = {
-          '+886': [9, 10],
-          '+852': [8],
-          '+853': [8],
-          '+60': [9, 10, 11],
-          '+65': [8],
-          'landline': [9, 10]
-        };
-        const allowedLengths = rules[currentCode] || [6, 15];
-        if (!allowedLengths.includes(value.length) || (currentCode === 'landline' && !value.startsWith('0'))) {
-          error = t.errorPhone;
-        }
-      }
-    } else if (name === 'name') {
-      if (value && value.length < 2) {
-        error = t.errorName;
-      }
-    }
+    const error = validateFieldLogic(name, value, code || formData.countryCode, t);
     setFormErrors(prev => ({ ...prev, [name]: error }));
   };
 
