@@ -4,7 +4,7 @@ import './App.css'
 import { registerLocale } from "react-datepicker";
 
 import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, generateTimeSlots } from './utils/dateUtils'
-import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil } from './utils/displayUtils'
+import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { validateFieldLogic } from './utils/validationUtils'
@@ -338,16 +338,15 @@ function App() {
   };
 
   // [補回] 複製帳號邏輯
-  const handleCopyAccount = (accountNumber?: string) => {
+  const handleCopyAccount = async (accountNumber?: string) => {
     if (!accountNumber) {
       console.error('未提供帳號，無法複製');
       return;
     }
-    navigator.clipboard.writeText(accountNumber).then(() => {
+    const success = await copyToClipboard(accountNumber);
+    if (success) {
       showAlert(t.accountCopied);
-    }).catch(err => {
-      console.error('無法複製帳號: ', err);
-    });
+    }
   };
 
   useEffect(() => {

@@ -29,3 +29,17 @@ export const getPaymentMethodDisplay = (method: string, lang: string, t: any) =>
   if (method.includes('電子支付')) return 'Digital Payment';
   return method;
 };
+
+/**
+ * 複製文字到剪貼簿
+ */
+export const copyToClipboard = async (text: string): Promise<boolean> => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    console.error('無法複製文字: ', err);
+    return false;
+  }
+};
+
