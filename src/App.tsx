@@ -5,6 +5,7 @@ import './App.css'
 import { registerLocale } from "react-datepicker";
 
 import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, pad } from './utils/dateUtils'
+import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil } from './utils/displayUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
@@ -570,11 +571,7 @@ function App() {
     }
   };
 
-  const getSessionDisplayName = (chineseName: string) => {
-    if (lang === 'zh') return chineseName;
-    const session = sessions.find(s => s.name === chineseName);
-    return session?.enName || chineseName;
-  };
+  const getSessionDisplayName = (chineseName: string) => getSessionDisplayNameUtil(chineseName, lang, sessions);
 
   const addPaymentMethod = async (methodData: any) => {
     if (!methodData.name) return;
@@ -1208,12 +1205,7 @@ function App() {
     setShowConfirmation(true);
   };
 
-  const getPickupLocationDisplay = (location: string) => {
-    if (lang === 'zh') return location;
-    if (location.includes('新港文教基金會')) return t.locFoundation;
-    if (location.includes('培桂堂')) return t.locPeiGui;
-    return location;
-  };
+  const getPickupLocationDisplay = (location: string) => getPickupLocationDisplayUtil(location, lang, t);
 
   // 執行最終資料寫入的函數
   const executeFinalSubmission = async (last5?: string) => {
@@ -1301,13 +1293,7 @@ function App() {
     }
   };
 
-  const getPaymentMethodDisplay = (method: string) => {
-    if (lang === 'zh') return method.split(' (')[0];
-    if (method.includes('現金支付')) return t.payInPerson;
-    if (method.includes('銀行轉帳')) return t.bankTransfer;
-    if (method.includes('電子支付')) return 'Digital Payment';
-    return method;
-  };
+  const getPaymentMethodDisplay = (method: string) => getPaymentMethodDisplayUtil(method, lang, t);
 
   const resetForm = () => {
     // 透過重新整理頁面來達到最徹底的狀態重置，解決組件內部狀態殘留問題
