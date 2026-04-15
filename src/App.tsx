@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 import { registerLocale } from "react-datepicker";
 
-import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, generateTimeSlots, adjustSelectedDate } from './utils/dateUtils'
+import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, generateTimeSlots, adjustSelectedDate, cleanSessionTimeFormat } from './utils/dateUtils'
 import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
@@ -775,15 +775,7 @@ function App() {
   };
 
   const startEditSession = (session: Session) => {
-    const cleanedTime = (session.fixedTime || '').split(',').map((t: string) => {
-      const p = t.trim();
-      if (p.includes('T')) return p.split('T')[1].substring(0, 5);
-      if (p.length > 10) {
-        const m = p.match(/(\d{2}:\d{2})/);
-        return m ? m[1] : "";
-      }
-      return p;
-    }).filter((t: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(t) && t !== "23:30").join(',');
+    const cleanedTime = cleanSessionTimeFormat(session.fixedTime || '');
     setEditingSession({ 
       id: (session as any).id, 
       oldName: session.name, 
