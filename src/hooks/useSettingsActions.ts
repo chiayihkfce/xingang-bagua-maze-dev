@@ -1,10 +1,11 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { Session } from "../types";
 import { cleanSessionTimeFormat } from "../utils/dateUtils";
 
 interface UseSettingsActionsProps {
   newSession: { name: string, price: string, fixedDate: string, fixedTime: string, isSpecial: boolean };
+  editingSession: { id: string, oldName: string, newName: string, newPrice: string, fixedDate: string, fixedTime: string, isSpecial: boolean };
   setNewSession: (data: any) => void;
   setIsSubmitting: (val: boolean) => void;
   setIsEditingSession: (val: boolean) => void;
@@ -18,6 +19,7 @@ interface UseSettingsActionsProps {
  */
 export const useSettingsActions = ({
   newSession,
+  editingSession,
   setNewSession,
   setIsSubmitting,
   setIsEditingSession,
@@ -69,9 +71,39 @@ export const useSettingsActions = ({
     setIsEditingSession(true);
   };
 
+  /**
+   * 提交場次修改
+   */
+  const handleUpdateSession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSession.id) return;
+    setIsSubmitting(true);
+    const collectionName = editingSession.isSpecial ? "special_sessions" : "sessions";
+    try {
+      const docRef = doc(db, collectionName, editingSession.id);
+      await updateDoc(docRef, {
+        name: editingSession.newName,
+        price: Number(editingSession.newPrice),
+        fixedDate: editingSession.fixedDate,
+        fixedTime: editingSession.fixedTime,
+        isSpecial: editingSession.isSpecial
+      });
+      setIsEditingSession(false);
+      await addLog('修改場次', `將 ${editingSession.oldName} 修改為 ${editingSession.newName}`);
+      showAlert('修改成功');
+    } catch (err) {
+      console.error(err);
+      showAlert('修改失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     handleAddSession,
-    startEditSession
+    startEditSession,
+    handleUpdateSession
   };
 };
+
 
