@@ -3,12 +3,11 @@ import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 import { registerLocale } from "react-datepicker";
 
-import { zhTW, formatFullDateTime, formatDateTimeMinute, findEarliestSlot, generateTimeSlots, adjustSelectedDate, cleanSessionTimeFormat, toggleTimeInString } from './utils/dateUtils'
+import { zhTW, formatFullDateTime, formatDateTimeMinute, generateTimeSlots, cleanSessionTimeFormat, toggleTimeInString } from './utils/dateUtils'
 import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
 import { sendPaymentSuccessEmail } from './utils/emailUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
-import { validateFieldLogic } from './utils/validationUtils'
-import { formatName, formatBankLast5, formatPhone, formatPhoneForDB } from './utils/formatUtils'
+import { formatPhoneForDB } from './utils/formatUtils'
 import { sortSubmissions, calculateDashboardStats, filterSubmissions } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useAppRouting } from './hooks/useAppRouting'
@@ -20,7 +19,7 @@ import { useRegistrationForm } from './hooks/useRegistrationForm'
 // 註冊語系
 registerLocale('zh', zhTW as any);
 
-import { Session, FormData, FormErrors, TimeslotConfig, DashboardStats, PaymentMethod, AdminAccount } from './types'
+import { Session, FormData, TimeslotConfig, DashboardStats, PaymentMethod, AdminAccount } from './types'
 
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
@@ -111,11 +110,9 @@ function App() {
     sessionType,
     setSessionType,
     formErrors,
-    setFormErrors,
     handleInputChange,
     handleDateChange,
-    handleCheckboxChange,
-    validateField
+    handleCheckboxChange
   } = useRegistrationForm({
     formData,
     setFormData,
@@ -162,20 +159,6 @@ function App() {
 
   // 時間段手動調整狀態
   const [newManualTime, setNewManualTime] = useState('');
-
-  const [sessionType, setSessionType] = useState<'一般預約' | '特別預約' | ''>('');
-
-  const [formErrors, setFormErrors] = useState<FormErrors>({
-    email: '',
-    phone: '',
-    name: ''
-  });
-
-  // [補回] 欄位驗證邏輯
-  const validateField = (name: string, value: string, code?: string) => {
-    const error = validateFieldLogic(name, value, code || formData.countryCode, t);
-    setFormErrors(prev => ({ ...prev, [name]: error }));
-  };
 
   // [補回] 計算動態統計
   const getDisplayStats = (): DashboardStats => {
@@ -821,97 +804,6 @@ function App() {
   };
 
   const [showConfirmation, setShowConfirmation] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    if (name === 'name') {
-      const filteredValue = formatName(value);
-      setFormData(prev => ({ ...prev, [name]: filteredValue }));
-      validateField(name, filteredValue);
-      return;
-    }
-    if (name === 'bankLast5') {
-      const filteredValue = formatBankLast5(value);
-      setFormData(prev => ({ ...prev, [name]: filteredValue }));
-      return;
-    }
-    if (name === 'quantity') {
-      const qty = parseInt(value) || 0;
-      setFormData(prev => {
-        let updatedSession = prev.session;
-        if (sessionType === '一般預約') {
-          const filtered = sessions.filter(s => !s.isSpecial);
-          if (qty >= 5) updatedSession = filtered.find(s => s.name.includes('團體優惠'))?.name || filtered[0]?.name || '';
-          else updatedSession = filtered.find(s => s.name.includes('單人') || s.name.includes('個人') || s.name.includes('一般'))?.name || filtered[0]?.name || '';
-        }
-        return { ...prev, quantity: value, session: updatedSession };
-      });
-      return;
-    }
-    if (name === 'session') {
-      const selectedSession = sessions.find(s => s.name === value);
-      let newPickupTime = ''; 
-      
-      // 如果是「特別場次」且有「固定日期」，則尊重固定日期
-      if (selectedSession?.fixedDate) {
-        const times = selectedSession.fixedTime ? selectedSession.fixedTime.split(',').sort() : [];
-        let timeToUse = times.length > 0 ? times[0] : timeslotConfig.generalStart;
-        if (timeToUse.length === 4 && timeToUse.includes(':')) timeToUse = '0' + timeToUse;
-        newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
-      } else {
-        // 其餘情況（包含有勾選時段的一般場次）一律交由 findEarliestSlot 計算最早可用時間
-        // 這會自動處理「超過今日最晚班次跳隔天」的邏輯
-        newPickupTime = findEarliestSlot(sessions, timeslotConfig, generalTimeSlots, specialTimeSlots, value);
-      }
-      
-      setFormData(prev => ({ ...prev, session: value, pickupTime: newPickupTime }));
-      return;
-    }
-    if (name === 'countryCode') {
-      setFormData(prev => ({ ...prev, [name]: value }));
-      validateField('phone', formData.phone, value);
-      return;
-    }
-    if (name === 'phone') {
-      const filteredValue = formatPhone(value, formData.countryCode);
-      setFormData(prev => ({ ...prev, [name]: filteredValue }));
-      validateField(name, filteredValue);
-      return;
-    }
-    if (name === 'email') {
-      setFormData(prev => ({ ...prev, [name]: value }));
-      validateField(name, value);
-      return;
-    }
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleDateChange = (date: Date | null) => {
-    if (date) {
-      const day = date.getDay();
-      if (day === 1 || day === 2) return;
-      
-      const selectedSession = sessions.find(s => s.name === formData.session);
-      const adjustedDate = adjustSelectedDate(
-        date, 
-        selectedSession, 
-        sessionType, 
-        timeslotConfig, 
-        generalTimeSlots, 
-        specialTimeSlots
-      );
-      
-      setFormData(prev => ({ ...prev, pickupTime: formatDateTimeMinute(adjustedDate) }));
-    }
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    setFormData(prev => {
-      const newReferral = checked ? [...prev.referral, value] : prev.referral.filter(item => item !== value);
-      return { ...prev, referral: newReferral };
-    });
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
