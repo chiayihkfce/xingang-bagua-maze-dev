@@ -18,6 +18,7 @@ import { useAdminAuth } from './hooks/useAdminAuth'
 import { useAdminData } from './hooks/useAdminData'
 import { useAdminActions } from './hooks/useAdminActions'
 import { useSettingsActions } from './hooks/useSettingsActions'
+import { useRegistrationActions } from './hooks/useRegistrationActions'
 
 // 註冊語系
 registerLocale('zh', zhTW as any);
@@ -204,9 +205,10 @@ const {
   saveTimeSlotsConfig,
   addPaymentMethod,
   deletePaymentMethod
-  } = useSettingsActions({ 
+} = useSettingsActions({ 
   sessions,
-  paymentMethods,  newSession, 
+  paymentMethods,
+  newSession, 
   editingSession,
   setNewSession, 
   setIsSubmitting, 
@@ -219,6 +221,11 @@ const {
   showAlert,
   showConfirm
 });
+
+// 使用抽離出的報名操作 Hook
+const {
+  handleSubmit
+} = useRegistrationActions({ formData, formErrors, sessionType, showAlert, setShowConfirmation });
 
 const [showAuditModal, setShowAuditModal] = useState(false);
 const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
@@ -439,26 +446,6 @@ const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
       const newTimes = toggleTimeInString(newSession.fixedTime, time);
       setNewSession({ ...newSession, fixedTime: newTimes });
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formErrors.email || formErrors.phone || formErrors.name) {
-      showAlert('請修正表單中的錯誤紅字後再試。');
-      return;
-    }
-    const requiredFields = [{ key: 'name', label: '姓名' }, { key: 'phone', label: '電話' }, { key: 'email', label: 'Email' }];
-    for (const field of requiredFields) {
-      const value = formData[field.key as keyof typeof formData];
-      if (!value || (typeof value === 'string' && value.trim() === '')) {
-        showAlert(`請填寫${field.label}`);
-        return;
-      }
-    }
-    if (sessionType === '') { showAlert('請選擇場次類型'); return; }
-    if (!formData.session) { showAlert('尚未選定場次'); return; }
-    if (!formData.pickupTime) { showAlert('請選擇日期時間'); return; }
-    setShowConfirmation(true);
   };
 
   const getPickupLocationDisplay = (location: string) => getPickupLocationDisplayUtil(location, lang, t);
