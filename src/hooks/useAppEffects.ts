@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
-import { FormData } from '../types';
+import { FormData, Session } from '../types';
 
 interface UseAppEffectsProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  sessions: Session[];
+  sessionType: string;
+  setCalculatedTotal: (total: number) => void;
 }
 
 /**
@@ -11,7 +14,10 @@ interface UseAppEffectsProps {
  */
 export const useAppEffects = ({
   formData,
-  setFormData
+  setFormData,
+  sessions,
+  sessionType,
+  setCalculatedTotal
 }: UseAppEffectsProps) => {
 
   /**
@@ -27,4 +33,15 @@ export const useAppEffects = ({
     }
   }, [formData.quantity, formData.players, setFormData]);
 
+  /**
+   * 副作用 2：計算總金額
+   */
+  useEffect(() => {
+    const qty = parseInt(formData.quantity) || 0;
+    const sessionObj = sessions.find(s => s.name === formData.session);
+    const price = sessionType === '' ? 0 : (sessionObj ? sessionObj.price : 650);
+    setCalculatedTotal(qty * price);
+  }, [formData.quantity, formData.session, sessions, sessionType, setCalculatedTotal]);
+
 };
+

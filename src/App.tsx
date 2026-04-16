@@ -133,7 +133,7 @@ function App() {
   });
 
   // 處理全域副作用
-  useAppEffects({ formData, setFormData });
+  useAppEffects({ formData, setFormData, sessions, sessionType, setCalculatedTotal });
 
   // --- 系統自訂彈窗狀態 ---
   const { sysModal, showAlert, showConfirm } = useSystemModal();
@@ -368,12 +368,6 @@ const handleCopyAccount = async (accountNumber?: string) => {
     showAlert(t.accountCopied);
   }
 };
-
-useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
-    const sessionObj = sessions.find(s => s.name === formData.session);
-    const price = sessionType === '' ? 0 : (sessionObj ? sessionObj.price : 650);
-    setCalculatedTotal(qty * price);
-  }, [formData.quantity, formData.session, sessions, sessionType]);
 
   const handleSort = (index: number) => {
     let direction: 'asc' | 'desc' = 'asc';
