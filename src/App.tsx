@@ -202,9 +202,11 @@ function App() {
   // 使用抽離出的管理員設定操作 Hook
   const {
     handleAddSession,
-    startEditSession
+    startEditSession,
+    handleUpdateSession
   } = useSettingsActions({ 
     newSession, 
+    editingSession,
     setNewSession, 
     setIsSubmitting, 
     setIsEditingSession,
@@ -546,30 +548,6 @@ function App() {
     } else {
       const newTimes = toggleTimeInString(newSession.fixedTime, time);
       setNewSession({ ...newSession, fixedTime: newTimes });
-    }
-  };
-
-  const handleUpdateSession = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingSession.id) return;
-    setIsSubmitting(true);
-    const collectionName = editingSession.isSpecial ? "special_sessions" : "sessions";
-    try {
-      const docRef = doc(db, collectionName, editingSession.id);
-      await updateDoc(docRef, {
-        name: editingSession.newName,
-        price: Number(editingSession.newPrice),
-        fixedDate: editingSession.fixedDate,
-        fixedTime: editingSession.fixedTime,
-        isSpecial: editingSession.isSpecial
-      });
-      setIsEditingSession(false);
-      addLog('修改場次', `將 ${editingSession.oldName} 修改為 ${editingSession.newName}`);
-      showAlert('修改成功');
-    } catch (err) {
-      showAlert('修改失敗');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
