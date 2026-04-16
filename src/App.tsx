@@ -20,7 +20,7 @@ import { useAdminAuth } from './hooks/useAdminAuth'
 // 註冊語系
 registerLocale('zh', zhTW as any);
 
-import { Session, FormData, TimeslotConfig, DashboardStats, PaymentMethod, AdminAccount } from './types'
+import { Session, FormData, TimeslotConfig, DashboardStats, PaymentMethod } from './types'
 
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
@@ -127,6 +127,24 @@ function App() {
     t
   });
 
+  // --- 系統自訂彈窗狀態 ---
+  const { sysModal, showAlert, showConfirm } = useSystemModal();
+
+  const addLog = async (type: string, details: string, operatorOverride?: string) => {
+    try {
+      const operator = operatorOverride || (currentAdmin ? (currentAdmin.nickname || currentAdmin.username) : '超級管理員');
+      await addDoc(collection(db, "logs"), {
+        timestamp: formatFullDateTime(new Date()),
+        type,
+        operator,
+        details,
+        createdAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.error("Log error:", e);
+    }
+  };
+
   // 使用抽離出的管理員認證 Hook
   const {
     isAdmin,
@@ -136,8 +154,9 @@ function App() {
     adminPassword,
     setAdminPassword,
     currentAdmin,
-    setCurrentAdmin
-  } = useAdminAuth();
+    setCurrentAdmin,
+    handleAdminLogin
+  } = useAdminAuth({ showAlert, addLog, setIsDataLoading });
 
   const [submissions, setSubmissions] = useState<any[][]>([]);
   const [deletedSubmissions, setDeletedSubmissions] = useState<any[][]>([]);
@@ -152,9 +171,6 @@ function App() {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
 
   const [calculatedTotal, setCalculatedTotal] = useState(0);
-
-  // --- 系統自訂彈窗狀態 ---
-  const { sysModal, showAlert, showConfirm } = useSystemModal();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
@@ -569,71 +585,10 @@ function App() {
 
     return () => {
       unsubSubmissions(); unsubBin(); unsubLogs(); unsubStats();
-    };
-  }, [isAdmin, adminFilterDate, adminSearchKeyword]);
+      };
+      }, [isAdmin, adminFilterDate, adminSearchKeyword]);
 
-  const handleAdminLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsDataLoading(true);
-
-    try {
-      // 1. 檢查是否輸入帳號
-      if (!adminUser) {
-        showAlert('請輸入帳號');
-        setIsDataLoading(false);
-        return;
-      }
-
-      // 2. 檢查 Firestore 中的多管理者帳號
-      const q = query(
-        collection(db, "admins"), 
-        where("username", "==", adminUser),
-        where("password", "==", adminPassword),
-        limit(1)
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const adminDoc = querySnapshot.docs[0];
-        const adminData = { id: adminDoc.id, ...adminDoc.data() } as AdminAccount;
-
-        setCurrentAdmin(adminData);
-        setIsAdmin(true);
-
-        // 更新最後登入時間
-        await updateDoc(doc(db, "admins", adminDoc.id), {
-          lastLogin: formatFullDateTime(new Date())
-        });
-
-        addLog('系統', `管理者 [${adminData.nickname || adminData.username}] 登入成功`);
-      } else {
-
-        showAlert('帳號或密碼錯誤');
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      showAlert('登入過程中發生錯誤');
-    } finally {
-      setIsDataLoading(false);
-    }
-  };
-  const handleDateFilter = (date: Date | null) => setAdminFilterDate(date);
-
-  const addLog = async (type: string, details: string, operatorOverride?: string) => {
-    try {
-      const operator = operatorOverride || (currentAdmin ? (currentAdmin.nickname || currentAdmin.username) : '超級管理員');
-      await addDoc(collection(db, "logs"), {
-        timestamp: formatFullDateTime(new Date()),
-        type,
-        operator,
-        details,
-        createdAt: serverTimestamp()
-      });
-    } catch (e) {
-      console.error("Log error:", e);
-    }
-  };
+      const handleDateFilter = (date: Date | null) => setAdminFilterDate(date);
 
   const handleClearLogs = async () => {
     showConfirm('確定要清除所有操作日誌嗎？此動作無法復原。', async () => {
