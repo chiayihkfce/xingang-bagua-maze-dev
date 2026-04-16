@@ -11,6 +11,7 @@ import { validateFieldLogic } from './utils/validationUtils'
 import { formatName, formatBankLast5, formatPhone, formatPhoneForDB } from './utils/formatUtils'
 import { sortSubmissions, calculateDashboardStats, filterSubmissions } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
+import { useAppRouting } from './hooks/useAppRouting'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
 // 註冊語系
@@ -56,25 +57,8 @@ function App() {
 
   // --- 1. 狀態與變數定義 ---
 
-  // 路由狀態
-  const [currentPath, setCurrentPath] = useState(window.location.hash.replace(/^#\/?/, '') || '/');
-  // 取得秘密路徑環境變數，若不存在則設為 null
-  const envSecret = import.meta.env.VITE_ADMIN_SECRET_PATH;
-  const SECRET_ADMIN_PATH = envSecret ? envSecret.replace(/^\//, '') : null;
-
-  // 監聽網址變化
-  useEffect(() => {
-    const handleHashChange = () => {
-      const path = window.location.hash.replace(/^#\/?/, '') || '/';
-      setCurrentPath(path);
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
-  const navigate = (to: string) => {
-    window.location.hash = to.startsWith('/') ? to : '/' + to;
-  };
+  // 基礎路由狀態
+  const { currentPath, navigate, SECRET_ADMIN_PATH } = useAppRouting();
 
   useEffect(() => {
     const savedVersion = localStorage.getItem('app_version');
