@@ -201,8 +201,9 @@ const {
   handleDeleteSession,
   saveTimeSlotsConfig,
   addPaymentMethod,
-  deletePaymentMethod
-} = useSettingsActions({ 
+  deletePaymentMethod,
+  handleImportSessionsExcel
+  } = useSettingsActions({ 
   sessions,
   paymentMethods,
   newSession, 
@@ -211,14 +212,14 @@ const {
   setIsSubmitting, 
   setIsEditingSession,
   setEditingSession,
+  setIsDataLoading,
   setGeneralTimeSlots,
   setSpecialTimeSlots,
   setTimeslotConfig,
   addLog, 
   showAlert,
   showConfirm
-});
-
+  });
 // 使用抽離出的報名操作 Hook
 const {
   handleSubmit,
@@ -456,55 +457,6 @@ useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
   const resetForm = () => {
     // 透過重新整理頁面來達到最徹底的狀態重置，解決組件內部狀態殘留問題
     window.location.reload();
-  };
-
-  // [新增] 匯入場次舊資料邏輯
-  const handleImportSessionsExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    showConfirm('確定要從此 Excel 匯入場次設定嗎？', async () => {
-      setIsDataLoading(true);
-      try {
-        const data = await readExcelFile(file);
-
-        if (data.length <= 1) {
-          showAlert('Excel 檔案似乎沒有資料。');
-          return;
-        }
-
-        const rows = data.slice(1);
-        let count = 0;
-
-        for (const row of rows) {
-          if (!row[0]) continue; // 沒名稱就跳過
-
-          const isSpecial = row[2] === '是' || row[2] === 'special' || row[2] === true || !!row[3];
-          const collectionName = isSpecial ? "special_sessions" : "sessions";
-
-          const sessionData = {
-            name: String(row[0]),
-            price: Number(row[1]) || 0,
-            isSpecial: isSpecial,
-            fixedDate: row[3] ? String(row[3]) : '',
-            fixedTime: row[4] ? String(row[4]) : '',
-            enName: row[5] ? String(row[5]) : '',
-            createdAt: serverTimestamp()
-          };
-
-          await addDoc(collection(db, collectionName), sessionData);
-          count++;
-        }
-        addLog('匯入場次', `批次匯入了 ${count} 個場次`);
-        showAlert(`成功匯入 ${count} 個場次！`);
-      } catch (err) {
-        console.error(err);
-        showAlert('匯入失敗，請檢查檔案格式。');
-      } finally {
-        setIsDataLoading(false);
-        e.target.value = '';
-      }
-    });
   };
 
   // 判斷是否顯示管理員後台
