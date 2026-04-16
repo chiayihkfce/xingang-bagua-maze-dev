@@ -40,12 +40,10 @@ import SystemModal from './components/UI/SystemModal'
 import { 
   collection, 
   addDoc, 
-  query, 
   updateDoc, 
   doc, 
   deleteDoc, 
   setDoc,
-  getDocs,
   serverTimestamp,
   writeBatch
 } from "firebase/firestore";
@@ -175,7 +173,8 @@ function App() {
     handleVerifyPayment,
     handleDeleteSubmission,
     handleRestoreSubmission,
-    handleClearRecycleBin
+    handleClearRecycleBin,
+    handleClearLogs
   } = useAdminActions({ 
     submissions, 
     deletedSubmissions, 
@@ -510,27 +509,6 @@ function App() {
     };
 
     const handleDateFilter = (date: Date | null) => setAdminFilterDate(date);
-  const handleClearLogs = async () => {
-    showConfirm('確定要清除所有操作日誌嗎？此動作無法復原。', async () => {
-      setIsDataLoading(true);
-      try {
-        const q = query(collection(db, "logs"));
-        const snapshot = await getDocs(q);
-        const batch = writeBatch(db);
-        snapshot.docs.forEach((doc) => {
-          batch.delete(doc.ref);
-        });
-        await batch.commit();
-        addLog('清除日誌', '超級管理員清空了所有操作日誌');
-        showAlert('日誌已全數清除');
-      } catch (err) {
-        console.error(err);
-        showAlert('清除失敗');
-      } finally {
-        setIsDataLoading(false);
-      }
-    });
-  };
 
   const loadPage = async (page: number) => {
     // Firebase 分頁邏輯較複雜，此處先維持基礎 100 筆即時更新，
