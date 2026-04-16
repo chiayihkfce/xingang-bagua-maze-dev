@@ -15,6 +15,7 @@ import { useAppVersion } from './hooks/useAppVersion'
 import { useSystemModal } from './hooks/useSystemModal'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 import { useRegistrationForm } from './hooks/useRegistrationForm'
+import { useAdminAuth } from './hooks/useAdminAuth'
 
 // 註冊語系
 registerLocale('zh', zhTW as any);
@@ -126,11 +127,18 @@ function App() {
     t
   });
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  // 控制登入視窗：如果在秘密路徑且未登入，則顯示
-  const [adminUser, setAdminUser] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
-  const [currentAdmin, setCurrentAdmin] = useState<AdminAccount | null>(null);
+  // 使用抽離出的管理員認證 Hook
+  const {
+    isAdmin,
+    setIsAdmin,
+    adminUser,
+    setAdminUser,
+    adminPassword,
+    setAdminPassword,
+    currentAdmin,
+    setCurrentAdmin
+  } = useAdminAuth();
+
   const [submissions, setSubmissions] = useState<any[][]>([]);
   const [deletedSubmissions, setDeletedSubmissions] = useState<any[][]>([]);
   const [showRecycleBin, setShowRecycleBin] = useState(false);
