@@ -66,6 +66,8 @@ function App() {
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calculatedTotal, setCalculatedTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadTime] = useState(Date.now());
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -225,14 +227,18 @@ const {
 // 使用抽離出的報名操作 Hook
 const {
   handleSubmit,
-  executeFinalSubmission
+  executeFinalSubmission,
+  handleConfirmSubmit
 } = useRegistrationActions({ 
   formData, 
   formErrors, 
   sessionType, 
   calculatedTotal,
+  paymentMethods,
+  loadTime,
   setIsSubmitting,
   setLastSubmissionId,
+  setSubmitted,
   showAlert, 
   setShowConfirmation,
   addLog
@@ -241,7 +247,6 @@ const {
 const [showAuditModal, setShowAuditModal] = useState(false);
 const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
 
-const [currentPage, setCurrentPage] = useState(1);const [loadTime] = useState(Date.now());
 const [sortConfig, setSortConfig] = useState<{ key: number, direction: 'asc' | 'desc' } | null>(null);
 const [visibleColumns, setVisibleColumns] = useState<number[]>(() => {
   const saved = localStorage.getItem('visibleColumns');
@@ -459,40 +464,6 @@ const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
   const getPickupLocationDisplay = (location: string) => getPickupLocationDisplayUtil(location, lang, t);
 
   // 執行最終資料寫入的函數
-  const handleConfirmSubmit = async () => {
-    if (formData.hp_field !== '') return; 
-    const timeDiff = (Date.now() - loadTime) / 1000;
-    if (timeDiff < 3) { showAlert('填表速度過快，請稍候再試'); return; }
-    
-    const qty = parseInt(formData.quantity) || 0;
-    const players = parseInt(formData.players) || 0;
-    const maxPlayers = qty * 4;
-    
-    if (qty <= 0) { showAlert('份數必須至少為 1 份'); setShowConfirmation(false); return; }
-    if (players <= 0 || players > maxPlayers) { showAlert(`遊玩人數上限應為 ${maxPlayers} 人`); setShowConfirmation(false); return; }
-    
-    setShowConfirmation(false);
-
-    // 取得選取的付款方式詳細資訊
-    const selectedPayment = (paymentMethods || []).find(m => m.name === formData.paymentMethod);
-
-    // 如果是「銀行轉帳」或「Line Pay」，不立即存檔，而是先顯示成功頁面（引導付款）
-    if (selectedPayment?.type === 'bank' || selectedPayment?.type === 'linepay') {
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    // 其他付款方式（如現金）則立即存檔
-    try {
-      await executeFinalSubmission();
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (e) {
-      // 錯誤已處理
-    }
-  };
-
   const handleUpdateBankLast5 = async (id: string, last5: string) => {
     try {
       // 如果 ID 存在，代表已經存過檔（例如現金轉銀行之類的例外狀況）
