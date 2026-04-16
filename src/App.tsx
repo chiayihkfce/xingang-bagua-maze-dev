@@ -19,6 +19,7 @@ import { useAdminActions } from './hooks/useAdminActions'
 import { useSettingsActions } from './hooks/useSettingsActions'
 import { useRegistrationActions } from './hooks/useRegistrationActions'
 import { useDisplayLogic } from './hooks/useDisplayLogic'
+import { useAppEffects } from './hooks/useAppEffects'
 
 // 註冊語系
 registerLocale('zh', zhTW as any);
@@ -130,6 +131,9 @@ function App() {
     specialTimeSlots,
     t
   });
+
+  // 處理全域副作用
+  useAppEffects({ formData, setFormData });
 
   // --- 系統自訂彈窗狀態 ---
   const { sysModal, showAlert, showConfirm } = useSystemModal();
@@ -364,16 +368,6 @@ const handleCopyAccount = async (accountNumber?: string) => {
     showAlert(t.accountCopied);
   }
 };
-
-useEffect(() => {
-  const qty = parseInt(formData.quantity) || 1;
-  const players = parseInt(formData.players) || 0;
-  const maxPlayers = qty * 4;
-
-  if (players > maxPlayers || players === 0) {
-    setFormData(prev => ({ ...prev, players: '1' }));
-  }
-}, [formData.quantity]);
 
 useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
     const sessionObj = sessions.find(s => s.name === formData.session);
