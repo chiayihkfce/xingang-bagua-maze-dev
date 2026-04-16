@@ -10,6 +10,8 @@ interface UseAdminActionsProps {
   setIsDataLoading: (val: boolean) => void;
   setIsSubmitting: (val: boolean) => void;
   setShowRecycleBin: (val: boolean) => void;
+  setIsEditing: (val: boolean) => void;
+  setEditData: (data: any) => void;
   addLog: (type: string, details: string) => Promise<void>;
 }
 
@@ -24,6 +26,8 @@ export const useAdminActions = ({
   setIsDataLoading,
   setIsSubmitting,
   setShowRecycleBin,
+  setIsEditing,
+  setEditData,
   addLog
 }: UseAdminActionsProps) => {
 
@@ -154,14 +158,34 @@ export const useAdminActions = ({
     });
   };
 
+  /**
+   * 開始編輯報名資料 (準備編輯資料並開啟 Modal)
+   */
+  const startEditSubmission = (row: any[], _index: number) => {
+    let rawTime = row[11] || ''; 
+    if (typeof rawTime === 'string' && rawTime.includes('T')) {
+      rawTime = new Date(rawTime).toLocaleString('zh-TW', { hour12: false }).replace(/\//g, '-');
+    }
+    setEditData({
+      timestamp: row[0], status: row[1], name: row[2], phone: row[3], email: row[4], 
+      session: row[5], quantity: row[6], players: row[7], totalAmount: row[8], 
+      paymentMethod: row[9], bankLast5: row[10], pickupTime: rawTime, 
+      pickupLocation: row[12], referral: row[13], notes: row[14],
+      id: row[15] 
+    });
+    setIsEditing(true);
+  };
+
   return {
     handleVerifyPayment,
     handleDeleteSubmission,
     handleRestoreSubmission,
     handleClearRecycleBin,
-    handleClearLogs
+    handleClearLogs,
+    startEditSubmission
   };
 };
+
 
 
 

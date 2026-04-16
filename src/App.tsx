@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 import { registerLocale } from "react-datepicker";
 
-import { zhTW, formatFullDateTime, formatDateTimeMinute, generateTimeSlots, cleanSessionTimeFormat, toggleTimeInString } from './utils/dateUtils'
+import { zhTW, formatFullDateTime, generateTimeSlots, cleanSessionTimeFormat, toggleTimeInString } from './utils/dateUtils'
 import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { formatPhoneForDB } from './utils/formatUtils'
@@ -70,6 +70,8 @@ function App() {
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isEditingSession, setIsEditingSession] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
 
   const [adminFilterDate, setAdminFilterDate] = useState<Date | null>(null);
   const [adminSearchKeyword, setAdminSearchKeyword] = useState('');
@@ -174,7 +176,8 @@ function App() {
     handleDeleteSubmission,
     handleRestoreSubmission,
     handleClearRecycleBin,
-    handleClearLogs
+    handleClearLogs,
+    startEditSubmission
   } = useAdminActions({ 
     submissions, 
     deletedSubmissions, 
@@ -183,13 +186,13 @@ function App() {
     setIsDataLoading, 
     setIsSubmitting, 
     setShowRecycleBin, 
+    setIsEditing,
+    setEditData,
     addLog 
   });
 
   const [adminTab, setAdminTab] = useState<'sessions' | 'submissions' | 'timeslots' | 'logs' | 'payments'>('sessions');
   const [newSession, setNewSession] = useState({ name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false });
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState<any>(null);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
 
@@ -514,21 +517,6 @@ function App() {
     // Firebase 分頁邏輯較複雜，此處先維持基礎 100 筆即時更新，
     // 若資料量大於 1000 筆時建議再實作 startAfter 分頁。
     setCurrentPage(page);
-  };
-
-  const startEditSubmission = (row: any[], _index: number) => {
-    let rawTime = row[11] || ''; 
-    if (typeof rawTime === 'string' && rawTime.includes('T')) {
-      rawTime = formatDateTimeMinute(new Date(rawTime));
-    }
-    setEditData({
-      timestamp: row[0], status: row[1], name: row[2], phone: row[3], email: row[4], 
-      session: row[5], quantity: row[6], players: row[7], totalAmount: row[8], 
-      paymentMethod: row[9], bankLast5: row[10], pickupTime: rawTime, 
-      pickupLocation: row[12], referral: row[13], notes: row[14],
-      id: row[15] // 使用 doc ID
-    });
-    setIsEditing(true);
   };
 
   const handleUpdateSubmission = async (e: React.FormEvent) => {
