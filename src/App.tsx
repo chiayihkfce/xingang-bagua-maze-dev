@@ -77,6 +77,8 @@ function App() {
   const [adminFilterDate, setAdminFilterDate] = useState<Date | null>(null);
   const [adminSearchKeyword, setAdminSearchKeyword] = useState('');
 
+  const [showRecycleBin, setShowRecycleBin] = useState(false);
+
   // 狀態管理
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -172,10 +174,19 @@ function App() {
   // 使用抽離出的管理員操作 Hook
   const {
     handleVerifyPayment,
-    handleDeleteSubmission
-  } = useAdminActions({ submissions, showConfirm, showAlert, setIsDataLoading, addLog });
+    handleDeleteSubmission,
+    handleRestoreSubmission
+  } = useAdminActions({ 
+    submissions, 
+    deletedSubmissions, 
+    showConfirm, 
+    showAlert, 
+    setIsDataLoading, 
+    setIsSubmitting, 
+    setShowRecycleBin, 
+    addLog 
+  });
 
-  const [showRecycleBin, setShowRecycleBin] = useState(false);
   const [adminTab, setAdminTab] = useState<'sessions' | 'submissions' | 'timeslots' | 'logs' | 'payments'>('sessions');
   const [newSession, setNewSession] = useState({ name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false });
   const [isEditing, setIsEditing] = useState(false);
@@ -771,25 +782,6 @@ function App() {
   const resetForm = () => {
     // 透過重新整理頁面來達到最徹底的狀態重置，解決組件內部狀態殘留問題
     window.location.reload();
-  };
-
-  const handleRestoreSubmission = async (rowIndex: number) => {
-    const target = deletedSubmissions[rowIndex];
-    const docId = target[15];
-    if (!docId) return;
-    
-    setIsSubmitting(true);
-    try {
-      const docRef = doc(db, "registrations", docId);
-      await updateDoc(docRef, { deleted: false });
-      addLog('還原報名', `從回收桶還原了「${target[2]}」的紀錄`);
-      showAlert('資料已還原');
-      setShowRecycleBin(false);
-    } catch (err) {
-      showAlert('還原失敗');
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleClearRecycleBin = async () => {
