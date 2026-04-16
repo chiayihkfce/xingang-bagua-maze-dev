@@ -71,6 +71,9 @@ function App() {
   const [submitted, setSubmitted] = useState(false);
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isEditingSession, setIsEditingSession] = useState(false);
 
   // 狀態管理
   const [formData, setFormData] = useState<FormData>({
@@ -160,6 +163,37 @@ function App() {
   // 時間段手動調整狀態
   const [newManualTime, setNewManualTime] = useState('');
 
+  // 監聽所有彈窗與載入狀態，防止背景滑動
+  useEffect(() => {
+    const isAnyModalOpen = 
+      sysModal.show || 
+      showConfirmation || 
+      isSubmitting || 
+      isDataLoading || 
+      showAuditModal || 
+      isEditing || 
+      isEditingSession || 
+      showRecycleBin || 
+      shouldRenderEntry;
+
+    if (isAnyModalOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => document.body.classList.remove('modal-open');
+  }, [
+    sysModal.show, 
+    showConfirmation, 
+    isSubmitting, 
+    isDataLoading, 
+    showAuditModal, 
+    isEditing, 
+    isEditingSession, 
+    showRecycleBin, 
+    shouldRenderEntry
+  ]);
+
   // [補回] 計算動態統計
   const getDisplayStats = (): DashboardStats => {
     return calculateDashboardStats(submissions, adminFilterDate, dashboardStats);
@@ -167,8 +201,6 @@ function App() {
 
   // [補回] 下載 Excel 邏輯
   const handleDownloadExcel = () => exportToExcel(submissions);
-
-  const [isDataLoading, setIsDataLoading] = useState(false);
 
   // [新增] 匯入 Excel 舊資料邏輯 (用於從 Google Sheets 遷移)
   const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -658,7 +690,6 @@ function App() {
     }
   };
 
-  const [isEditingSession, setIsEditingSession] = useState(false);
   const [editingSession, setEditingSession] = useState({ id: '', oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false });
 
   const toggleFixedTime = (time: string, isEdit: boolean) => {
@@ -802,8 +833,6 @@ function App() {
       }
     });
   };
-
-  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

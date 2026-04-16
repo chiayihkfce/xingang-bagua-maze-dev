@@ -2317,3 +2317,8 @@ body.light-theme .admin-time-input::-webkit-calendar-picker-indicator {
   background: rgba(255,255,255,0.05);
 }
 
+/* 當彈窗或載入畫面顯示時，禁止背景滑動 */
+body.modal-open {
+  overflow: hidden !important;
+}
+
