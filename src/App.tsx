@@ -177,10 +177,12 @@ function App() {
     handleRestoreSubmission,
     handleClearRecycleBin,
     handleClearLogs,
-    startEditSubmission
+    startEditSubmission,
+    handleUpdateSubmission
   } = useAdminActions({ 
     submissions, 
     deletedSubmissions, 
+    editData,
     showConfirm, 
     showAlert, 
     setIsDataLoading, 
@@ -517,26 +519,6 @@ function App() {
     // Firebase 分頁邏輯較複雜，此處先維持基礎 100 筆即時更新，
     // 若資料量大於 1000 筆時建議再實作 startAfter 分頁。
     setCurrentPage(page);
-  };
-
-  const handleUpdateSubmission = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editData.id) return;
-    setIsSubmitting(true);
-    try {
-      const docRef = doc(db, "registrations", editData.id);
-      const updateData = { ...editData };
-      delete updateData.id;
-      await updateDoc(docRef, updateData);
-      
-      addLog('修改報名', `修改了「${editData.name}」的報名資訊`);
-      setIsEditing(false);
-      showAlert('修改成功');
-    } catch (err) {
-      showAlert('更新失敗');
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const [editingSession, setEditingSession] = useState({ id: '', oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false });

@@ -5,6 +5,7 @@ import { sendPaymentSuccessEmail } from "../utils/emailUtils";
 interface UseAdminActionsProps {
   submissions: any[][];
   deletedSubmissions: any[][];
+  editData: any;
   showConfirm: (message: string, onConfirm: () => void) => void;
   showAlert: (message: string) => void;
   setIsDataLoading: (val: boolean) => void;
@@ -21,6 +22,7 @@ interface UseAdminActionsProps {
 export const useAdminActions = ({
   submissions,
   deletedSubmissions,
+  editData,
   showConfirm,
   showAlert,
   setIsDataLoading,
@@ -176,15 +178,41 @@ export const useAdminActions = ({
     setIsEditing(true);
   };
 
+  /**
+   * 提交報名資料修改
+   */
+  const handleUpdateSubmission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editData?.id) return;
+    setIsSubmitting(true);
+    try {
+      const docRef = doc(db, "registrations", editData.id);
+      const updateData = { ...editData };
+      delete updateData.id;
+      await updateDoc(docRef, updateData);
+      
+      await addLog('修改報名', `修改了「${editData.name}」的報名資訊`);
+      setIsEditing(false);
+      showAlert('修改成功');
+    } catch (err) {
+      console.error(err);
+      showAlert('更新失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     handleVerifyPayment,
     handleDeleteSubmission,
     handleRestoreSubmission,
     handleClearRecycleBin,
     handleClearLogs,
-    startEditSubmission
+    startEditSubmission,
+    handleUpdateSubmission
   };
 };
+
 
 
 
