@@ -2,6 +2,7 @@ import { collection, addDoc, updateDoc, doc, deleteDoc, setDoc, writeBatch, serv
 import { db } from "../firebase";
 import { Session, TimeslotConfig, PaymentMethod } from "../types";
 import { cleanSessionTimeFormat } from "../utils/dateUtils";
+import { readExcelFile } from "../utils/excelUtils";
 
 interface UseSettingsActionsProps {
   sessions: Session[];
@@ -12,6 +13,7 @@ interface UseSettingsActionsProps {
   setIsSubmitting: (val: boolean) => void;
   setIsEditingSession: (val: boolean) => void;
   setEditingSession: (data: any) => void;
+  setIsDataLoading: (val: boolean) => void;
   setGeneralTimeSlots: (slots: string[]) => void;
   setSpecialTimeSlots: (slots: string[]) => void;
   setTimeslotConfig: (val: any) => void;
@@ -32,6 +34,7 @@ export const useSettingsActions = ({
   setIsSubmitting,
   setIsEditingSession,
   setEditingSession,
+  setIsDataLoading,
   setGeneralTimeSlots,
   setSpecialTimeSlots,
   setTimeslotConfig,
@@ -247,6 +250,57 @@ export const useSettingsActions = ({
     });
   };
 
+  /**
+   * 批次從 Excel 匯入場次資料
+   */
+  const handleImportSessionsExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    showConfirm('確定要從此 Excel 匯入場次設定嗎？', async () => {
+      setIsDataLoading(true);
+      try {
+        const data = await readExcelFile(file);
+
+        if (data.length <= 1) {
+          showAlert('Excel 檔案似乎沒有資料。');
+          return;
+        }
+
+        const rows = data.slice(1);
+        let count = 0;
+
+        for (const row of rows) {
+          if (!row[0]) continue; 
+
+          const isSpecial = row[2] === '是' || row[2] === 'special' || row[2] === true || !!row[3];
+          const collectionName = isSpecial ? "special_sessions" : "sessions";
+
+          const sessionData = {
+            name: String(row[0]),
+            price: Number(row[1]) || 0,
+            isSpecial: isSpecial,
+            fixedDate: row[3] ? String(row[3]) : '',
+            fixedTime: row[4] ? String(row[4]) : '',
+            enName: row[5] ? String(row[5]) : '',
+            createdAt: serverTimestamp()
+          };
+
+          await addDoc(collection(db, collectionName), sessionData);
+          count++;
+        }
+        await addLog('匯入場次', `批次匯入了 ${count} 個場次`);
+        showAlert(`成功匯入 ${count} 個場次！`);
+      } catch (err) {
+        console.error(err);
+        showAlert('匯入失敗，請檢查檔案格式。');
+      } finally {
+        setIsDataLoading(false);
+        e.target.value = '';
+      }
+    });
+  };
+
   return {
     handleAddSession,
     startEditSession,
@@ -254,7 +308,8 @@ export const useSettingsActions = ({
     handleDeleteSession,
     saveTimeSlotsConfig,
     addPaymentMethod,
-    deletePaymentMethod
+    deletePaymentMethod,
+    handleImportSessionsExcel
   };
 };
 
