@@ -1,14 +1,12 @@
 import React from 'react';
 import CustomCursor from '../components/UI/CustomCursor';
-import EntryAnimation from '../components/Registration/EntryAnimation';
-import ConfirmationModal from '../components/Registration/ConfirmationModal';
 import Header from '../components/UI/Header';
 import StorySection from '../components/Registration/StorySection';
 import EventInfo from '../components/Registration/EventInfo';
 import RegistrationForm from '../components/Registration/RegistrationForm';
 import SocialButtons from '../components/UI/SocialButtons';
 import Footer from '../components/UI/Footer';
-import SystemModal from '../components/UI/SystemModal';
+import RegistrationOverlays from '../components/Registration/RegistrationOverlays';
 import { Session, FormData, FormErrors, PaymentMethod, Lang, Theme } from '../types';
 
 interface RegistrationPageProps {
@@ -58,12 +56,12 @@ const RegistrationPage: React.FC<RegistrationPageProps> = (props) => {
   return (
     <div className="container">
       <CustomCursor />
-      <EntryAnimation {...{ t, isEntryAnimating, shouldRenderEntry }} />
-      <ConfirmationModal 
+      <RegistrationOverlays 
         {...{ 
-          t, lang, showConfirmation, setShowConfirmation, formData, 
-          calculatedTotal, handleConfirmSubmit, isSubmitting, 
-          getSessionDisplayName, getPickupLocationDisplay, getPaymentMethodDisplay 
+          t, lang, isEntryAnimating, shouldRenderEntry, showConfirmation, 
+          setShowConfirmation, formData, calculatedTotal, handleConfirmSubmit, 
+          isSubmitting, getSessionDisplayName, getPickupLocationDisplay, 
+          getPaymentMethodDisplay, sysModal 
         }} 
       />
       <Header {...{ lang, setLang, theme, toggleTheme, t }} />
@@ -85,16 +83,6 @@ const RegistrationPage: React.FC<RegistrationPageProps> = (props) => {
       </main>
       <SocialButtons t={t} />
       <Footer t={t} />
-      <SystemModal 
-        show={sysModal.show}
-        type={sysModal.type}
-        title={sysModal.title}
-        message={sysModal.message}
-        onConfirm={sysModal.onConfirm}
-        onCancel={sysModal.onCancel}
-        confirmText={sysModal.confirmText}
-        cancelText={sysModal.cancelText}
-      />
     </div>
   );
 };
