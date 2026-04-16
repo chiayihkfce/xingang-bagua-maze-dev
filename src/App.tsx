@@ -37,12 +37,9 @@ import AdminLogin from './components/Admin/AdminLogin'
 import AdminDashboard from './components/Admin/AdminDashboard'
 import CustomCursor from './components/UI/CustomCursor'
 import SystemModal from './components/UI/SystemModal'
-
 import { 
   collection, 
   addDoc, 
-  updateDoc, 
-  doc, 
   serverTimestamp
 } from "firebase/firestore";
 import { db } from "./firebase";
@@ -227,8 +224,8 @@ const {
 // 使用抽離出的報名操作 Hook
 const {
   handleSubmit,
-  executeFinalSubmission,
-  handleConfirmSubmit
+  handleConfirmSubmit,
+  handleUpdateBankLast5
 } = useRegistrationActions({ 
   formData, 
   formErrors, 
@@ -464,24 +461,6 @@ const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
   const getPickupLocationDisplay = (location: string) => getPickupLocationDisplayUtil(location, lang, t);
 
   // 執行最終資料寫入的函數
-  const handleUpdateBankLast5 = async (id: string, last5: string) => {
-    try {
-      // 如果 ID 存在，代表已經存過檔（例如現金轉銀行之類的例外狀況）
-      if (id) {
-        const docRef = doc(db, "registrations", id);
-        await updateDoc(docRef, { bankLast5: last5 });
-        return true;
-      } else {
-        // 如果沒有 ID，代表尚未存過檔，現在進行最終存檔並帶入末五碼
-        const newId = await executeFinalSubmission(last5);
-        return !!newId;
-      }
-    } catch (err) {
-      console.error("更新末五碼失敗:", err);
-      return false;
-    }
-  };
-
   const getPaymentMethodDisplay = (method: string) => getPaymentMethodDisplayUtil(method, lang, t);
 
   const resetForm = () => {

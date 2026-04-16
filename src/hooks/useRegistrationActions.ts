@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { FormData, FormErrors, PaymentMethod } from '../types';
 import { formatPhoneForDB } from '../utils/formatUtils';
@@ -148,11 +148,32 @@ export const useRegistrationActions = ({
     }
   };
 
+  /**
+   * 更新銀行末五碼 (異步或先存檔)
+   */
+  const handleUpdateBankLast5 = async (id: string, last5: string) => {
+    try {
+      if (id) {
+        const docRef = doc(db, "registrations", id);
+        await updateDoc(docRef, { bankLast5: last5 });
+        return true;
+      } else {
+        const newId = await executeFinalSubmission(last5);
+        return !!newId;
+      }
+    } catch (err) {
+      console.error("更新末五碼失敗:", err);
+      return false;
+    }
+  };
+
   return {
     handleSubmit,
     executeFinalSubmission,
-    handleConfirmSubmit
+    handleConfirmSubmit,
+    handleUpdateBankLast5
   };
 };
+
 
 
