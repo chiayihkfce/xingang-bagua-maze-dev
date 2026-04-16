@@ -70,6 +70,17 @@ export const useSettingsActions = ({
   };
 
   /**
+   * 移除特定時段
+   */
+  const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
+    if (type === 'general') {
+      setGeneralTimeSlots(generalTimeSlots.filter(s => s !== slot));
+    } else {
+      setSpecialTimeSlots(specialTimeSlots.filter(s => s !== slot));
+    }
+  };
+
+  /**
    * 新增場次 (一般或特別)
    */
   const handleAddSession = async () => {
@@ -336,7 +347,8 @@ export const useSettingsActions = ({
     addPaymentMethod,
     deletePaymentMethod,
     handleImportSessionsExcel,
-    handleManualTimeAdd
+    handleManualTimeAdd,
+    removeTimeSlot
   };
 };
 

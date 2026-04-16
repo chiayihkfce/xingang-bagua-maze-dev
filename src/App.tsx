@@ -204,10 +204,10 @@ const {
   addPaymentMethod,
   deletePaymentMethod,
   handleImportSessionsExcel,
-  handleManualTimeAdd
+  handleManualTimeAdd,
+  removeTimeSlot
   } = useSettingsActions({ 
-  sessions,
-  paymentMethods,
+  sessions,  paymentMethods,
   generalTimeSlots,
   specialTimeSlots,
   newManualTime,
@@ -394,14 +394,6 @@ useEffect(() => {
     localStorage.setItem('visibleColumns', JSON.stringify(allIndexes));
   }
 }, [submissions]);
-
-const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
-  if (type === 'general') {
-    setGeneralTimeSlots(generalTimeSlots.filter(s => s !== slot));
-  } else {
-    setSpecialTimeSlots(specialTimeSlots.filter(s => s !== slot));
-  }
-};
 
 useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
     const sessionObj = sessions.find(s => s.name === formData.session);
