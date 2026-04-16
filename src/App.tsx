@@ -22,7 +22,7 @@ import { useSettingsActions } from './hooks/useSettingsActions'
 // 註冊語系
 registerLocale('zh', zhTW as any);
 
-import { FormData, TimeslotConfig, DashboardStats, PaymentMethod } from './types'
+import { FormData, DashboardStats, PaymentMethod } from './types'
 
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
@@ -44,8 +44,7 @@ import {
   updateDoc, 
   doc, 
   setDoc,
-  serverTimestamp,
-  writeBatch
+  serverTimestamp
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -203,7 +202,8 @@ function App() {
     handleAddSession,
     startEditSession,
     handleUpdateSession,
-    handleDeleteSession
+    handleDeleteSession,
+    saveTimeSlotsConfig
   } = useSettingsActions({ 
     sessions,
     newSession, 
@@ -212,6 +212,9 @@ function App() {
     setIsSubmitting, 
     setIsEditingSession,
     setEditingSession,
+    setGeneralTimeSlots,
+    setSpecialTimeSlots,
+    setTimeslotConfig,
     addLog, 
     showAlert,
     showConfirm
@@ -394,89 +397,6 @@ function App() {
       setGeneralTimeSlots(generalTimeSlots.filter(s => s !== slot));
     } else {
       setSpecialTimeSlots(specialTimeSlots.filter(s => s !== slot));
-    }
-  };
-
-  const saveTimeSlotsConfig = async (type: 'general' | 'special', config: TimeslotConfig, slots: string[]) => {
-    setIsSubmitting(true);
-    try {
-      const docPath = type === 'general' ? "general_timeslots" : "special_timeslots";
-      const docRef = doc(db, "config", docPath);
-      
-      const subConfig = type === 'general' ? {
-        start: config.generalStart,
-        end: config.generalEnd,
-        interval: config.generalInterval
-      } : {
-        start: config.specialStart,
-        end: config.specialEnd,
-        interval: config.specialInterval
-      };
-
-      // 1. 儲存主要的時段配置
-      await setDoc(docRef, {
-        config: subConfig,
-        slots: slots,
-        updatedAt: serverTimestamp()
-      });
-      
-      // 2. [核心修正] 自動清理所有場次中已失效的限制時段
-      const batch = writeBatch(db);
-      let cleanupCount = 0;
-      
-      // 找出該類別 (一般/特別) 的場次
-      const relevantSessions = sessions.filter(s => s.isSpecial === (type === 'special'));
-      
-      for (const session of relevantSessions) {
-        if (session.fixedTime) {
-          const originalTimes = session.fixedTime.split(',').filter(Boolean);
-          // 只保留那些仍存在於新 slots 清單中的時間點
-          const filteredTimes = originalTimes.filter(t => slots.includes(t));
-          
-          // 如果數量不一致，代表有時段被刪除了，需要更新該場次文件
-          if (originalTimes.length !== filteredTimes.length) {
-            const collectionName = type === 'general' ? "sessions" : "special_sessions";
-            const sessionRef = doc(db, collectionName, (session as any).id);
-            batch.update(sessionRef, { 
-              fixedTime: filteredTimes.join(',') 
-            });
-            cleanupCount++;
-          }
-        }
-      }
-      
-      // 如果有任何場次需要清理，執行批次寫入
-      if (cleanupCount > 0) {
-        await batch.commit();
-        console.log(`[系統] 已從 ${cleanupCount} 個場次中移除了失效的時段`);
-      }
-
-      // 3. 同步更新本地全域 State
-      if (type === 'general') {
-        setGeneralTimeSlots(slots);
-        setTimeslotConfig(prev => ({
-          ...prev,
-          generalStart: config.generalStart,
-          generalEnd: config.generalEnd,
-          generalInterval: config.generalInterval
-        }));
-      } else {
-        setSpecialTimeSlots(slots);
-        setTimeslotConfig(prev => ({
-          ...prev,
-          specialStart: config.specialStart,
-          specialEnd: config.specialEnd,
-          specialInterval: config.specialInterval
-        }));
-      }
-      
-      addLog('修改時段', `管理員更新了${type === 'general' ? '一般' : '特別'}預約時段設定，並同步清理了 ${cleanupCount} 個場次的無效時段`);
-      showAlert(`${type === 'general' ? '一般' : '特別'}預約時段已儲存${cleanupCount > 0 ? `，並同步清理了 ${cleanupCount} 個場次的失效時段` : ''}`);
-    } catch (err) {
-      console.error(err);
-      showAlert('儲存失敗');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

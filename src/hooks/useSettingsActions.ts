@@ -1,6 +1,6 @@
-import { collection, addDoc, updateDoc, doc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, deleteDoc, setDoc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import { Session } from "../types";
+import { Session, TimeslotConfig } from "../types";
 import { cleanSessionTimeFormat } from "../utils/dateUtils";
 
 interface UseSettingsActionsProps {
@@ -11,6 +11,9 @@ interface UseSettingsActionsProps {
   setIsSubmitting: (val: boolean) => void;
   setIsEditingSession: (val: boolean) => void;
   setEditingSession: (data: any) => void;
+  setGeneralTimeSlots: (slots: string[]) => void;
+  setSpecialTimeSlots: (slots: string[]) => void;
+  setTimeslotConfig: (val: any) => void;
   addLog: (type: string, details: string) => Promise<void>;
   showAlert: (message: string) => void;
   showConfirm: (message: string, onConfirm: () => void) => void;
@@ -27,6 +30,9 @@ export const useSettingsActions = ({
   setIsSubmitting,
   setIsEditingSession,
   setEditingSession,
+  setGeneralTimeSlots,
+  setSpecialTimeSlots,
+  setTimeslotConfig,
   addLog,
   showAlert,
   showConfirm
@@ -123,13 +129,90 @@ export const useSettingsActions = ({
     });
   };
 
+  /**
+   * 儲存預約時段配置
+   */
+  const saveTimeSlotsConfig = async (type: 'general' | 'special', config: TimeslotConfig, slots: string[]) => {
+    setIsSubmitting(true);
+    try {
+      const docPath = type === 'general' ? "general_timeslots" : "special_timeslots";
+      const docRef = doc(db, "config", docPath);
+      
+      const subConfig = type === 'general' ? {
+        start: config.generalStart,
+        end: config.generalEnd,
+        interval: config.generalInterval
+      } : {
+        start: config.specialStart,
+        end: config.specialEnd,
+        interval: config.specialInterval
+      };
+
+      await setDoc(docRef, {
+        config: subConfig,
+        slots: slots,
+        updatedAt: serverTimestamp()
+      });
+      
+      const batch = writeBatch(db);
+      let cleanupCount = 0;
+      const relevantSessions = sessions.filter(s => s.isSpecial === (type === 'special'));
+      
+      for (const session of relevantSessions) {
+        if (session.fixedTime) {
+          const originalTimes = session.fixedTime.split(',').filter(Boolean);
+          const filteredTimes = originalTimes.filter(t => slots.includes(t));
+          
+          if (originalTimes.length !== filteredTimes.length) {
+            const collectionName = type === 'general' ? "sessions" : "special_sessions";
+            const sessionRef = doc(db, collectionName, (session as any).id);
+            batch.update(sessionRef, { fixedTime: filteredTimes.join(',') });
+            cleanupCount++;
+          }
+        }
+      }
+      
+      if (cleanupCount > 0) {
+        await batch.commit();
+      }
+
+      if (type === 'general') {
+        setGeneralTimeSlots(slots);
+        setTimeslotConfig((prev: any) => ({
+          ...prev,
+          generalStart: config.generalStart,
+          generalEnd: config.generalEnd,
+          generalInterval: config.generalInterval
+        }));
+      } else {
+        setSpecialTimeSlots(slots);
+        setTimeslotConfig((prev: any) => ({
+          ...prev,
+          specialStart: config.specialStart,
+          specialEnd: config.specialEnd,
+          specialInterval: config.specialInterval
+        }));
+      }
+      
+      await addLog('修改時段', `管理員更新了${type === 'general' ? '一般' : '特別'}預約時段設定，並同步清理了 ${cleanupCount} 個場次的無效時段`);
+      showAlert(`${type === 'general' ? '一般' : '特別'}預約時段已儲存${cleanupCount > 0 ? `，並同步清理了 ${cleanupCount} 個場次的失效時段` : ''}`);
+    } catch (err) {
+      console.error(err);
+      showAlert('儲存失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     handleAddSession,
     startEditSession,
     handleUpdateSession,
-    handleDeleteSession
+    handleDeleteSession,
+    saveTimeSlotsConfig
   };
 };
+
 
 
 
