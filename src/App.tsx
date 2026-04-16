@@ -12,6 +12,7 @@ import { formatName, formatBankLast5, formatPhone, formatPhoneForDB } from './ut
 import { sortSubmissions, calculateDashboardStats, filterSubmissions } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
 import { useAppRouting } from './hooks/useAppRouting'
+import { useAppVersion } from './hooks/useAppVersion'
 import { useFirebaseListeners } from './hooks/useFirebaseListeners'
 
 // 註冊語系
@@ -60,26 +61,8 @@ function App() {
   // 基礎路由狀態
   const { currentPath, navigate, SECRET_ADMIN_PATH } = useAppRouting();
 
-  useEffect(() => {
-    const savedVersion = localStorage.getItem('app_version');
-    if (savedVersion !== APP_VERSION) {
-      console.log(`[系統] 偵測到版本更新 (${savedVersion} -> ${APP_VERSION})，正在清理過時快取...`);
-      // 清理可能導致 UI 不一致的關鍵快取
-      const keysToClear = [
-        'bagua_maze_sessions', 
-        'bagua_maze_slots', 
-        'adminSortConfig'
-      ];
-      keysToClear.forEach(key => localStorage.removeItem(key));
-      
-      localStorage.setItem('app_version', APP_VERSION);
-      
-      // 如果是從舊版本升級，可視情況強制重新載入頁面確保狀態乾淨
-      if (savedVersion) {
-        window.location.reload();
-      }
-    }
-  }, []);
+  // 版本控管與快取清理
+  useAppVersion(APP_VERSION);
 
   // 使用抽離出的主題與語言 Hook
   const { lang, setLang, theme, toggleTheme, t } = useSystemTheme();
