@@ -25,18 +25,9 @@ registerLocale('zh', zhTW as any);
 
 import { FormData, DashboardStats } from './types'
 
-import Header from './components/UI/Header'
-import Footer from './components/UI/Footer'
-import SocialButtons from './components/UI/SocialButtons'
-import EntryAnimation from './components/Registration/EntryAnimation'
-import StorySection from './components/Registration/StorySection'
-import EventInfo from './components/Registration/EventInfo'
-import RegistrationForm from './components/Registration/RegistrationForm'
-import ConfirmationModal from './components/Registration/ConfirmationModal'
-import CustomCursor from './components/UI/CustomCursor'
-import SystemModal from './components/UI/SystemModal'
 import SuccessPage from './pages/SuccessPage'
 import AdminPage from './pages/AdminPage'
+import RegistrationPage from './pages/RegistrationPage'
 import { 
   collection, 
   addDoc, 
@@ -559,30 +550,18 @@ useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
   }
 
   return (
-    <div className="container">
-      <CustomCursor />
-      <EntryAnimation {...{ t, isEntryAnimating, shouldRenderEntry }} />
-      <ConfirmationModal {...{ t, lang, showConfirmation, setShowConfirmation, formData, calculatedTotal, handleConfirmSubmit, isSubmitting, getSessionDisplayName, getPickupLocationDisplay, getPaymentMethodDisplay }} />
-      <Header {...{ lang, setLang, theme, toggleTheme, t }} />
-      <main className="main-content">
-        <div className="poster-container"><img src="poster.jpg" alt="Poster" className="poster-image" /></div>
-        <StorySection t={t} />
-        <EventInfo t={t} />
-        <RegistrationForm {...{ t, lang, formData, formErrors, sessionType, setSessionType, sessions, timeslotConfig, generalTimeSlots, specialTimeSlots, handleInputChange, handleCheckboxChange, handleDateChange, handleCopyAccount, handleSubmit, isSubmitting, calculatedTotal, getSessionDisplayName, paymentMethods }} />
-      </main>
-      <SocialButtons t={t} />
-      <Footer t={t} />
-      <SystemModal 
-        show={sysModal.show}
-        type={sysModal.type}
-        title={sysModal.title}
-        message={sysModal.message}
-        onConfirm={sysModal.onConfirm}
-        onCancel={sysModal.onCancel}
-        confirmText={sysModal.confirmText}
-        cancelText={sysModal.cancelText}
-      />
-    </div>
+    <RegistrationPage 
+      {...{ 
+        t, lang, setLang, theme, toggleTheme, formData, formErrors, sessionType, 
+        setSessionType, sessions, timeslotConfig, generalTimeSlots, 
+        specialTimeSlots, handleInputChange, handleCheckboxChange, 
+        handleDateChange, handleCopyAccount, handleSubmit, isSubmitting, 
+        calculatedTotal, getSessionDisplayName, getPickupLocationDisplay, 
+        getPaymentMethodDisplay, paymentMethods, isEntryAnimating, 
+        shouldRenderEntry, showConfirmation, setShowConfirmation, 
+        handleConfirmSubmit, sysModal 
+      }} 
+    />
   )
 }
 export default App
