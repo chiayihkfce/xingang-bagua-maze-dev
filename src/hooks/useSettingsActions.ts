@@ -1,10 +1,14 @@
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
+import { Session } from "../types";
+import { cleanSessionTimeFormat } from "../utils/dateUtils";
 
 interface UseSettingsActionsProps {
   newSession: { name: string, price: string, fixedDate: string, fixedTime: string, isSpecial: boolean };
   setNewSession: (data: any) => void;
   setIsSubmitting: (val: boolean) => void;
+  setIsEditingSession: (val: boolean) => void;
+  setEditingSession: (data: any) => void;
   addLog: (type: string, details: string) => Promise<void>;
   showAlert: (message: string) => void;
 }
@@ -16,6 +20,8 @@ export const useSettingsActions = ({
   newSession,
   setNewSession,
   setIsSubmitting,
+  setIsEditingSession,
+  setEditingSession,
   addLog,
   showAlert
 }: UseSettingsActionsProps) => {
@@ -46,7 +52,26 @@ export const useSettingsActions = ({
     }
   };
 
+  /**
+   * 開始編輯場次 (準備編輯資料並開啟 Modal)
+   */
+  const startEditSession = (session: Session) => {
+    const cleanedTime = cleanSessionTimeFormat(session.fixedTime || '');
+    setEditingSession({ 
+      id: (session as any).id, 
+      oldName: session.name, 
+      newName: session.name, 
+      newPrice: String(session.price), 
+      fixedDate: session.fixedDate || '', 
+      fixedTime: cleanedTime, 
+      isSpecial: session.isSpecial !== undefined ? session.isSpecial : !!session.fixedDate 
+    });
+    setIsEditingSession(true);
+  };
+
   return {
-    handleAddSession
+    handleAddSession,
+    startEditSession
   };
 };
+

@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 import { registerLocale } from "react-datepicker";
 
-import { zhTW, formatFullDateTime, generateTimeSlots, cleanSessionTimeFormat, toggleTimeInString } from './utils/dateUtils'
+import { zhTW, formatFullDateTime, generateTimeSlots, toggleTimeInString } from './utils/dateUtils'
 import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { formatPhoneForDB } from './utils/formatUtils'
@@ -22,7 +22,7 @@ import { useSettingsActions } from './hooks/useSettingsActions'
 // 註冊語系
 registerLocale('zh', zhTW as any);
 
-import { Session, FormData, TimeslotConfig, DashboardStats, PaymentMethod } from './types'
+import { FormData, TimeslotConfig, DashboardStats, PaymentMethod } from './types'
 
 import Header from './components/UI/Header'
 import Footer from './components/UI/Footer'
@@ -70,9 +70,11 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [isEditingSession, setIsEditingSession] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<any>(null);
+
+  const [isEditingSession, setIsEditingSession] = useState(false);
+  const [editingSession, setEditingSession] = useState({ id: '', oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false });
 
   const [adminTab, setAdminTab] = useState<'sessions' | 'submissions' | 'timeslots' | 'logs' | 'payments'>('sessions');
   const [newSession, setNewSession] = useState({ name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false });
@@ -199,8 +201,17 @@ function App() {
 
   // 使用抽離出的管理員設定操作 Hook
   const {
-    handleAddSession
-  } = useSettingsActions({ newSession, setNewSession, setIsSubmitting, addLog, showAlert });
+    handleAddSession,
+    startEditSession
+  } = useSettingsActions({ 
+    newSession, 
+    setNewSession, 
+    setIsSubmitting, 
+    setIsEditingSession,
+    setEditingSession,
+    addLog, 
+    showAlert 
+  });
 
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
@@ -528,8 +539,6 @@ function App() {
     setCurrentPage(page);
   };
 
-  const [editingSession, setEditingSession] = useState({ id: '', oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false });
-
   const toggleFixedTime = (time: string, isEdit: boolean) => {
     if (isEdit) {
       const newTimes = toggleTimeInString(editingSession.fixedTime, time);
@@ -538,20 +547,6 @@ function App() {
       const newTimes = toggleTimeInString(newSession.fixedTime, time);
       setNewSession({ ...newSession, fixedTime: newTimes });
     }
-  };
-
-  const startEditSession = (session: Session) => {
-    const cleanedTime = cleanSessionTimeFormat(session.fixedTime || '');
-    setEditingSession({ 
-      id: (session as any).id, 
-      oldName: session.name, 
-      newName: session.name, 
-      newPrice: String(session.price), 
-      fixedDate: session.fixedDate || '', 
-      fixedTime: cleanedTime, 
-      isSpecial: session.isSpecial !== undefined ? session.isSpecial : !!session.fixedDate 
-    });
-    setIsEditingSession(true);
   };
 
   const handleUpdateSession = async (e: React.FormEvent) => {
