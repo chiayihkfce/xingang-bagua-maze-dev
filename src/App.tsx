@@ -33,11 +33,10 @@ import StorySection from './components/Registration/StorySection'
 import EventInfo from './components/Registration/EventInfo'
 import RegistrationForm from './components/Registration/RegistrationForm'
 import ConfirmationModal from './components/Registration/ConfirmationModal'
-import AdminLogin from './components/Admin/AdminLogin'
-import AdminDashboard from './components/Admin/AdminDashboard'
 import CustomCursor from './components/UI/CustomCursor'
 import SystemModal from './components/UI/SystemModal'
 import SuccessPage from './pages/SuccessPage'
+import AdminPage from './pages/AdminPage'
 import { 
   collection, 
   addDoc, 
@@ -519,42 +518,31 @@ useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
 
   // 判斷是否顯示管理員後台
   if (SECRET_ADMIN_PATH && SECRET_ADMIN_PATH !== '/' && currentPath === SECRET_ADMIN_PATH) {
-    if (isAdmin) {
-      return (
-        <>
-          <CustomCursor />
-          <AdminDashboard 
-            {...{ t, theme, toggleTheme, setIsAdmin: (val) => { setIsAdmin(val); if(!val) navigate('/'); }, adminTab, setAdminTab, currentAdmin, setCurrentAdmin, dashboardStats: getDisplayStats(), logs, sessions, startEditSession, handleDeleteSession, newSession, setNewSession, handleAddSession, isSubmitting, toggleFixedTime, specialTimeSlots, totalRows, handleDownloadExcel, handleImportExcel, handleImportSessionsExcel, adminFilterDate, handleDateFilter, adminSearchKeyword, setAdminSearchKeyword, showColumnFilter, setShowShowColumnFilter, submissions, visibleColumns, toggleColumn, currentPage, isDataLoading, loadPage, handleSort, sortConfig, setAuditTarget, setShowAuditModal, showAuditModal, auditTarget, handleVerifyPayment, startEditSubmission, isEditing, setIsEditing, editData, setEditData, handleUpdateSubmission, handleDeleteSubmission, isEditingSession, setIsEditingSession, editingSession, setEditingSession, handleUpdateSession, timeslotConfig, setTimeslotConfig, generalTimeSlots, setGeneralTimeSlots, setSpecialTimeSlots, generateTimeSlots, newManualTime, setNewManualTime, handleManualTimeAdd, removeTimeSlot, saveTimeSlotsConfig, formatFullDateTime, deletedSubmissions, showRecycleBin, setShowRecycleBin, handleRestoreSubmission, dbStatus, paymentMethods, addPaymentMethod, deletePaymentMethod, handleClearLogs, handleClearRecycleBin, showAlert, showConfirm }}
-          />
-          <SystemModal 
-            show={sysModal.show}
-            type={sysModal.type}
-            title={sysModal.title}
-            message={sysModal.message}
-            onConfirm={sysModal.onConfirm}
-            onCancel={sysModal.onCancel}
-            confirmText={sysModal.confirmText}
-            cancelText={sysModal.cancelText}
-          />
-        </>
-      );
-    }
-    
     return (
-      <div className="admin-only-page">
-        <CustomCursor />
-        <AdminLogin {...{ t, showAdminLogin: true, setShowAdminLogin: () => navigate('/'), adminUser, setAdminUser, adminPassword, setAdminPassword, handleAdminLogin, isDataLoading }} />
-        <SystemModal 
-          show={sysModal.show}
-          type={sysModal.type}
-          title={sysModal.title}
-          message={sysModal.message}
-          onConfirm={sysModal.onConfirm}
-          onCancel={sysModal.onCancel}
-          confirmText={sysModal.confirmText}
-          cancelText={sysModal.cancelText}
-        />
-      </div>
+      <AdminPage 
+        {...{ 
+          isAdmin, setIsAdmin, adminTab, setAdminTab, currentAdmin, setCurrentAdmin, 
+          dashboardStats: getDisplayStats(), logs, sessions, startEditSession, 
+          handleDeleteSession, newSession, setNewSession, handleAddSession, 
+          isSubmitting, toggleFixedTime, specialTimeSlots, totalRows, 
+          handleDownloadExcel, handleImportExcel, handleImportSessionsExcel, 
+          adminFilterDate, handleDateFilter, adminSearchKeyword, setAdminSearchKeyword, 
+          showColumnFilter, setShowShowColumnFilter, submissions, visibleColumns, 
+          toggleColumn, currentPage, isDataLoading, loadPage, handleSort, sortConfig, 
+          setAuditTarget, setShowAuditModal, showAuditModal, auditTarget, 
+          handleVerifyPayment, startEditSubmission, isEditing, setIsEditing, 
+          editData, setEditData, handleUpdateSubmission, handleDeleteSubmission, 
+          isEditingSession, setIsEditingSession, editingSession, setEditingSession, 
+          handleUpdateSession, timeslotConfig, setTimeslotConfig, generalTimeSlots, 
+          setGeneralTimeSlots, setSpecialTimeSlots, generateTimeSlots, newManualTime, 
+          setNewManualTime, handleManualTimeAdd, removeTimeSlot, saveTimeSlotsConfig, 
+          formatFullDateTime, deletedSubmissions, showRecycleBin, setShowRecycleBin, 
+          handleRestoreSubmission, dbStatus, paymentMethods, addPaymentMethod, 
+          deletePaymentMethod, handleClearLogs, handleClearRecycleBin, showAlert, 
+          showConfirm, sysModal, t, theme, toggleTheme, adminUser, setAdminUser, 
+          adminPassword, setAdminPassword, handleAdminLogin, navigate, SECRET_ADMIN_PATH, currentPath
+        }} 
+      />
     );
   }
 
