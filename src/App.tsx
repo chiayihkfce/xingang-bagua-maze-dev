@@ -4,7 +4,7 @@ import './App.css'
 import { registerLocale } from "react-datepicker";
 
 import { zhTW, formatFullDateTime, generateTimeSlots, toggleTimeInString } from './utils/dateUtils'
-import { getSessionDisplayName as getSessionDisplayNameUtil, getPickupLocationDisplay as getPickupLocationDisplayUtil, getPaymentMethodDisplay as getPaymentMethodDisplayUtil, copyToClipboard } from './utils/displayUtils'
+import { copyToClipboard } from './utils/displayUtils'
 import { exportToExcel, readExcelFile } from './utils/excelUtils'
 import { sortSubmissions, calculateDashboardStats } from './utils/dataUtils'
 import { useSystemTheme } from './hooks/useSystemTheme'
@@ -18,6 +18,7 @@ import { useAdminData } from './hooks/useAdminData'
 import { useAdminActions } from './hooks/useAdminActions'
 import { useSettingsActions } from './hooks/useSettingsActions'
 import { useRegistrationActions } from './hooks/useRegistrationActions'
+import { useDisplayLogic } from './hooks/useDisplayLogic'
 
 // 註冊語系
 registerLocale('zh', zhTW as any);
@@ -114,6 +115,13 @@ function App() {
     isEntryAnimating,
     shouldRenderEntry
   } = useFirebaseListeners(setFormData);
+
+  // 使用抽離出的顯示邏輯 Hook
+  const {
+    getSessionDisplayName,
+    getPickupLocationDisplay,
+    getPaymentMethodDisplay
+  } = useDisplayLogic({ lang, sessions, t });
 
   const {
     sessionType,
@@ -417,10 +425,7 @@ const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
   }
 };
 
-  const getSessionDisplayName = (chineseName: string) => getSessionDisplayNameUtil(chineseName, lang, sessions);
-
-  useEffect(() => {
-    const qty = parseInt(formData.quantity) || 0;
+useEffect(() => {    const qty = parseInt(formData.quantity) || 0;
     const sessionObj = sessions.find(s => s.name === formData.session);
     const price = sessionType === '' ? 0 : (sessionObj ? sessionObj.price : 650);
     setCalculatedTotal(qty * price);
@@ -457,11 +462,6 @@ const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
       setNewSession({ ...newSession, fixedTime: newTimes });
     }
   };
-
-  const getPickupLocationDisplay = (location: string) => getPickupLocationDisplayUtil(location, lang, t);
-
-  // 執行最終資料寫入的函數
-  const getPaymentMethodDisplay = (method: string) => getPaymentMethodDisplayUtil(method, lang, t);
 
   const resetForm = () => {
     // 透過重新整理頁面來達到最徹底的狀態重置，解決組件內部狀態殘留問題
