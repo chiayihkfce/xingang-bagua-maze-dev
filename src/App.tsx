@@ -171,7 +171,8 @@ function App() {
 
   // 使用抽離出的管理員操作 Hook
   const {
-    handleVerifyPayment
+    handleVerifyPayment,
+    handleDeleteSubmission
   } = useAdminActions({ submissions, showConfirm, showAlert, setIsDataLoading, addLog });
 
   const [showRecycleBin, setShowRecycleBin] = useState(false);
@@ -653,26 +654,6 @@ function App() {
         showAlert('刪除成功');
       } catch (err) {
         showAlert('刪除失敗');
-      }
-    });
-  };
-
-  const handleDeleteSubmission = async (rowIndex: number) => {
-    const target = submissions[rowIndex];
-    const docId = target[15];
-    if (!docId) return;
-    
-    showConfirm('確定要將這筆報名資料移至回收桶嗎？', async () => {
-      setIsDataLoading(true);
-      try {
-        const docRef = doc(db, "registrations", docId);
-        await updateDoc(docRef, { deleted: true });
-        addLog('刪除報名', `將「${target[2]}」移至回收桶`);
-        showAlert('已移至回收桶');
-      } catch (err) {
-        showAlert('操作失敗');
-      } finally {
-        setIsDataLoading(false);
       }
     });
   };
