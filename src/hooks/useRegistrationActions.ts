@@ -1,6 +1,6 @@
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import { FormData, FormErrors } from '../types';
+import { FormData, FormErrors, PaymentMethod } from '../types';
 import { formatPhoneForDB } from '../utils/formatUtils';
 import { formatFullDateTime } from '../utils/dateUtils';
 
@@ -9,8 +9,11 @@ interface UseRegistrationActionsProps {
   formErrors: FormErrors;
   sessionType: '一般預約' | '特別預約' | '';
   calculatedTotal: number;
+  paymentMethods: PaymentMethod[];
+  loadTime: number;
   setIsSubmitting: (val: boolean) => void;
   setLastSubmissionId: (id: string | null) => void;
+  setSubmitted: (val: boolean) => void;
   showAlert: (message: string) => void;
   setShowConfirmation: (val: boolean) => void;
   addLog: (type: string, details: string) => Promise<void>;
@@ -24,8 +27,11 @@ export const useRegistrationActions = ({
   formErrors,
   sessionType,
   calculatedTotal,
+  paymentMethods,
+  loadTime,
   setIsSubmitting,
   setLastSubmissionId,
+  setSubmitted,
   showAlert,
   setShowConfirmation,
   addLog
@@ -108,9 +114,45 @@ export const useRegistrationActions = ({
     }
   };
 
+  /**
+   * 確認視窗按下確認後的最終處理
+   */
+  const handleConfirmSubmit = async () => {
+    if (formData.hp_field !== '') return; 
+    const timeDiff = (Date.now() - loadTime) / 1000;
+    if (timeDiff < 3) { showAlert('填表速度過快，請稍候再試'); return; }
+    
+    const qty = parseInt(formData.quantity) || 0;
+    const players = parseInt(formData.players) || 0;
+    const maxPlayers = qty * 4;
+    
+    if (qty <= 0) { showAlert('份數必須至少為 1 份'); setShowConfirmation(false); return; }
+    if (players <= 0 || players > maxPlayers) { showAlert(`遊玩人數上限應為 ${maxPlayers} 人`); setShowConfirmation(false); return; }
+    
+    setShowConfirmation(false);
+
+    const selectedPayment = (paymentMethods || []).find(m => m.name === formData.paymentMethod);
+
+    if (selectedPayment?.type === 'bank' || selectedPayment?.type === 'linepay') {
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    try {
+      await executeFinalSubmission();
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      // 錯誤已處理
+    }
+  };
+
   return {
     handleSubmit,
-    executeFinalSubmission
+    executeFinalSubmission,
+    handleConfirmSubmit
   };
 };
+
 
