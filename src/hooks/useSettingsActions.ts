@@ -1,10 +1,11 @@
 import { collection, addDoc, updateDoc, doc, deleteDoc, setDoc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import { Session, TimeslotConfig } from "../types";
+import { Session, TimeslotConfig, PaymentMethod } from "../types";
 import { cleanSessionTimeFormat } from "../utils/dateUtils";
 
 interface UseSettingsActionsProps {
   sessions: Session[];
+  paymentMethods: PaymentMethod[];
   newSession: { name: string, price: string, fixedDate: string, fixedTime: string, isSpecial: boolean };
   editingSession: { id: string, oldName: string, newName: string, newPrice: string, fixedDate: string, fixedTime: string, isSpecial: boolean };
   setNewSession: (data: any) => void;
@@ -24,6 +25,7 @@ interface UseSettingsActionsProps {
  */
 export const useSettingsActions = ({
   sessions,
+  paymentMethods,
   newSession,
   editingSession,
   setNewSession,
@@ -204,14 +206,41 @@ export const useSettingsActions = ({
     }
   };
 
+  /**
+   * 付款方式管理：新增或修改
+   */
+  const addPaymentMethod = async (methodData: any) => {
+    if (!methodData.name) return;
+    
+    const existingIndex = paymentMethods.findIndex(m => m.id === methodData.id);
+    let newMethods;
+    if (existingIndex > -1) {
+      newMethods = [...paymentMethods];
+      newMethods[existingIndex] = methodData;
+    } else {
+      newMethods = [...paymentMethods, methodData];
+    }
+
+    try {
+      await setDoc(doc(db, "config", "payments"), { methods: newMethods });
+      await addLog('付款方式', `${existingIndex > -1 ? '修改' : '新增'}了付款方式: ${methodData.name}`);
+      showAlert('已儲存變更');
+    } catch (e) { 
+      console.error(e);
+      showAlert('儲存失敗'); 
+    }
+  };
+
   return {
     handleAddSession,
     startEditSession,
     handleUpdateSession,
     handleDeleteSession,
-    saveTimeSlotsConfig
+    saveTimeSlotsConfig,
+    addPaymentMethod
   };
 };
+
 
 
 

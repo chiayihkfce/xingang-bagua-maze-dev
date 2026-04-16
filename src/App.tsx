@@ -196,236 +196,214 @@ function App() {
     setEditData,
     addLog 
   });
+// 使用抽離出的管理員設定操作 Hook
+const {
+  handleAddSession,
+  startEditSession,
+  handleUpdateSession,
+  handleDeleteSession,
+  saveTimeSlotsConfig,
+  addPaymentMethod
+} = useSettingsActions({ 
+  sessions,
+  paymentMethods,
+  newSession, 
+  editingSession,
+  setNewSession, 
+  setIsSubmitting, 
+  setIsEditingSession,
+  setEditingSession,
+  setGeneralTimeSlots,
+  setSpecialTimeSlots,
+  setTimeslotConfig,
+  addLog, 
+  showAlert,
+  showConfirm
+});
 
-  // 使用抽離出的管理員設定操作 Hook
-  const {
-    handleAddSession,
-    startEditSession,
-    handleUpdateSession,
-    handleDeleteSession,
-    saveTimeSlotsConfig
-  } = useSettingsActions({ 
-    sessions,
-    newSession, 
-    editingSession,
-    setNewSession, 
-    setIsSubmitting, 
-    setIsEditingSession,
-    setEditingSession,
-    setGeneralTimeSlots,
-    setSpecialTimeSlots,
-    setTimeslotConfig,
-    addLog, 
-    showAlert,
-    showConfirm
-  });
+const [showAuditModal, setShowAuditModal] = useState(false);
+const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
 
-  const [showAuditModal, setShowAuditModal] = useState(false);
-  const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
+const [calculatedTotal, setCalculatedTotal] = useState(0);
 
-  const [calculatedTotal, setCalculatedTotal] = useState(0);
+const [currentPage, setCurrentPage] = useState(1);
+const [loadTime] = useState(Date.now());
+const [sortConfig, setSortConfig] = useState<{ key: number, direction: 'asc' | 'desc' } | null>(null);
+const [visibleColumns, setVisibleColumns] = useState<number[]>(() => {
+  const saved = localStorage.getItem('visibleColumns');
+  return saved ? JSON.parse(saved) : [];
+});
+const [showColumnFilter, setShowShowColumnFilter] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loadTime] = useState(Date.now());
-  const [sortConfig, setSortConfig] = useState<{ key: number, direction: 'asc' | 'desc' } | null>(null);
-  const [visibleColumns, setVisibleColumns] = useState<number[]>(() => {
-    const saved = localStorage.getItem('visibleColumns');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [showColumnFilter, setShowShowColumnFilter] = useState(false);
+// 時間段手動調整狀態
+const [newManualTime, setNewManualTime] = useState('');
 
-  // 時間段手動調整狀態
-  const [newManualTime, setNewManualTime] = useState('');
+// 監聽所有彈窗與載入狀態，防止背景滑動
+useEffect(() => {
+  const isAnyModalOpen = 
+    sysModal.show || 
+    showConfirmation || 
+    isSubmitting || 
+    isDataLoading || 
+    showAuditModal || 
+    isEditing || 
+    isEditingSession || 
+    showRecycleBin || 
+    shouldRenderEntry;
 
-  // 監聽所有彈窗與載入狀態，防止背景滑動
-  useEffect(() => {
-    const isAnyModalOpen = 
-      sysModal.show || 
-      showConfirmation || 
-      isSubmitting || 
-      isDataLoading || 
-      showAuditModal || 
-      isEditing || 
-      isEditingSession || 
-      showRecycleBin || 
-      shouldRenderEntry;
+  if (isAnyModalOpen) {
+    document.body.classList.add('modal-open');
+  } else {
+    document.body.classList.remove('modal-open');
+  }
+  return () => document.body.classList.remove('modal-open');
+}, [
+  sysModal.show, 
+  showConfirmation, 
+  isSubmitting, 
+  isDataLoading, 
+  showAuditModal, 
+  isEditing, 
+  isEditingSession, 
+  showRecycleBin, 
+  shouldRenderEntry
+]);
 
-    if (isAnyModalOpen) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-    return () => document.body.classList.remove('modal-open');
-  }, [
-    sysModal.show, 
-    showConfirmation, 
-    isSubmitting, 
-    isDataLoading, 
-    showAuditModal, 
-    isEditing, 
-    isEditingSession, 
-    showRecycleBin, 
-    shouldRenderEntry
-  ]);
+// [補回] 計算動態統計
+const getDisplayStats = (): DashboardStats => {
+  return calculateDashboardStats(submissions, adminFilterDate, dashboardStats);
+};
 
-  // [補回] 計算動態統計
-  const getDisplayStats = (): DashboardStats => {
-    return calculateDashboardStats(submissions, adminFilterDate, dashboardStats);
-  };
+// [補回] 下載 Excel 邏輯
+const handleDownloadExcel = () => exportToExcel(submissions);
 
-  // [補回] 下載 Excel 邏輯
-  const handleDownloadExcel = () => exportToExcel(submissions);
+// [新增] 匯入 Excel 舊資料邏輯 (用於從 Google Sheets 遷移)
+const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-  // [新增] 匯入 Excel 舊資料邏輯 (用於從 Google Sheets 遷移)
-  const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    showConfirm('確定要從此 Excel 匯入舊報名資料嗎？', async () => {
-      setIsDataLoading(true);
-      try {
-        const data = await readExcelFile(file);
-
-        if (data.length <= 1) {
-          showAlert('Excel 檔案似乎沒有資料（只有標題列或空表）。');
-          return;
-        }
-
-        const rows = data.slice(1);
-        let count = 0;
-
-        for (const row of rows) {
-          // 如果這一列幾乎是空的就跳過
-          if (!row[2] && !row[3]) continue; 
-
-          const submissionData = {
-            timestamp: row[0] ? String(row[0]) : formatFullDateTime(new Date()),
-            status: row[1] || '待審核',
-            name: String(row[2] || '無姓名'),
-            phone: String(row[3] || '無電話'),
-            email: String(row[4] || ''),
-            session: String(row[5] || '未知場次'),
-            quantity: String(row[6] || '1'),
-            players: String(row[7] || '1'),
-            totalAmount: Number(row[8]) || 0,
-            paymentMethod: String(row[9] || '現金支付'),
-            bankLast5: String(row[10] || '無'),
-            pickupTime: row[11] ? String(row[11]) : '',
-            pickupLocation: String(row[12] || '新港文教基金會(閱讀館)'),
-            referral: String(row[13] || ''),
-            notes: String(row[14] || '無'),
-            createdAt: serverTimestamp(),
-            deleted: false
-          };
-
-          try {
-            await addDoc(collection(db, "registrations"), submissionData);
-            count++;
-          } catch (writeErr) {
-            console.error('寫入 Firebase 失敗:', writeErr);
-          }
-        }
-        showAlert(`匯入程序結束！成功寫入 ${count} 筆資料。`);
-      } catch (err) {
-        console.error('Excel 解析錯誤:', err);
-        showAlert('匯入失敗：無法讀取 Excel 檔案。請確保檔案格式正確 (.xlsx)。');
-      } finally {
-        setIsDataLoading(false);
-        e.target.value = '';
-      }
-    });
-  };
-
-  // [補回] 欄位切換邏輯 (加入持久化)
-  const toggleColumn = (index: number) => {
-    setVisibleColumns(prev => {
-      const newList = prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index].sort((a, b) => a - b);
-      localStorage.setItem('visibleColumns', JSON.stringify(newList));
-      return newList;
-    });
-  };
-
-  // [補回] 複製帳號邏輯
-  const handleCopyAccount = async (accountNumber?: string) => {
-    if (!accountNumber) {
-      console.error('未提供帳號，無法複製');
-      return;
-    }
-    const success = await copyToClipboard(accountNumber);
-    if (success) {
-      showAlert(t.accountCopied);
-    }
-  };
-
-  useEffect(() => {
-    const qty = parseInt(formData.quantity) || 1;
-    const players = parseInt(formData.players) || 0;
-    const maxPlayers = qty * 4;
-    
-    if (players > maxPlayers || players === 0) {
-      setFormData(prev => ({ ...prev, players: '1' }));
-    }
-  }, [formData.quantity]);
-
-  useEffect(() => {
-    // 只有在 submissions 有資料，且 visibleColumns 既沒有目前狀態、也沒有 localStorage 存檔時，才自動全選
-    const saved = localStorage.getItem('visibleColumns');
-    if (submissions.length > 0 && visibleColumns.length === 0 && !saved) {
-      const allIndexes = submissions[0].map((_, i) => i);
-      setVisibleColumns(allIndexes);
-      localStorage.setItem('visibleColumns', JSON.stringify(allIndexes));
-    }
-  }, [submissions]);
-
-  const handleManualTimeAdd = (type: 'general' | 'special') => {
-    if (!newManualTime || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(newManualTime)) {
-      showAlert('請輸入正確的時間格式 (HH:mm)');
-      return;
-    }
-    if (type === 'general') {
-      if (generalTimeSlots.includes(newManualTime)) return;
-      setGeneralTimeSlots([...generalTimeSlots, newManualTime].sort());
-    } else {
-      if (specialTimeSlots.includes(newManualTime)) return;
-      setSpecialTimeSlots([...specialTimeSlots, newManualTime].sort());
-    }
-    setNewManualTime('');
-  };
-
-  const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
-    if (type === 'general') {
-      setGeneralTimeSlots(generalTimeSlots.filter(s => s !== slot));
-    } else {
-      setSpecialTimeSlots(specialTimeSlots.filter(s => s !== slot));
-    }
-  };
-
-  const getSessionDisplayName = (chineseName: string) => getSessionDisplayNameUtil(chineseName, lang, sessions);
-
-  const addPaymentMethod = async (methodData: any) => {
-    if (!methodData.name) return;
-    
-    // 檢查是新增還是修改
-    const existingIndex = paymentMethods.findIndex(m => m.id === methodData.id);
-    let newMethods;
-    if (existingIndex > -1) {
-      // 修改現有項目
-      newMethods = [...paymentMethods];
-      newMethods[existingIndex] = methodData;
-    } else {
-      // 新增項目
-      newMethods = [...paymentMethods, methodData];
-    }
-
+  showConfirm('確定要從此 Excel 匯入舊報名資料嗎？', async () => {
+    setIsDataLoading(true);
     try {
-      await setDoc(doc(db, "config", "payments"), { methods: newMethods });
-      addLog('付款方式', `${existingIndex > -1 ? '修改' : '新增'}了付款方式: ${methodData.name}`);
-      showAlert('已儲存變更');
-    } catch (e) { showAlert('儲存失敗'); }
-  };
+      const data = await readExcelFile(file);
 
-  const deletePaymentMethod = async (method: PaymentMethod) => {
-    showConfirm(`確定要刪除「${method.name}」嗎？`, async () => {
+      if (data.length <= 1) {
+        showAlert('Excel 檔案似乎沒有資料（只有標題列或空表）。');
+        return;
+      }
+
+      const rows = data.slice(1);
+      let count = 0;
+
+      for (const row of rows) {
+        // 如果這一列幾乎是空的就跳過
+        if (!row[2] && !row[3]) continue; 
+
+        const submissionData = {
+          timestamp: row[0] ? String(row[0]) : formatFullDateTime(new Date()),
+          status: row[1] || '待審核',
+          name: String(row[2] || '無姓名'),
+          phone: String(row[3] || '無電話'),
+          email: String(row[4] || ''),
+          session: String(row[5] || '未知場次'),
+          quantity: String(row[6] || '1'),
+          players: String(row[7] || '1'),
+          totalAmount: Number(row[8]) || 0,
+          paymentMethod: String(row[9] || '現金支付'),
+          bankLast5: String(row[10] || '無'),
+          pickupTime: row[11] ? String(row[11]) : '',
+          pickupLocation: String(row[12] || '新港文教基金會(閱讀館)'),
+          referral: String(row[13] || ''),
+          notes: String(row[14] || '無'),
+          createdAt: serverTimestamp(),
+          deleted: false
+        };
+
+        try {
+          await addDoc(collection(db, "registrations"), submissionData);
+          count++;
+        } catch (writeErr) {
+          console.error('寫入 Firebase 失敗:', writeErr);
+        }
+      }
+      showAlert(`匯入程序結束！成功寫入 ${count} 筆資料。`);
+    } catch (err) {
+      console.error('Excel 解析錯誤:', err);
+      showAlert('匯入失敗：無法讀取 Excel 檔案。請確保檔案格式正確 (.xlsx)。');
+    } finally {
+      setIsDataLoading(false);
+      e.target.value = '';
+    }
+  });
+};
+
+// [補回] 欄位切換邏輯 (加入持久化)
+const toggleColumn = (index: number) => {
+  setVisibleColumns(prev => {
+    const newList = prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index].sort((a, b) => a - b);
+    localStorage.setItem('visibleColumns', JSON.stringify(newList));
+    return newList;
+  });
+};
+
+// [補回] 複製帳號邏輯
+const handleCopyAccount = async (accountNumber?: string) => {
+  if (!accountNumber) {
+    console.error('未提供帳號，無法複製');
+    return;
+  }
+  const success = await copyToClipboard(accountNumber);
+  if (success) {
+    showAlert(t.accountCopied);
+  }
+};
+
+useEffect(() => {
+  const qty = parseInt(formData.quantity) || 1;
+  const players = parseInt(formData.players) || 0;
+  const maxPlayers = qty * 4;
+
+  if (players > maxPlayers || players === 0) {
+    setFormData(prev => ({ ...prev, players: '1' }));
+  }
+}, [formData.quantity]);
+
+useEffect(() => {
+  // 只有在 submissions 有資料，且 visibleColumns 既沒有目前狀態、也沒有 localStorage 存檔時，才自動全選
+  const saved = localStorage.getItem('visibleColumns');
+  if (submissions.length > 0 && visibleColumns.length === 0 && !saved) {
+    const allIndexes = submissions[0].map((_, i) => i);
+    setVisibleColumns(allIndexes);
+    localStorage.setItem('visibleColumns', JSON.stringify(allIndexes));
+  }
+}, [submissions]);
+
+const handleManualTimeAdd = (type: 'general' | 'special') => {
+  if (!newManualTime || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(newManualTime)) {
+    showAlert('請輸入正確的時間格式 (HH:mm)');
+    return;
+  }
+  if (type === 'general') {
+    if (generalTimeSlots.includes(newManualTime)) return;
+    setGeneralTimeSlots([...generalTimeSlots, newManualTime].sort());
+  } else {
+    if (specialTimeSlots.includes(newManualTime)) return;
+    setSpecialTimeSlots([...specialTimeSlots, newManualTime].sort());
+  }
+  setNewManualTime('');
+};
+
+const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
+  if (type === 'general') {
+    setGeneralTimeSlots(generalTimeSlots.filter(s => s !== slot));
+  } else {
+    setSpecialTimeSlots(specialTimeSlots.filter(s => s !== slot));
+  }
+};
+
+const getSessionDisplayName = (chineseName: string) => getSessionDisplayNameUtil(chineseName, lang, sessions);
+
+const deletePaymentMethod = async (method: PaymentMethod) => {    showConfirm(`確定要刪除「${method.name}」嗎？`, async () => {
       const newMethods = paymentMethods.filter(m => m.id !== method.id);
       try {
         await setDoc(doc(db, "config", "payments"), { methods: newMethods });
