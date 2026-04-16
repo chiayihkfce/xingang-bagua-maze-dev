@@ -52,7 +52,32 @@ export const useAdminActions = ({
     });
   };
 
+  /**
+   * 將報名資料移至回收桶
+   */
+  const handleDeleteSubmission = async (rowIndex: number) => {
+    const target = submissions[rowIndex];
+    const docId = target[15];
+    if (!docId) return;
+    
+    showConfirm('確定要將這筆報名資料移至回收桶嗎？', async () => {
+      setIsDataLoading(true);
+      try {
+        const docRef = doc(db, "registrations", docId);
+        await updateDoc(docRef, { deleted: true });
+        await addLog('刪除報名', `將「${target[2]}」移至回收桶`);
+        showAlert('已移至回收桶');
+      } catch (err) {
+        showAlert('操作失敗');
+      } finally {
+        setIsDataLoading(false);
+      }
+    });
+  };
+
   return {
-    handleVerifyPayment
+    handleVerifyPayment,
+    handleDeleteSubmission
   };
 };
+
