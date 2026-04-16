@@ -4,9 +4,12 @@ import { sendPaymentSuccessEmail } from "../utils/emailUtils";
 
 interface UseAdminActionsProps {
   submissions: any[][];
+  deletedSubmissions: any[][];
   showConfirm: (message: string, onConfirm: () => void) => void;
   showAlert: (message: string) => void;
   setIsDataLoading: (val: boolean) => void;
+  setIsSubmitting: (val: boolean) => void;
+  setShowRecycleBin: (val: boolean) => void;
   addLog: (type: string, details: string) => Promise<void>;
 }
 
@@ -15,9 +18,12 @@ interface UseAdminActionsProps {
  */
 export const useAdminActions = ({
   submissions,
+  deletedSubmissions,
   showConfirm,
   showAlert,
   setIsDataLoading,
+  setIsSubmitting,
+  setShowRecycleBin,
   addLog
 }: UseAdminActionsProps) => {
 
@@ -75,9 +81,33 @@ export const useAdminActions = ({
     });
   };
 
+  /**
+   * 從回收桶還原報名資料
+   */
+  const handleRestoreSubmission = async (rowIndex: number) => {
+    const target = deletedSubmissions[rowIndex];
+    const docId = target[15];
+    if (!docId) return;
+    
+    setIsSubmitting(true);
+    try {
+      const docRef = doc(db, "registrations", docId);
+      await updateDoc(docRef, { deleted: false });
+      await addLog('還原報名', `從回收桶還原了「${target[2]}」的紀錄`);
+      showAlert('資料已還原');
+      setShowRecycleBin(false);
+    } catch (err) {
+      showAlert('還原失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     handleVerifyPayment,
-    handleDeleteSubmission
+    handleDeleteSubmission,
+    handleRestoreSubmission
   };
 };
+
 
