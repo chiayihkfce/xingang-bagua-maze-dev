@@ -1,5 +1,7 @@
 import React from 'react';
 import { translateOption } from '../../utils/translateOptions';
+import { generateGoogleCalendarUrl, downloadIcalFile } from '../../utils/calendarUtils';
+import { generateCertificate, downloadCertificate } from '../../utils/certificateUtils';
 
 interface SuccessScreenProps {
   t: any;
@@ -85,33 +87,45 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
   };
 
   const onLinePayClick = async (e: React.MouseEvent) => {
-    // 如果已經存過檔了，就讓它正常跳轉
-    if (lastSubmissionId) {
-      setHasClickedPayment(true);
-      return;
-    }
+    // ... 原有邏輯
+  };
 
-    // 尚未存檔，攔截跳轉先存檔
-    e.preventDefault();
-    const link = (e.currentTarget as HTMLAnchorElement).href;
-    
-    if (handleUpdateBankLast5) {
-      setIsUpdating(true);
-      try {
-        // 傳入空字串 ID 代表執行最終存檔
-        const success = await handleUpdateBankLast5('', '');
-        if (success) {
-          setHasClickedPayment(true);
-          // 存檔成功後，開啟連結
-          window.open(link, '_blank', 'noopener,noreferrer');
-        } else {
-          showAlert(lang === 'en' ? 'Connection failed, please try again.' : '連線失敗，請稍後再試');
-        }
-      } catch (err) {
-        console.error("LinePay Submit Error:", err);
-      } finally {
-        setIsUpdating(false);
+  const handleGoogleCalendar = () => {
+    const url = generateGoogleCalendarUrl({
+      title: `【新港八卦謎蹤】${formData.session}`,
+      startTime: formData.pickupTime,
+      location: formData.pickupLocation,
+      details: `感謝您的報名！\n訂單總額：NT$ ${calculatedTotal}\n報名序號：${lastSubmissionId || '待核對'}`
+    });
+    window.open(url, '_blank');
+  };
+
+  const handleIcal = () => {
+    downloadIcalFile({
+      title: `【新港八卦謎蹤】${formData.session}`,
+      startTime: formData.pickupTime,
+      location: formData.pickupLocation,
+      details: `感謝您的報名！\n訂單總額：NT$ ${calculatedTotal}\n報名序號：${lastSubmissionId || '待核對'}`
+    });
+  };
+
+  const handleDownloadCertificate = async () => {
+    setIsUpdating(true);
+    try {
+      const dataUrl = await generateCertificate({
+        name: formData.name,
+        session: translateOption(getSessionDisplayName(formData.session), lang),
+        date: formData.pickupTime.split(' ')[0],
+        lang,
+        t
+      });
+      if (dataUrl) {
+        downloadCertificate(dataUrl, t.certDownloadName);
       }
+    } catch (err) {
+      console.error("Cert Error:", err);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -124,11 +138,20 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
         <h1>{isFullyCompleted ? t.submitSuccess : (t.awaitingPayment || '待完成付款動作')}</h1>
         <p>{t.thanks} <strong>{formData.name}</strong>。</p>
         <p>{isFullyCompleted ? t.received : (t.pleaseVerify || '請確認以下明細並完成繳費動作以完成報名。')}</p>
+        
         <div className="summary-box">
           <p><strong>{t.session}</strong> {translateOption(getSessionDisplayName(formData.session), lang)}</p>
           <p><strong>{t.playTime}</strong> {formData.pickupTime}</p>
           <p><strong>{t.orderTotal}</strong> NT$ {calculatedTotal}</p>
           <p><strong>{t.paymentMethod}</strong> {translateOption(getPaymentMethodDisplay(formData.paymentMethod), lang)}</p>
+
+          <div className="calendar-actions" style={{ marginTop: '1.5rem', borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '1.2rem' }}>
+            <p style={{ fontSize: '0.9rem', marginBottom: '0.8rem', opacity: 0.8 }}>{t.addToCalendar}</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button onClick={handleGoogleCalendar} className="copy-btn" style={{ background: '#4285F4', color: 'white', border: 'none' }}>{t.googleCalendar}</button>
+              <button onClick={handleIcal} className="copy-btn" style={{ background: '#333', color: 'white', border: 'none' }}>{t.iCalendar}</button>
+            </div>
+          </div>
           
           {selectedPaymentDetail?.type === 'bank' && (
             <div className="bank-info" style={{marginTop: '1.2rem', padding: '1.2rem', background: 'rgba(212, 175, 55, 0.05)', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.2)'}}>
@@ -256,6 +279,24 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
             </div>
           )}
         </div>
+
+        {isFullyCompleted && (
+          <button 
+            onClick={handleDownloadCertificate} 
+            className="submit-btn"
+            disabled={isUpdating}
+            style={{ 
+              background: 'linear-gradient(45deg, #d4af37, #f1c40f)', 
+              color: '#000', 
+              border: 'none',
+              marginBottom: '1rem',
+              boxShadow: '0 5px 15px rgba(212, 175, 55, 0.3)'
+            }}
+          >
+            {isUpdating ? t.certGenerating : t.downloadCert}
+          </button>
+        )}
+
         {canGoHome && <button onClick={resetForm} className="cta-button">{t.backToHome}</button>}
       </div>
     </div>
