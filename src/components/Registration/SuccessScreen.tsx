@@ -73,8 +73,8 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
         }
       };
       
-      // 延遲 1.5 秒等待 UI 載入後自動彈出下載
-      const timer = setTimeout(triggerAutoDownload, 1500);
+      // 延遲 500ms 等待資料載入後立刻執行高品質下載
+      const timer = setTimeout(triggerAutoDownload, 500);
       return () => clearTimeout(timer);
     }
   }, [formData.name, isFullyCompleted, lang, t, getSessionDisplayName]);
@@ -165,6 +165,18 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
       details: `感謝您的報名！\n訂單總額：NT$ ${calculatedTotal}\n報名序號：${lastSubmissionId || '待核對'}`
     });
   };
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const isCertMode = !!urlParams.get('certId');
+
+  // 如果是證書領取模式，只顯示極簡載入狀態 (隱身模式)
+  if (isCertMode) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#000', color: '#d4af37', textAlign: 'center' }}>
+        <p style={{ letterSpacing: '3px', fontSize: '1.2rem', fontWeight: 'bold' }}>正在為您準備最高畫質證書...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
