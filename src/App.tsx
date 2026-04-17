@@ -26,7 +26,7 @@ function AppContent() {
     return <SuccessPage />;
   }
 
-  return <RegistrationPage {...app} />;
+  return <RegistrationPage />;
 }
 
 function App() {
