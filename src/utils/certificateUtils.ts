@@ -30,10 +30,10 @@ export const generateCertificate = async (data: {
     ctx.fillRect(Math.random() * w, Math.random() * h, 2, 2);
   }
 
-  // 3. 完整太極八卦水印 (比例微調)
+  // 3. 完整太極八卦水印 (亮度提升)
   ctx.save();
   ctx.translate(w / 2, h / 2);
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.05)'; ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.12)'; ctx.lineWidth = 4; // 亮度調高
   const r = 250;
   ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
   ctx.beginPath(); ctx.arc(0, -r/2, r/2, Math.PI * 1.5, Math.PI * 0.5); ctx.arc(0, r/2, r/2, Math.PI * 1.5, Math.PI * 0.5, true); ctx.stroke();
@@ -49,16 +49,17 @@ export const generateCertificate = async (data: {
   });
   ctx.restore();
 
-  // 4. 高級雲紋邊框
+  // 4. 高級雲紋邊框 (修正凸出問題)
   ctx.strokeStyle = '#d4af37';
   ctx.lineWidth = 20; ctx.strokeRect(60, 60, w-120, h-120);
   ctx.lineWidth = 4; ctx.strokeRect(100, 100, w-200, h-200);
   
   const drawCloud = (x: number, y: number, r1: number) => {
     ctx.save(); ctx.translate(x, y); ctx.rotate(r1); ctx.beginPath();
-    ctx.arc(0, 0, 80, 0, Math.PI * 1.2); ctx.stroke(); ctx.restore();
+    ctx.arc(40, 40, 60, Math.PI, Math.PI * 1.5); // 調整圓弧半徑與位置，使其貼合內部
+    ctx.stroke(); ctx.restore();
   };
-  [[60,60,0], [w-60,60,Math.PI/2], [60,h-60,-Math.PI/2], [w-60,h-60,Math.PI]].forEach(([x,y,r]) => drawCloud(x,y,r));
+  [[100,100,0], [w-100,100,Math.PI/2], [100,h-100,-Math.PI/2], [w-100,h-100,Math.PI]].forEach(([x,y,r]) => drawCloud(x,y,r));
 
   // 5. 文字樣式與配置
   const centerX = w / 2;
@@ -71,43 +72,43 @@ export const generateCertificate = async (data: {
     ctx.fillText(text, x, y); ctx.restore();
   };
 
-  // 標題與英文名 (燙金感)
-  drawMasterText('數位成就證書', centerX, 350, `bold 180px ${fontAntique}`, '#d4af37', 20);
-  drawMasterText('XINGANG BAGUA MYSTERY ACHIEVEMENT', centerX, 440, `36px ${fontEng}`, 'rgba(212, 175, 55, 0.6)');
+  // 標題縮小
+  drawMasterText('數位成就證書', centerX, 350, `bold 140px ${fontAntique}`, '#d4af37', 15);
+  drawMasterText('XINGANG BAGUA MYSTERY ACHIEVEMENT', centerX, 430, `32px ${fontEng}`, 'rgba(212, 175, 55, 0.6)');
 
   // 頒發給
-  drawMasterText('頒發給', centerX, 650, `60px ${fontAntique}`, '#ffffff');
+  drawMasterText('頒發給', centerX, 650, `55px ${fontAntique}`, '#ffffff');
 
-  // 姓名 (核心視覺 - 氣勢磅礴)
+  // 姓名 (縮小至 220px，氣勢適中)
   ctx.save();
-  ctx.font = `bold 280px ${fontAntique}`;
+  ctx.font = `bold 220px ${fontAntique}`;
   ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
-  ctx.shadowBlur = 30; ctx.shadowColor = 'rgba(255,255,255,0.3)';
-  ctx.fillText(data.name || '挑戰者', centerX, 950);
+  ctx.shadowBlur = 25; ctx.shadowColor = 'rgba(255,255,255,0.3)';
+  ctx.fillText(data.name || '挑戰者', centerX, 920);
   ctx.restore();
   
   // 裝飾底線
-  ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 5; ctx.beginPath();
-  ctx.moveTo(centerX - 350, 1000); ctx.lineTo(centerX + 350, 1000); ctx.stroke();
+  ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 4; ctx.beginPath();
+  ctx.moveTo(centerX - 300, 960); ctx.lineTo(centerX + 300, 960); ctx.stroke();
 
-  // 祝賀詞 (精確對位)
+  // 祝賀詞
   const t1 = '恭喜完成', t2 = '【新港八卦謎蹤】', t3 = '挑戰！';
-  ctx.font = `70px ${fontAntique}`;
+  ctx.font = `65px ${fontAntique}`;
   const w1 = ctx.measureText(t1).width, w3 = ctx.measureText(t3).width;
-  ctx.font = `bold 85px ${fontAntique}`;
+  ctx.font = `bold 75px ${fontAntique}`;
   const w2 = ctx.measureText(t2).width;
   const startX = centerX - (w1 + w2 + w3 + 40) / 2;
 
   ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-  ctx.font = `70px ${fontAntique}`; ctx.fillText(t1, startX, 1200);
-  ctx.fillStyle = '#d4af37'; ctx.font = `bold 85px ${fontAntique}`; ctx.fillText(t2, startX + w1 + 20, 1200);
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.font = `70px ${fontAntique}`; ctx.fillText(t3, startX + w1 + w2 + 40, 1200);
+  ctx.font = `65px ${fontAntique}`; ctx.fillText(t1, startX, 1150);
+  ctx.fillStyle = '#d4af37'; ctx.font = `bold 75px ${fontAntique}`; ctx.fillText(t2, startX + w1 + 20, 1150);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.font = `65px ${fontAntique}`; ctx.fillText(t3, startX + w1 + w2 + 40, 1150);
 
-  // 底部資訊
+  // 底部資訊縮小
   const sName = data.session ? data.session.split('(')[0].trim() : '一般場次';
-  drawMasterText(`活動場次：${sName}`, centerX, 1350, `45px ${fontEng}`, 'rgba(255, 255, 255, 0.4)');
-  drawMasterText(`${data.date} | 新港文教基金會`, centerX, 1450, `55px ${fontAntique}`, 'rgba(255, 255, 255, 0.7)');
+  drawMasterText(`活動場次：${sName}`, centerX, 1320, `36px ${fontEng}`, 'rgba(255, 255, 255, 0.4)');
+  drawMasterText(`${data.date} | 新港文教基金會`, centerX, 1420, `48px ${fontAntique}`, 'rgba(255, 255, 255, 0.7)');
 
   // 6. 紅印章 (精緻化)
   ctx.save(); ctx.translate(w - 400, h - 350); ctx.rotate(-0.05);
