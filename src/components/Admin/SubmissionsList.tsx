@@ -62,9 +62,9 @@ const SubmissionsList: React.FC = () => {
             {selectedIds.length > 0 && (
               <div style={{ display: 'flex', gap: '0.5rem', padding: '0.2rem 1rem', background: 'rgba(243, 156, 18, 0.1)', borderRadius: '10px', alignItems: 'center', border: '1px solid #f39c12' }}>
                 <span style={{ fontSize: '0.85rem', color: '#f39c12', fontWeight: 'bold' }}>已選取 {selectedIds.length} 筆：</span>
-                <button onClick={handleBatchVerifyPayment} className="edit-btn" style={{ background: '#27ae60', padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>批次通過</button>
-                <button onClick={handleBatchDelete} className="delete-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>批次刪除</button>
-                <button onClick={() => setSelectedIds([])} className="cancel-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>取消選取</button>
+                <button onClick={handleBatchVerifyPayment} className="edit-btn" style={{ background: '#27ae60', padding: '0.4rem 0.8rem', fontSize: '0.8rem', height: 'auto', width: 'auto', margin: 0 }}>批次通過</button>
+                <button onClick={handleBatchDelete} className="delete-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', height: 'auto', width: 'auto', margin: 0 }}>批次刪除</button>
+                <button onClick={() => setSelectedIds([])} className="edit-btn" style={{ background: 'var(--input-border)', color: 'var(--text-light)', padding: '0.4rem 0.8rem', fontSize: '0.8rem', height: 'auto', width: 'auto', margin: 0 }}>取消選取</button>
               </div>
             )}
 
