@@ -57,27 +57,36 @@ async function drawCertificateImage(data) {
   const fontAntique = 'serif';
   ctx.textAlign = 'center';
   
-  // 4. 文字
-  ctx.fillStyle = '#d4af37'; ctx.font = `bold 60px ${fontAntique}`;
-  ctx.fillText('數位成就證書', width/2, 130);
-  ctx.fillStyle = '#ffffff'; ctx.font = `bold 85px ${fontAntique}`;
-  ctx.fillText(data.name || '參加者', width/2, 330);
+  // 4. 標題與副標
+  ctx.fillStyle = '#d4af37'; ctx.font = `bold 52px ${fontAntique}`;
+  ctx.fillText('數位成就證書', width/2, 110);
+  ctx.fillStyle = 'rgba(212, 175, 55, 0.7)'; ctx.font = `16px sans-serif`;
+  ctx.fillText('Xingang Bagua Maze Achievement', width/2, 140);
 
+  // 5. 頒發給與姓名
+  ctx.fillStyle = '#ffffff'; ctx.font = `20px ${fontAntique}`;
+  ctx.fillText('頒發給', width/2, 200);
+  ctx.fillStyle = '#ffffff'; ctx.font = `bold 75px ${fontAntique}`;
+  ctx.fillText(data.name || '參加者', width/2, 285);
+  ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(width/2 - 80, 295); ctx.lineTo(width/2 + 80, 295); ctx.stroke();
+
+  // 6. 金色分段文字
   const t1 = '恭喜完成 ', t2 = '新港八卦謎蹤', t3 = ' 挑戰！';
-  ctx.font = `24px ${fontAntique}`; const w1 = ctx.measureText(t1).width, w3 = ctx.measureText(t3).width;
-  ctx.font = `bold 32px ${fontAntique}`; const w2 = ctx.measureText(t2).width;
+  ctx.font = `22px ${fontAntique}`; const w1 = ctx.measureText(t1).width, w3 = ctx.measureText(t3).width;
+  ctx.font = `bold 28px ${fontAntique}`; const w2 = ctx.measureText(t2).width;
   let sx = (width - (w1 + w2 + w3 + 10)) / 2;
   ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.font = `24px ${fontAntique}`; ctx.fillText(t1, sx, 410);
-  ctx.fillStyle = '#d4af37'; ctx.font = `bold 32px ${fontAntique}`; ctx.fillText(t2, sx + w1 + 5, 410);
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.font = `24px ${fontAntique}`; ctx.fillText(t3, sx + w1 + w2 + 10, 410);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.font = `22px ${fontAntique}`; ctx.fillText(t1, sx, 360);
+  ctx.fillStyle = '#d4af37'; ctx.font = `bold 28px ${fontAntique}`; ctx.fillText(t2, sx + w1 + 5, 360);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.font = `22px ${fontAntique}`; ctx.fillText(t3, sx + w1 + w2 + 10, 360);
 
+  // 7. 場次與日期
   ctx.textAlign = 'center';
-  const sName = data.session ? data.session.split(' (')[0] : '一般場次';
-  ctx.font = `18px sans-serif`; ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-  ctx.fillText(`活動場次：${sName}`, width/2, 465);
-  ctx.font = `20px ${fontAntique}`; ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-  ctx.fillText(`${data.date} | 新港文教基金會`, width/2, 515);
+  const sName = data.session ? data.session.split('(')[0].trim() : '一般場次';
+  ctx.font = `16px sans-serif`; ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+  ctx.fillText(`活動場次：${sName}`, width/2, 415);
+  ctx.font = `18px ${fontAntique}`; ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+  ctx.fillText(`${data.date} | 新港文教基金會`, width/2, 465);
 
   // 5. 紅印章
   ctx.save(); ctx.translate(width - 120, height - 110); ctx.rotate(-0.1);
@@ -116,7 +125,7 @@ async function drawCertificateImage(data) {
       });
 
       // 呼叫 EmailJS
-      const certUrl = `https://xingang-bagua-maze.web.app?certId=${doc.id}`; 
+      const certUrl = `https://xingang-maze.web.app?certId=${doc.id}`; 
       
       const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
