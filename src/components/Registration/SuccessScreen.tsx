@@ -1,7 +1,6 @@
 import React from 'react';
 import { translateOption } from '../../utils/translateOptions';
 import { generateGoogleCalendarUrl, downloadIcalFile } from '../../utils/calendarUtils';
-import { generateCertificate, downloadCertificate } from '../../utils/certificateUtils';
 
 interface SuccessScreenProps {
   t: any;
@@ -87,7 +86,34 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
   };
 
   const onLinePayClick = async (e: React.MouseEvent) => {
-    // ... 原有邏輯
+    // 如果已經存過檔了，就讓它正常跳轉
+    if (lastSubmissionId) {
+      setHasClickedPayment(true);
+      return;
+    }
+
+    // 尚未存檔，攔截跳轉先存檔
+    e.preventDefault();
+    const link = (e.currentTarget as HTMLAnchorElement).href;
+    
+    if (handleUpdateBankLast5) {
+      setIsUpdating(true);
+      try {
+        // 傳入空字串 ID 代表執行最終存檔
+        const success = await handleUpdateBankLast5('', '');
+        if (success) {
+          setHasClickedPayment(true);
+          // 存檔成功後，開啟連結
+          window.open(link, '_blank', 'noopener,noreferrer');
+        } else {
+          showAlert(lang === 'en' ? 'Connection failed, please try again.' : '連線失敗，請稍後再試');
+        }
+      } catch (err) {
+        console.error("LinePay Submit Error:", err);
+      } finally {
+        setIsUpdating(false);
+      }
+    }
   };
 
   const handleGoogleCalendar = () => {
@@ -107,26 +133,6 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
       location: formData.pickupLocation,
       details: `感謝您的報名！\n訂單總額：NT$ ${calculatedTotal}\n報名序號：${lastSubmissionId || '待核對'}`
     });
-  };
-
-  const handleDownloadCertificate = async () => {
-    setIsUpdating(true);
-    try {
-      const dataUrl = await generateCertificate({
-        name: formData.name,
-        session: translateOption(getSessionDisplayName(formData.session), lang),
-        date: formData.pickupTime.split(' ')[0],
-        lang,
-        t
-      });
-      if (dataUrl) {
-        downloadCertificate(dataUrl, t.certDownloadName);
-      }
-    } catch (err) {
-      console.error("Cert Error:", err);
-    } finally {
-      setIsUpdating(false);
-    }
   };
 
   return (
@@ -279,23 +285,6 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
             </div>
           )}
         </div>
-
-        {isFullyCompleted && (
-          <button 
-            onClick={handleDownloadCertificate} 
-            className="submit-btn"
-            disabled={isUpdating}
-            style={{ 
-              background: 'linear-gradient(45deg, #d4af37, #f1c40f)', 
-              color: '#000', 
-              border: 'none',
-              marginBottom: '1rem',
-              boxShadow: '0 5px 15px rgba(212, 175, 55, 0.3)'
-            }}
-          >
-            {isUpdating ? t.certGenerating : t.downloadCert}
-          </button>
-        )}
 
         {canGoHome && <button onClick={resetForm} className="cta-button">{t.backToHome}</button>}
       </div>
