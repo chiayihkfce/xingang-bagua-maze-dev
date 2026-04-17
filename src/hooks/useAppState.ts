@@ -58,6 +58,7 @@ export const useAppState = () => {
   });
   const [showColumnFilter, setShowShowColumnFilter] = useState(false);
   const [newManualTime, setNewManualTime] = useState('');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   return {
     submitted, setSubmitted,
@@ -83,6 +84,7 @@ export const useAppState = () => {
     sortConfig, setSortConfig,
     visibleColumns, setVisibleColumns,
     showColumnFilter, setShowShowColumnFilter,
-    newManualTime, setNewManualTime
+    newManualTime, setNewManualTime,
+    selectedIds, setSelectedIds
   };
 };

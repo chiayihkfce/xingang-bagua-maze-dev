@@ -110,7 +110,21 @@ export const useAppController = () => {
 
   const auth = useAdminAuth({ showAlert: modal.showAlert, addLog, setIsDataLoading: state.setIsDataLoading });
   const adminData = useAdminData({ isAdmin: auth.isAdmin, adminFilterDate: state.adminFilterDate, adminSearchKeyword: state.adminSearchKeyword, setIsDataLoading: state.setIsDataLoading });
-  const adminActions = useAdminActions({ submissions: adminData.submissions, deletedSubmissions: adminData.deletedSubmissions, editData: state.editData, showConfirm: modal.showConfirm, showAlert: modal.showAlert, setIsDataLoading: state.setIsDataLoading, setIsSubmitting: state.setIsSubmitting, setShowRecycleBin: state.setShowRecycleBin, setIsEditing: state.setIsEditing, setEditData: state.setEditData, addLog });
+  const adminActions = useAdminActions({ 
+    submissions: adminData.submissions, 
+    deletedSubmissions: adminData.deletedSubmissions, 
+    editData: state.editData, 
+    showConfirm: modal.showConfirm, 
+    showAlert: modal.showAlert, 
+    setIsDataLoading: state.setIsDataLoading, 
+    setIsSubmitting: state.setIsSubmitting, 
+    setShowRecycleBin: state.setShowRecycleBin, 
+    setIsEditing: state.setIsEditing, 
+    setEditData: state.setEditData, 
+    addLog,
+    selectedIds: state.selectedIds,
+    setSelectedIds: state.setSelectedIds
+  });
   const settingsActions = useSettingsActions({ 
     sessions: firebase.sessions, 
     paymentMethods: firebase.paymentMethods, 

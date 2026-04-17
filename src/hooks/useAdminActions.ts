@@ -14,6 +14,8 @@ interface UseAdminActionsProps {
   setIsEditing: (val: boolean) => void;
   setEditData: (data: any) => void;
   addLog: (type: string, details: string) => Promise<void>;
+  selectedIds: string[];
+  setSelectedIds: (ids: string[]) => void;
 }
 
 /**
@@ -30,8 +32,90 @@ export const useAdminActions = ({
   setShowRecycleBin,
   setIsEditing,
   setEditData,
-  addLog
+  addLog,
+  selectedIds,
+  setSelectedIds
 }: UseAdminActionsProps) => {
+
+  /**
+   * 批次審核付款 (通過)
+   */
+  const handleBatchVerifyPayment = async () => {
+    if (selectedIds.length === 0) return;
+
+    showConfirm(`確定要將選取的 ${selectedIds.length} 筆報名標記為「通過」並發送成功信嗎？`, async () => {
+      setIsSubmitting(true);
+      try {
+        const batch = writeBatch(db);
+        let count = 0;
+
+        for (const docId of selectedIds) {
+          const target = submissions.find(row => row[15] === docId);
+          if (target && target[1] !== '通過') {
+            const docRef = doc(db, "registrations", docId);
+            batch.update(docRef, { status: '通過' });
+            await sendPaymentSuccessEmail(target);
+            count++;
+          }
+        }
+
+        await batch.commit();
+        await addLog('批次審核', `批次通過了 ${count} 筆報名資料`);
+        showAlert(`成功批次處理 ${count} 筆資料`);
+        setSelectedIds([]);
+      } catch (err) {
+        console.error(err);
+        showAlert('批次處理失敗');
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
+  };
+
+  /**
+   * 批次刪除 (移至回收桶)
+   */
+  const handleBatchDelete = async () => {
+    if (selectedIds.length === 0) return;
+
+    showConfirm(`確定要將選取的 ${selectedIds.length} 筆報名資料移至回收桶嗎？`, async () => {
+      setIsSubmitting(true);
+      try {
+        const batch = writeBatch(db);
+        let count = 0;
+
+        for (const docId of selectedIds) {
+          const target = submissions.find(row => row[15] === docId);
+          if (target) {
+            const sourceRef = doc(db, "registrations", docId);
+            const targetRef = doc(db, "registrations_deleted", docId);
+            
+            const dataToMove = {
+              timestamp: target[0], status: target[1], name: target[2], phone: target[3], email: target[4],
+              session: target[5], quantity: target[6], players: target[7], totalAmount: target[8],
+              paymentMethod: target[9], bankLast5: target[10], pickupTime: target[11],
+              pickupLocation: target[12], referral: target[13], notes: target[14],
+              createdAt: target[16] || serverTimestamp()
+            };
+
+            batch.set(targetRef, dataToMove);
+            batch.delete(sourceRef);
+            count++;
+          }
+        }
+
+        await batch.commit();
+        await addLog('批次刪除', `將 ${count} 筆報名移至回收桶`);
+        showAlert(`已批次移至回收桶 ${count} 筆資料`);
+        setSelectedIds([]);
+      } catch (err) {
+        console.error(err);
+        showAlert('批次刪除失敗');
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
+  };
 
   /**
    * 審核付款狀態

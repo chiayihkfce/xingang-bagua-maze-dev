@@ -28,15 +28,46 @@ const SubmissionsList: React.FC = () => {
     setShowAuditModal,
     startEditSubmission,
     handleDeleteSubmission,
-    formatFullDateTime
+    formatFullDateTime,
+    selectedIds,
+    setSelectedIds,
+    handleBatchVerifyPayment,
+    handleBatchDelete
   } = useAppContext();
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === submissions.length - 1) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(submissions.slice(1).map(row => row[15]));
+    }
+  };
+
+  const toggleSelect = (docId: string) => {
+    if (selectedIds.includes(docId)) {
+      setSelectedIds(selectedIds.filter(id => id !== docId));
+    } else {
+      setSelectedIds([...selectedIds, docId]);
+    }
+  };
 
   return (
     <section className="admin-section form-card submissions-table-container">
       <div className="admin-section-header">
         <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
           <h3 className="form-section-title" style={{margin: 0}}>報名清單 (共 {totalRows} 筆)</h3>
-          <div className="admin-filter-bar" style={{ gap: '0.8rem' }}>
+          
+          <div className="admin-filter-bar" style={{ gap: '0.8rem', flexWrap: 'wrap' }}>
+            {/* 批次操作區 */}
+            {selectedIds.length > 0 && (
+              <div style={{ display: 'flex', gap: '0.5rem', padding: '0.2rem 1rem', background: 'rgba(243, 156, 18, 0.1)', borderRadius: '10px', alignItems: 'center', border: '1px solid #f39c12' }}>
+                <span style={{ fontSize: '0.85rem', color: '#f39c12', fontWeight: 'bold' }}>已選取 {selectedIds.length} 筆：</span>
+                <button onClick={handleBatchVerifyPayment} className="edit-btn" style={{ background: '#27ae60', padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>批次通過</button>
+                <button onClick={handleBatchDelete} className="delete-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>批次刪除</button>
+                <button onClick={() => setSelectedIds([])} className="cancel-btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>取消選取</button>
+              </div>
+            )}
+
             <button 
               onClick={handlePrintCheckInSheet} 
               className="submit-btn" 
@@ -223,6 +254,14 @@ const SubmissionsList: React.FC = () => {
       <table className="submissions-table">
         <thead>
           <tr>
+            <th style={{ width: '40px' }}>
+              <input 
+                type="checkbox" 
+                checked={selectedIds.length > 0 && selectedIds.length === submissions.length - 1}
+                onChange={toggleSelectAll}
+                title="全選"
+              />
+            </th>
             <th>操作</th>
             {submissions[0]?.map((h: any, i: number) => visibleColumns.includes(i) && (
               <th key={i}>
@@ -242,7 +281,14 @@ const SubmissionsList: React.FC = () => {
         </thead>
         <tbody>
           {submissions.slice(1).map((row, i) => (
-            <tr key={i}>
+            <tr key={row[15] || i} className={selectedIds.includes(row[15]) ? 'selected-row' : ''}>
+              <td>
+                <input 
+                  type="checkbox" 
+                  checked={selectedIds.includes(row[15])} 
+                  onChange={() => toggleSelect(row[15])} 
+                />
+              </td>
               <td className="action-cell">
                 <button onClick={() => { setAuditTarget({index: i + 1, row}); setShowAuditModal(true); }} className="edit-btn" style={{background: '#f39c12', color: 'white'}}>審核</button>
                 <button onClick={() => startEditSubmission(row, i + 1)} className="edit-btn">修改</button>
