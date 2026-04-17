@@ -19,7 +19,7 @@ function AppContent() {
   const { SECRET_ADMIN_PATH, currentPath, submitted } = app;
 
   if (SECRET_ADMIN_PATH && SECRET_ADMIN_PATH !== '/' && currentPath === SECRET_ADMIN_PATH) {
-    return <AdminPage {...app} />;
+    return <AdminPage />;
   }
 
   if (submitted) {
