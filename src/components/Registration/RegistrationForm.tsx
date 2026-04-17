@@ -174,9 +174,20 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                    return;
                 }
 
-                const filtered = sessions.filter(s => 
-                  newType === '特別預約' ? s.isSpecial : !s.isSpecial
-                );
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const filtered = sessions.filter(s => {
+                  const isTypeMatch = newType === '特別預約' ? s.isSpecial : !s.isSpecial;
+                  if (!isTypeMatch) return false;
+                  
+                  // 如果有設定固定日期，檢查是否已過期
+                  if (s.fixedDate) {
+                    const sessionDate = new Date(s.fixedDate.replace(/-/g, '/'));
+                    return sessionDate >= today;
+                  }
+                  return true;
+                });
                 
                 if (filtered.length > 0) {
                   let targetValue = filtered[0].name;
@@ -231,7 +242,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                   >
                     {sessions.length > 0 ? (
                       sessions
-                        .filter(s => s.isSpecial)
+                        .filter(s => {
+                          if (!s.isSpecial) return false;
+                          if (!s.fixedDate) return true;
+                          const sessionDate = new Date(s.fixedDate.replace(/-/g, '/'));
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return sessionDate >= today;
+                        })
                         .map(s => <option key={s.name} value={s.name}>{lang === 'en' ? (s.enName || translateOption(s.name, lang)) : s.name} (${s.price})</option>)
                     ) : (
                       <option disabled>{t.loading}</option>
