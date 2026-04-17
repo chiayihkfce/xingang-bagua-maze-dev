@@ -12,8 +12,8 @@ export const generateCertificate = async (data: {
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
-  // 1. 設定極致解析度 (維持 16:9 比例)
-  const w = 3200, h = 1800;
+  // 1. 設定高品質解析度 (適度調降以確保瀏覽器效能)
+  const w = 2000, h = 1414;
   canvas.width = w;
   canvas.height = h;
 
@@ -24,17 +24,17 @@ export const generateCertificate = async (data: {
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, w, h);
 
-  // 宣紙/絲絹紋理 (纖維感強化)
+  // 宣紙/絲絹紋理 (適度減少循環以提升速度)
   ctx.save();
   ctx.globalAlpha = 0.05;
-  for (let i = 0; i < 5000; i++) {
+  for (let i = 0; i < 2000; i++) {
     ctx.strokeStyle = Math.random() > 0.5 ? '#d4af37' : '#ffffff';
     ctx.beginPath();
     const x = Math.random() * w;
     const y = Math.random() * h;
     ctx.moveTo(x, y);
-    ctx.lineTo(x + Math.random() * 20 - 10, y + Math.random() * 20 - 10);
-    ctx.lineWidth = 0.3;
+    ctx.lineTo(x + Math.random() * 15, y + Math.random() * 15);
+    ctx.lineWidth = 0.2;
     ctx.stroke();
   }
   ctx.restore();

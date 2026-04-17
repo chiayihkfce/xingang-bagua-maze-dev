@@ -49,13 +49,15 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
     selectedPaymentDetail?.type === 'linepay' ? hasClickedPayment :
     !!lastSubmissionId;
 
+  const [hasDownloaded, setHasDownloaded] = React.useState(false);
+
   // 自動偵測連結並下載高品質證書
   React.useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const certId = urlParams.get('certId');
     
-    // 如果有 certId 且 formData 已載入 (有名字)，則自動執行高品質下載
-    if (certId && formData.name && isFullyCompleted) {
+    // 如果有 certId 且 formData 已載入，且「尚未執行過下載」
+    if (certId && formData.name && isFullyCompleted && !hasDownloaded) {
       const triggerAutoDownload = async () => {
         try {
           const dataUrl = await generateCertificate({
@@ -67,17 +69,17 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
           });
           if (dataUrl) {
             downloadCertificate(dataUrl, t.certDownloadName);
+            setHasDownloaded(true); // 標記為已下載，停止迴圈
           }
         } catch (err) {
           console.error("Auto Download Error:", err);
         }
       };
       
-      // 延遲 500ms 等待資料載入後立刻執行高品質下載
-      const timer = setTimeout(triggerAutoDownload, 500);
+      const timer = setTimeout(triggerAutoDownload, 800);
       return () => clearTimeout(timer);
     }
-  }, [formData.name, isFullyCompleted, lang, t, getSessionDisplayName]);
+  }, [formData.name, isFullyCompleted, hasDownloaded]); // 精簡依賴項
 
   // 離開頁面警告邏輯：若尚未完成付款動作，跳出警告
   React.useEffect(() => {
