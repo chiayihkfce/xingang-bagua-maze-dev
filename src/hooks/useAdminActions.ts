@@ -117,7 +117,7 @@ export const useAdminActions = ({
         batch.delete(sourceRef);
         await batch.commit();
 
-        await addLog('刪除報名', `將「${target[2]}」移至獨立回收桶`);
+        await addLog('刪除報名', `將「${target[2]}」移至回收桶`);
         showAlert('已移至回收桶');
       } catch (err) {
         console.error(err);
@@ -166,7 +166,7 @@ export const useAdminActions = ({
       batch.delete(sourceRef);
       await batch.commit();
 
-      await addLog('還原報名', `從獨立回收桶還原了「${target[2]}」的紀錄`);
+      await addLog('還原報名', `從回收桶還原了「${target[2]}」的紀錄`);
       showAlert('資料已還原');
       setShowRecycleBin(false);
     } catch (err) {
@@ -191,7 +191,7 @@ export const useAdminActions = ({
           batch.delete(doc.ref);
         });
         await batch.commit();
-        await addLog('清空回收桶', '超級管理員清空了獨立回收桶集合');
+        await addLog('清空回收桶', '超級管理員清空了回收桶');
         showAlert('回收桶已清空');
         setShowRecycleBin(false);
       } catch (err) {
