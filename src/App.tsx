@@ -1,3 +1,5 @@
+import "react-datepicker/dist/react-datepicker.css"
+import './App.css'
 import { registerLocale } from "react-datepicker";
 import { zhTW } from './utils/dateUtils'
 import { useAppController } from './hooks/useAppController'
