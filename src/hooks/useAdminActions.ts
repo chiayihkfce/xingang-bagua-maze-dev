@@ -78,7 +78,7 @@ export const useAdminActions = ({
         const sourceRef = doc(db, "registrations", docId);
         const targetRef = doc(db, "registrations_deleted", docId);
         
-        // 構建原始對象 (根據 submission row 索引還原，這是最快的方式)
+        // 構建原始對象 (不再需要 deleted 欄位，由集合位置決定狀態)
         const dataToMove = {
           timestamp: target[0],
           status: target[1],
@@ -95,8 +95,7 @@ export const useAdminActions = ({
           pickupLocation: target[12],
           referral: target[13],
           notes: target[14],
-          createdAt: target[16] || serverTimestamp(),
-          deleted: true
+          createdAt: target[16] || serverTimestamp()
         };
 
         const batch = writeBatch(db);
@@ -144,8 +143,7 @@ export const useAdminActions = ({
         pickupLocation: target[12],
         referral: target[13],
         notes: target[14],
-        createdAt: target[16] || serverTimestamp(),
-        deleted: false
+        createdAt: target[16] || serverTimestamp()
       };
 
       const batch = writeBatch(db);
