@@ -91,11 +91,13 @@ export const getAnalyticsData = (submissions: any[][]) => {
   const data = submissions.slice(1); // 跳過標題
   const referralMap: Record<string, number> = {};
   const sessionMap: Record<string, number> = {};
+  const trendMap: Record<string, number> = {};
+  const quantityMap: Record<string, number> = {};
+  const paymentMap: Record<string, number> = {};
 
   data.forEach(row => {
     // 1. 得知管道分析 (索引 13)
     const referralRaw = row[13] || '其他';
-    // 處理陣列或逗號分隔的字串
     const referrals = String(referralRaw).split(/[,,、\s]/).filter(Boolean);
     referrals.forEach(ref => {
       referralMap[ref] = (referralMap[ref] || 0) + 1;
@@ -104,6 +106,19 @@ export const getAnalyticsData = (submissions: any[][]) => {
     // 2. 場次熱度分析 (索引 5)
     const session = row[5] || '未定';
     sessionMap[session] = (sessionMap[session] || 0) + 1;
+
+    // 3. 報名趨勢分析 (索引 0 報名時間: "2024/04/17 12:00:00")
+    const datePart = String(row[0] || '').split(' ')[0] || '未知';
+    trendMap[datePart] = (trendMap[datePart] || 0) + 1;
+
+    // 4. 份數分佈 (索引 6)
+    const qty = String(row[6] || '1');
+    const qtyKey = `${qty} 份`;
+    quantityMap[qtyKey] = (quantityMap[qtyKey] || 0) + 1;
+
+    // 5. 付款方式佔比 (索引 9)
+    const pay = row[9] || '其他';
+    paymentMap[pay] = (paymentMap[pay] || 0) + 1;
   });
 
   const referralData = Object.entries(referralMap)
@@ -114,8 +129,21 @@ export const getAnalyticsData = (submissions: any[][]) => {
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
-  return { referralData, sessionData };
+  const trendData = Object.entries(trendMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => a.name.localeCompare(b.name)); // 依日期正序
+
+  const quantityData = Object.entries(quantityMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => parseInt(a.name) - parseInt(b.name));
+
+  const paymentData = Object.entries(paymentMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  return { referralData, sessionData, trendData, quantityData, paymentData };
 };
+
 
 
 
