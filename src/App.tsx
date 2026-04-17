@@ -132,11 +132,18 @@ function App() {
     t
   });
 
-  // 處理全域副作用
-  useAppEffects({ formData, setFormData, sessions, sessionType, setCalculatedTotal });
-
   // --- 系統自訂彈窗狀態 ---
   const { sysModal, showAlert, showConfirm } = useSystemModal();
+
+  const [showAuditModal, setShowAuditModal] = useState(false);
+  const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
+
+  // 處理全域副作用
+  useAppEffects({ 
+    formData, setFormData, sessions, sessionType, setCalculatedTotal,
+    sysModalShow: sysModal.show, showConfirmation, isSubmitting, isDataLoading, 
+    showAuditModal, isEditing, isEditingSession, showRecycleBin, shouldRenderEntry
+  });
 
   const addLog = async (type: string, details: string, operatorOverride?: string) => {
     try {
@@ -251,9 +258,6 @@ const {
   setShowConfirmation,
   addLog
 });
-
-const [showAuditModal, setShowAuditModal] = useState(false);
-const [auditTarget, setAuditTarget] = useState<{index: number, row: any[]} | null>(null);
 
 const [sortConfig, setSortConfig] = useState<{ key: number, direction: 'asc' | 'desc' } | null>(null);
 const [showColumnFilter, setShowShowColumnFilter] = useState(false);

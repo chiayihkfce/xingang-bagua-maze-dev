@@ -7,6 +7,15 @@ interface UseAppEffectsProps {
   sessions: Session[];
   sessionType: string;
   setCalculatedTotal: (total: number) => void;
+  sysModalShow: boolean;
+  showConfirmation: boolean;
+  isSubmitting: boolean;
+  isDataLoading: boolean;
+  showAuditModal: boolean;
+  isEditing: boolean;
+  isEditingSession: boolean;
+  showRecycleBin: boolean;
+  shouldRenderEntry: boolean;
 }
 
 /**
@@ -17,7 +26,16 @@ export const useAppEffects = ({
   setFormData,
   sessions,
   sessionType,
-  setCalculatedTotal
+  setCalculatedTotal,
+  sysModalShow,
+  showConfirmation,
+  isSubmitting,
+  isDataLoading,
+  showAuditModal,
+  isEditing,
+  isEditingSession,
+  showRecycleBin,
+  shouldRenderEntry
 }: UseAppEffectsProps) => {
 
   /**
@@ -43,5 +61,39 @@ export const useAppEffects = ({
     setCalculatedTotal(qty * price);
   }, [formData.quantity, formData.session, sessions, sessionType, setCalculatedTotal]);
 
+  /**
+   * 副作用 3：當彈窗或載入畫面顯示時，禁止背景滑動
+   */
+  useEffect(() => {
+    const isAnyModalOpen = 
+      sysModalShow || 
+      showConfirmation || 
+      isSubmitting || 
+      isDataLoading || 
+      showAuditModal || 
+      isEditing || 
+      isEditingSession || 
+      showRecycleBin || 
+      shouldRenderEntry;
+
+    if (isAnyModalOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => document.body.classList.remove('modal-open');
+  }, [
+    sysModalShow, 
+    showConfirmation, 
+    isSubmitting, 
+    isDataLoading, 
+    showAuditModal, 
+    isEditing, 
+    isEditingSession, 
+    showRecycleBin, 
+    shouldRenderEntry
+  ]);
+
 };
+
 
