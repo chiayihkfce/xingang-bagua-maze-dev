@@ -1,4 +1,4 @@
-import { doc, updateDoc, writeBatch, query, collection, where, getDocs, deleteDoc, setDoc } from "firebase/firestore";
+import { doc, updateDoc, writeBatch, query, collection, getDocs, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { sendPaymentSuccessEmail } from "../utils/emailUtils";
 
@@ -32,19 +32,6 @@ export const useAdminActions = ({
   setEditData,
   addLog
 }: UseAdminActionsProps) => {
-
-  /**
-   * 輔助函數：從 A 集合搬移到 B 集合
-   */
-  const moveDocument = async (sourceId: string, sourceColl: string, targetColl: string) => {
-    // 1. 取得原始資料
-    const sourceRef = doc(db, sourceColl, sourceId);
-    const targetRef = doc(db, targetColl, sourceId);
-    
-    // 這裡我們需要精確的原始 Data，但因為我們已經有 submissions state，可以直接從 state 拿
-    // 或者為了保險起見，我們在這裡使用 getDocs 或從 Hook 外部傳入。
-    // 為了最安全，我們讓呼叫者傳入完整 row。
-  };
 
   /**
    * 審核付款狀態
