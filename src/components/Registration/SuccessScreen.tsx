@@ -1,6 +1,7 @@
 import React from 'react';
 import { translateOption } from '../../utils/translateOptions';
 import { generateGoogleCalendarUrl, downloadIcalFile } from '../../utils/calendarUtils';
+import { generateCertificate, downloadCertificate } from '../../utils/certificateUtils';
 
 interface SuccessScreenProps {
   t: any;
@@ -47,6 +48,36 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
     selectedPaymentDetail?.type === 'bank' ? updateSuccess :
     selectedPaymentDetail?.type === 'linepay' ? hasClickedPayment :
     !!lastSubmissionId;
+
+  // 自動偵測連結並下載高品質證書
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const certId = urlParams.get('certId');
+    
+    // 如果有 certId 且 formData 已載入 (有名字)，則自動執行高品質下載
+    if (certId && formData.name && isFullyCompleted) {
+      const triggerAutoDownload = async () => {
+        try {
+          const dataUrl = await generateCertificate({
+            name: formData.name,
+            session: translateOption(getSessionDisplayName(formData.session), lang),
+            date: formData.pickupTime.split(' ')[0],
+            lang,
+            t
+          });
+          if (dataUrl) {
+            downloadCertificate(dataUrl, t.certDownloadName);
+          }
+        } catch (err) {
+          console.error("Auto Download Error:", err);
+        }
+      };
+      
+      // 延遲 1.5 秒等待 UI 載入後自動彈出下載
+      const timer = setTimeout(triggerAutoDownload, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [formData.name, isFullyCompleted, lang, t, getSessionDisplayName]);
 
   // 離開頁面警告邏輯：若尚未完成付款動作，跳出警告
   React.useEffect(() => {
