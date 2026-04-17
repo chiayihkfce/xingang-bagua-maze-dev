@@ -92,6 +92,8 @@ async function drawCertificateImage(data) {
       .where('status', '==', '通過')
       .get();
 
+    console.log(`[自動任務] 資料庫搜尋結果：找到 ${snapshot.size} 筆符合條件的資料`);
+
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.certSent === true) continue;
