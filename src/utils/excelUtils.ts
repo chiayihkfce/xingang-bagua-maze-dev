@@ -4,10 +4,17 @@ import * as XLSX from 'xlsx';
  * 將報名資料匯出為 Excel 檔案
  */
 export const exportToExcel = (data: any[][], fileNamePrefix: string = '報名清單') => {
-  if (data.length === 0) return;
+  if (data.length <= 1) return;
 
-  // 過濾掉每一列最後一個欄位 (通常是 Firebase ID)
-  const exportData = data.map(row => row.slice(0, 15));
+  // 1. 分離標題列與資料列
+  const header = data[0];
+  const rows = data.slice(1);
+
+  // 2. 反轉資料列順序 (讓原本最上面/最新的資料移到最下面)
+  const reversedRows = [...rows].reverse();
+
+  // 3. 重新組合並過濾掉最後一個欄位 (Firebase ID)
+  const exportData = [header, ...reversedRows].map(row => row.slice(0, 15));
 
   const ws = XLSX.utils.aoa_to_sheet(exportData);
   const wb = XLSX.utils.book_new();
