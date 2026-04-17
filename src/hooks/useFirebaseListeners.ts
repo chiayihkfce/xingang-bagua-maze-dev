@@ -4,12 +4,18 @@ import {
   onSnapshot, 
   query, 
   orderBy, 
-  doc
+  doc,
+  getDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Session, TimeslotConfig, PaymentMethod, FormData } from '../types'
 
-export const useFirebaseListeners = (setFormData: React.Dispatch<React.SetStateAction<FormData>>) => {
+export const useFirebaseListeners = (
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>,
+  setSubmitted?: (val: boolean) => void,
+  setLastSubmissionId?: (id: string | null) => void,
+  setCalculatedTotal?: (val: number) => void
+) => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [dbStatus, setDbStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
   
@@ -23,6 +29,33 @@ export const useFirebaseListeners = (setFormData: React.Dispatch<React.SetStateA
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [isEntryAnimating, setIsEntryAnimating] = useState(true); 
   const [shouldRenderEntry, setShouldRenderEntry] = useState(true);
+
+  // 新增：偵測 certId 領取證書
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const certId = urlParams.get('certId');
+    if (certId && setFormData && setSubmitted && setLastSubmissionId && setCalculatedTotal) {
+      const fetchCertData = async () => {
+        const docRef = doc(db, "registrations", certId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFormData(prev => ({
+            ...prev,
+            name: data.name,
+            session: data.session,
+            pickupTime: data.pickupTime,
+            paymentMethod: data.paymentMethod,
+            email: data.email
+          }));
+          setCalculatedTotal(data.totalAmount || 0);
+          setLastSubmissionId(certId);
+          setSubmitted(true);
+        }
+      };
+      fetchCertData();
+    }
+  }, [setFormData, setSubmitted, setLastSubmissionId, setCalculatedTotal]);
 
   useEffect(() => {
     const minEntryTime = 2500; 
