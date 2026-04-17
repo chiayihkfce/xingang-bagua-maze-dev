@@ -6,15 +6,13 @@ import AuditModal from './AuditModal';
 import EditSubmissionModal from './EditSubmissionModal';
 import EditSessionModal from './EditSessionModal';
 import DashboardStats from './DashboardStats';
+import AnalyticsCharts from './AnalyticsCharts';
 import LogsTable from './LogsTable';
 import RecycleBinModal from './RecycleBinModal';
 import PaymentManagement from './PaymentManagement';
 import AdminSettingsModal from './AdminSettingsModal';
 import { Session, Theme, TimeslotConfig, DashboardStats as IStats, PaymentMethod, AdminAccount } from '../../types';
 import DatePicker from 'react-datepicker';
-
-// 使用 Lazy Loading 動態導入圖表組件，優化首屏載入速度
-const AnalyticsCharts = React.lazy(() => import('./AnalyticsCharts'));
 
 interface AdminDashboardProps {
   t: any;
@@ -217,9 +215,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
       ) : adminTab === 'payments' ? (
         <PaymentManagement paymentMethods={paymentMethods} addPaymentMethod={addPaymentMethod} deletePaymentMethod={deletePaymentMethod} isSubmitting={isSubmitting} />
       ) : adminTab === 'analytics' ? (
-        <React.Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--primary-gold)' }}>圖表元件載入中...</div>}>
-          <AnalyticsCharts submissions={props.submissions} />
-        </React.Suspense>
+        <AnalyticsCharts submissions={props.submissions} />
       ) : (
         <TimeSlotManagement {...props} />
       )}
