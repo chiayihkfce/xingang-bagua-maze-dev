@@ -23,7 +23,7 @@ function AppContent() {
   }
 
   if (submitted) {
-    return <SuccessPage {...app} />;
+    return <SuccessPage />;
   }
 
   return <RegistrationPage {...app} />;
