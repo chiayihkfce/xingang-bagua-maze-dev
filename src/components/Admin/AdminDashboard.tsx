@@ -6,6 +6,7 @@ import AuditModal from './AuditModal';
 import EditSubmissionModal from './EditSubmissionModal';
 import EditSessionModal from './EditSessionModal';
 import DashboardStats from './DashboardStats';
+import AnalyticsCharts from './AnalyticsCharts';
 import LogsTable from './LogsTable';
 import RecycleBinModal from './RecycleBinModal';
 import PaymentManagement from './PaymentManagement';
@@ -198,6 +199,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
           <button onClick={() => setAdminTab('submissions')} className={adminTab === 'submissions' ? 'active' : ''}>報名清單</button>
           <button onClick={() => setAdminTab('logs')} className={adminTab === 'logs' ? 'active' : ''}>操作日誌</button>
           <button onClick={() => setAdminTab('payments')} className={adminTab === 'payments' ? 'active' : ''}>付款方式</button>
+          <button onClick={() => setAdminTab('analytics')} className={adminTab === 'analytics' ? 'active' : ''}>數據分析</button>
           <button onClick={() => setIsAdmin(false)}>登出後台</button>
         </div>
       </header>
@@ -212,6 +214,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         <LogsTable logs={logs} formatFullDateTime={props.formatFullDateTime} handleClearLogs={handleClearLogs} currentAdmin={currentAdmin} />
       ) : adminTab === 'payments' ? (
         <PaymentManagement paymentMethods={paymentMethods} addPaymentMethod={addPaymentMethod} deletePaymentMethod={deletePaymentMethod} isSubmitting={isSubmitting} />
+      ) : adminTab === 'analytics' ? (
+        <AnalyticsCharts submissions={props.submissions} />
       ) : (
         <TimeSlotManagement {...props} />
       )}

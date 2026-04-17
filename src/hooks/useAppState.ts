@@ -42,7 +42,7 @@ export const useAppState = () => {
   const [editingSession, setEditingSession] = useState({ 
     id: '', oldName: '', newName: '', newPrice: '', fixedDate: '', fixedTime: '', isSpecial: false 
   });
-  const [adminTab, setAdminTab] = useState<'sessions' | 'submissions' | 'timeslots' | 'logs' | 'payments'>('sessions');
+  const [adminTab, setAdminTab] = useState<'sessions' | 'submissions' | 'timeslots' | 'logs' | 'payments' | 'analytics'>('sessions');
   const [newSession, setNewSession] = useState({ 
     name: '', price: '', fixedDate: '', fixedTime: '', isSpecial: false 
   });

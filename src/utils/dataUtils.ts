@@ -84,4 +84,38 @@ export const filterSubmissions = (data: any[][], keyword: string): any[][] => {
   );
 };
 
+/**
+ * 取得視覺化分析所需的數據
+ */
+export const getAnalyticsData = (submissions: any[][]) => {
+  const data = submissions.slice(1); // 跳過標題
+  const referralMap: Record<string, number> = {};
+  const sessionMap: Record<string, number> = {};
+
+  data.forEach(row => {
+    // 1. 得知管道分析 (索引 13)
+    const referralRaw = row[13] || '其他';
+    // 處理陣列或逗號分隔的字串
+    const referrals = String(referralRaw).split(/[,,、\s]/).filter(Boolean);
+    referrals.forEach(ref => {
+      referralMap[ref] = (referralMap[ref] || 0) + 1;
+    });
+
+    // 2. 場次熱度分析 (索引 5)
+    const session = row[5] || '未定';
+    sessionMap[session] = (sessionMap[session] || 0) + 1;
+  });
+
+  const referralData = Object.entries(referralMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const sessionData = Object.entries(sessionMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  return { referralData, sessionData };
+};
+
+
 
