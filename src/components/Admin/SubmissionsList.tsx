@@ -1,63 +1,61 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 
-interface SubmissionsListProps {
-  totalRows: number;
-  handleDownloadExcel: () => void;
-  handleImportExcel: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  setShowRecycleBin: (show: boolean) => void;
-  adminFilterDate: Date | null;
-  handleDateFilter: (date: Date | null) => void;
-  adminSearchKeyword: string;
-  setAdminSearchKeyword: (keyword: string) => void;
-  showColumnFilter: boolean;
-  setShowShowColumnFilter: (show: boolean) => void;
-  submissions: any[][];
-  visibleColumns: number[];
-  toggleColumn: (index: number) => void;
-  currentPage: number;
-  isDataLoading: boolean;
-  loadPage: (page: number) => void;
-  handleSort: (index: number) => void;
-  sortConfig: { key: number, direction: 'asc' | 'desc' } | null;
-  setAuditTarget: (target: any) => void;
-  setShowAuditModal: (show: boolean) => void;
-  startEditSubmission: (row: any[], index: number) => void;
-  handleDeleteSubmission: (index: number) => void;
-  formatFullDateTime: (date: Date) => string;
-}
+import { useAppContext } from '../../context/AppContext';
 
-const SubmissionsList: React.FC<SubmissionsListProps> = ({
-  totalRows,
-  handleDownloadExcel,
-  handleImportExcel,
-  setShowRecycleBin,
-  adminFilterDate,
-  handleDateFilter,
-  adminSearchKeyword,
-  setAdminSearchKeyword,
-  showColumnFilter,
-  setShowShowColumnFilter,
-  submissions,
-  visibleColumns,
-  toggleColumn,
-  currentPage,
-  isDataLoading,
-  loadPage,
-  handleSort,
-  sortConfig,
-  setAuditTarget,
-  setShowAuditModal,
-  startEditSubmission,
-  handleDeleteSubmission,
-  formatFullDateTime
-}) => {
+const SubmissionsList: React.FC = () => {
+  const {
+    totalRows,
+    handleDownloadExcel,
+    handleImportExcel,
+    handlePrintCheckInSheet,
+    setShowRecycleBin,
+    adminFilterDate,
+    handleDateFilter,
+    adminSearchKeyword,
+    setAdminSearchKeyword,
+    showColumnFilter,
+    setShowShowColumnFilter,
+    submissions,
+    visibleColumns,
+    toggleColumn,
+    currentPage,
+    isDataLoading,
+    loadPage,
+    handleSort,
+    sortConfig,
+    setAuditTarget,
+    setShowAuditModal,
+    startEditSubmission,
+    handleDeleteSubmission,
+    formatFullDateTime
+  } = useAppContext();
+
   return (
     <section className="admin-section form-card submissions-table-container">
       <div className="admin-section-header">
         <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
           <h3 className="form-section-title" style={{margin: 0}}>報名清單 (共 {totalRows} 筆)</h3>
           <div className="admin-filter-bar" style={{ gap: '0.8rem' }}>
+            <button 
+              onClick={handlePrintCheckInSheet} 
+              className="submit-btn" 
+              title="列印今日簽到表"
+              style={{
+                background: '#8e44ad', padding: '0', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem',
+                height: '40px', width: '130px', border: 'none', margin: 0
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              列印今日
+            </button>
+
             <button 
               onClick={handleDownloadExcel} 
               className="submit-btn" 

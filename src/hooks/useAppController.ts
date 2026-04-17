@@ -12,7 +12,7 @@ import { useAdminActions } from './useAdminActions';
 import { useSettingsActions } from './useSettingsActions';
 import { useRegistrationActions } from './useRegistrationActions';
 import { formatFullDateTime, generateTimeSlots, toggleTimeInString } from '../utils/dateUtils';
-import { copyToClipboard } from '../utils/displayUtils';
+import { copyToClipboard, generatePrintContent } from '../utils/displayUtils';
 import { exportToExcel, readExcelFile } from '../utils/excelUtils';
 import { calculateDashboardStats, sortSubmissions } from '../utils/dataUtils';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -139,6 +139,31 @@ export const useAppController = () => {
 
   const loadPage = (page: number) => state.setCurrentPage(page);
 
+  const handlePrintCheckInSheet = () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayData = adminData.submissions.slice(1).filter(row => {
+      const pickupTime = row[11] || '';
+      const status = row[1] || '';
+      return pickupTime.startsWith(todayStr) && status === '通過';
+    });
+
+    if (todayData.length === 0) {
+      modal.showAlert('今天尚無已通過審核的預約資料');
+      return;
+    }
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(generatePrintContent(todayData));
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
+  };
+
   return {
     ...state, 
     ...routing, 
@@ -153,6 +178,7 @@ export const useAppController = () => {
     ...settingsActions, 
     ...registrationActions,
     dashboardStats: adminData.dashboardStats || { pendingCount: 0, totalRevenue: 0, todayKits: 0, todayPlayers: 0 },
-    handleCopyAccount, getDisplayStats, handleDownloadExcel, handleImportExcel, handleDateFilter, handleSort, toggleFixedTime, formatFullDateTime, generateTimeSlots, loadPage, addLog
+    handleCopyAccount, getDisplayStats, handleDownloadExcel, handleImportExcel, handleDateFilter, handleSort, toggleFixedTime, formatFullDateTime, generateTimeSlots, loadPage, addLog,
+    handlePrintCheckInSheet
   };
 };
