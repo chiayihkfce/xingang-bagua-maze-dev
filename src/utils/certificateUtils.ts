@@ -17,35 +17,34 @@ export const generateCertificate = async (data: {
   canvas.width = w;
   canvas.height = h;
 
-  // 2. 背景構建：暖黑底色 + 宣紙紋理 + 中心光暈
+  // 2. 背景構建：淡雅米白宣紙色 + 纖維紋理
   const bgGrad = ctx.createRadialGradient(w/2, h/2, 200, w/2, h/2, w);
-  bgGrad.addColorStop(0, '#1a1a1a');
-  bgGrad.addColorStop(1, '#020202');
+  bgGrad.addColorStop(0, '#f9f7f0');
+  bgGrad.addColorStop(1, '#eeeae0');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, w, h);
 
-  // 宣紙/絲絹紋理 (適度減少循環以提升速度)
+  // 宣紙/絲絹紋理 (纖維感強化)
   ctx.save();
-  ctx.globalAlpha = 0.05;
-  for (let i = 0; i < 2000; i++) {
-    ctx.strokeStyle = Math.random() > 0.5 ? '#d4af37' : '#ffffff';
+  ctx.globalAlpha = 0.08;
+  for (let i = 0; i < 3000; i++) {
+    ctx.strokeStyle = Math.random() > 0.5 ? '#d4af37' : '#999999';
     ctx.beginPath();
     const x = Math.random() * w;
     const y = Math.random() * h;
     ctx.moveTo(x, y);
-    ctx.lineTo(x + Math.random() * 15, y + Math.random() * 15);
-    ctx.lineWidth = 0.2;
+    ctx.lineTo(x + Math.random() * 20, y + Math.random() * 20);
+    ctx.lineWidth = 0.4;
     ctx.stroke();
   }
   ctx.restore();
 
-  // 3. 完整太極八卦水印 (主體強化：提升對比度、粗細與能量感)
+  // 3. 完整太極八卦水印 (白底適配：降低亮度)
   ctx.save();
   ctx.translate(w / 2, h / 2);
   const ritualGrad = ctx.createRadialGradient(0, 0, 100, 0, 0, 800);
-  ritualGrad.addColorStop(0, 'rgba(212, 175, 55, 0.3)'); // 增加對比
-  ritualGrad.addColorStop(0.5, 'rgba(212, 175, 55, 0.15)');
-  ritualGrad.addColorStop(1, 'rgba(212, 175, 55, 0)');
+  ritualGrad.addColorStop(0, 'rgba(184, 134, 11, 0.15)'); 
+  ritualGrad.addColorStop(1, 'rgba(184, 134, 11, 0)');
   ctx.strokeStyle = ritualGrad;
   
   // 繪製外環同心圓 (法陣結構)
@@ -158,27 +157,27 @@ export const generateCertificate = async (data: {
   ctx.textAlign = 'center';
   ctx.fillText('頒 發 給', centerX, 550);
 
-  // 姓名 (降權並縮減間距)
+  // 姓名 (白底適配：改用深墨色展現莊重感)
   ctx.save();
   ctx.textAlign = 'center';
   ctx.font = `bold 200px ${fontAntique}`;
-  ctx.fillStyle = '#e5e1d3';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-  ctx.shadowBlur = 10;
-  ctx.fillText(data.name || '挑戰者', centerX, 750); // 上移
-  
-  // 極細淡金描邊 (取代原本厚重的質感)
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
-  ctx.lineWidth = 1.5;
+  ctx.fillStyle = '#222222'; // 改為深墨色
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+  ctx.shadowBlur = 8;
+  ctx.fillText(data.name || '挑戰者', centerX, 750); 
+
+  // 極細淡金描邊 (保留微弱的尊貴感)
+  ctx.strokeStyle = 'rgba(184, 134, 11, 0.15)';
+  ctx.lineWidth = 1.2;
   ctx.strokeText(data.name || '挑戰者', centerX, 750);
   ctx.restore();
-  
-  // 名字下方的承托金線 (精簡為單線，降低視覺重量)
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
+
+  // 名字下方的承托金線 (改用深古銅金)
+  ctx.strokeStyle = 'rgba(133, 109, 40, 0.5)';
   ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(centerX - 350, 790); ctx.lineTo(centerX + 350, 790); ctx.stroke();
 
-  // D. 恭賀說明文字 (同步上移)
+  // D. 恭賀說明文字 (同步調整色調)
   const challengeTitle = '【新港八卦謎蹤】';
   ctx.font = `65px ${fontStandard}`;
   const wPrefix = ctx.measureText('恭喜完成 ').width;
@@ -189,41 +188,42 @@ export const generateCertificate = async (data: {
   const startT = centerX - (wPrefix + wTitle + wSuffix) / 2;
 
   ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+  ctx.fillStyle = 'rgba(34, 34, 34, 0.8)'; // 改用深色字
   ctx.font = `65px ${fontStandard}`;
-  ctx.fillText('恭喜完成 ', startT, 980); // 上移
-  
-  ctx.fillStyle = '#d4af37'; 
+  ctx.fillText('恭喜完成 ', startT, 980);
+
+  ctx.fillStyle = '#856d28'; // 改用深金色
   ctx.font = `bold 75px ${fontStandard}`;
   ctx.fillText(challengeTitle, startT + wPrefix, 980);
-  
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+
+  ctx.fillStyle = 'rgba(34, 34, 34, 0.8)';
   ctx.font = `65px ${fontStandard}`;
   ctx.fillText(' 挑戰！', startT + wPrefix + wTitle, 980);
 
-
-  // E. 底部資訊 (縮小比例並上移)
+  // E. 底部資訊 (配合白底調降對度)
   ctx.textAlign = 'center';
   const sessionLabel = `活動場次：${data.session ? data.session.split('(')[0].trim() : '一般場次'}`;
   ctx.font = `38px ${fontStandard}`;
-  ctx.fillStyle = 'rgba(212, 175, 55, 0.4)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
   ctx.fillText(sessionLabel, centerX, 1150, w - 500);
-  
+
   ctx.font = `50px ${fontAntique}`;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
   ctx.fillText(`${data.date} ｜ 新港文教基金會`, centerX, 1250);
 
-  // 7. 朱紅方形印章 (終極藝術化：破碎邊緣、印泥噴點、疊印感)
+  // 7. 朱紅方形印章 (適配白底：增強破碎感與滲透感)
   const drawSeal = (x: number, y: number) => {
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(-0.05);
-    
-    const sealSize = 240;
+    ctx.rotate(-0.06); 
+
+    const sealSize = 220;
+    // 在白底上使用 multiply 會非常自然
     ctx.globalCompositeOperation = 'multiply';
-    
-    // 繪製帶有隨機破碎感的印泥背景
-    ctx.fillStyle = 'rgba(192, 57, 43, 0.95)';
+
+    // 繪製具備隨機邊緣缺陷的印背景 (顏色稍微古樸)
+    ctx.fillStyle = 'rgba(160, 40, 30, 0.8)';
+
     ctx.beginPath();
     ctx.moveTo(Math.random()*6, Math.random()*6);
     ctx.lineTo(sealSize - Math.random()*6, Math.random()*6);
