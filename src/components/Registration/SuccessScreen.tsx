@@ -65,7 +65,8 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
             session: translateOption(getSessionDisplayName(formData.session), lang),
             date: formData.pickupTime.split(' ')[0],
             lang,
-            t
+            t,
+            theme: 'light' // 這裡可以設定 'dark' 或 'light'
           });
           if (dataUrl) {
             downloadCertificate(dataUrl, t.certDownloadName);
