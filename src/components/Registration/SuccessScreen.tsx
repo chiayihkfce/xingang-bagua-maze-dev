@@ -136,7 +136,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0a0a0a', color: '#fff', textAlign: 'center', padding: '20px' }}>
         <div className="check-icon" style={{ background: '#27ae60', margin: '0 auto 20px' }}>✓</div>
         <h2 style={{ fontSize: '2rem', letterSpacing: '4px', color: '#d4af37' }}>挑戰成就達成</h2>
-        <p style={{ marginTop: '10px', opacity: 0.8, fontSize: '1.2rem' }}>恭喜您，<strong>{formData.name}</strong>！</p>
+        <p style={{ marginTop: '10px', opacity: 0.8, fontSize: '1.2rem' }}>恭喜您，<strong>{formData.name || '挑戰者'}</strong>！</p>
         <p style={{ marginTop: '10px', opacity: 0.7 }}>請選擇您喜愛的證書風格進行領取：</p>
         
         <div style={{ display: 'flex', gap: '20px', marginTop: '40px', flexWrap: 'wrap', justifyContent: 'center' }}>

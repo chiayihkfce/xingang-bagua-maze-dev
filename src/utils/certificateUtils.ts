@@ -136,14 +136,14 @@ export const generateCertificate = async (data: {
   // 主標題 (數位成就證書)
   drawGoldenText('數位成就證書', centerX, 320, fontAntique, 160, true);
   
-  // 英文副標 (強化顯眼度：增加透明度與字級感)
+  // 英文副標 (更新名稱：The Bagua Mystery of xingang)
   ctx.save();
-  ctx.globalAlpha = 0.6; // 從 0.25 調升至 0.6
-  ctx.fillStyle = isDark ? 'rgba(212, 175, 55, 0.8)' : 'rgba(133, 109, 40, 0.8)';
-  ctx.font = `italic 28px serif`;
+  ctx.globalAlpha = 0.6;
+  ctx.fillStyle = isDark ? 'rgba(212, 175, 55, 0.8)' : 'rgba(184, 134, 11, 0.8)';
+  ctx.font = `italic 32px serif`; // 稍微調大一點
   ctx.textAlign = 'center';
   ctx.letterSpacing = '10px';
-  ctx.fillText('XINGANG BAGUA MYSTERY ACHIEVEMENT', centerX, 390);
+  ctx.fillText('The Bagua Mystery of xingang', centerX, 390);
   ctx.restore();
 
   // 頒發給 (使用標準宋體)

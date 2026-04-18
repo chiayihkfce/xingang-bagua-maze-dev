@@ -67,10 +67,10 @@ async function drawCertificateImage(data) {
   const centerX = width / 2;
   
   // 4. 文字樣式 (米白版適配)
-  ctx.fillStyle = '#856d28'; ctx.font = `bold 52px ${fontAntique}`; ctx.textAlign = 'center';
-  ctx.fillText('數位成就證書', centerX, 110);
+  drawGold('數位成就證書', centerX, 130, 65);
   ctx.fillStyle = 'rgba(184, 134, 11, 0.7)'; ctx.font = `italic 14px serif`;
-  ctx.fillText('XINGANG BAGUA MYSTERY ACHIEVEMENT', centerX, 140);
+  ctx.fillText('The Bagua Mystery of xingang', centerX, 160);
+
 
   ctx.fillStyle = '#666666'; ctx.font = `20px serif`; ctx.fillText('頒 發 給', centerX, 200);
   ctx.fillStyle = '#222222'; ctx.font = `bold 75px ${fontAntique}`; ctx.fillText(data.name || '參加者', centerX, 285);
