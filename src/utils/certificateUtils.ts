@@ -24,25 +24,24 @@ export const generateCertificate = async (data: {
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, w, h);
 
-  // 宣紙/絲絹紋理 (極致纖維感重構)
+  // 宣紙/絲絹紋理 (極致纖維感強化 - 25000 條細絲)
   ctx.save();
-  const colors = ['#d4af37', '#999999', '#ffffff', '#c0c0c0'];
-  for (let i = 0; i < 8000; i++) {
-    ctx.globalAlpha = Math.random() * 0.12; // 隨機透明度
+  const colors = ['#d4af37', '#999999', '#ffffff', '#e0e0e0', '#f1c40f'];
+  for (let i = 0; i < 25000; i++) {
+    ctx.globalAlpha = Math.random() * 0.15;
     ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
-    ctx.lineWidth = Math.random() * 0.6;
+    ctx.lineWidth = Math.random() * 0.5;
     
     ctx.beginPath();
     const x = Math.random() * w;
     const y = Math.random() * h;
-    const len = Math.random() * 25 + 5;
+    const len = Math.random() * 30 + 5;
     const angle = Math.random() * Math.PI * 2;
     
-    // 使用二次貝茲曲線繪製帶有弧度的細碎纖維
     ctx.moveTo(x, y);
     ctx.quadraticCurveTo(
-      x + Math.random() * 10 - 5, 
-      y + Math.random() * 10 - 5,
+      x + Math.random() * 12 - 6, 
+      y + Math.random() * 12 - 6,
       x + Math.cos(angle) * len, 
       y + Math.sin(angle) * len
     );
@@ -226,46 +225,56 @@ export const generateCertificate = async (data: {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
   ctx.fillText(`${data.date} ｜ 新港文教基金會`, centerX, 1250);
 
-  // 7. 朱紅方形印章 (鏤空篆刻化：大尺寸、透明、紅色文字、無底色)
+  // 7. 朱紅方形印章 (工整官印化：圓角、紅色文字、絕對置中、無噴點)
   const drawSeal = (x: number, y: number) => {
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(-0.05); 
+    // 恢復正位，僅保留極微小的手動感偏位
+    ctx.rotate(-0.01); 
     
-    const sealSize = 300; // 放大尺寸
-    ctx.globalAlpha = 0.6; // 增加透明度讓其更自然
+    const sealSize = 280;
+    const radius = 40; // 圓角半徑
+    ctx.globalAlpha = 0.7;
     ctx.globalCompositeOperation = 'multiply';
     
-    // A. 繪製破碎的紅色邊框 (不填充背景，達成鏤空感)
+    // A. 繪製圓角紅色邊框
     ctx.strokeStyle = 'rgba(160, 40, 30, 1)';
-    ctx.lineWidth = 16;
+    ctx.lineWidth = 14;
+    
     ctx.beginPath();
-    ctx.moveTo(Math.random()*10, Math.random()*10);
-    ctx.lineTo(sealSize-Math.random()*10, Math.random()*5);
-    ctx.lineTo(sealSize+Math.random()*5, sealSize-Math.random()*10);
-    ctx.lineTo(Math.random()*5, sealSize+Math.random()*8);
+    ctx.moveTo(radius, 0);
+    ctx.lineTo(sealSize - radius, 0);
+    ctx.quadraticCurveTo(sealSize, 0, sealSize, radius);
+    ctx.lineTo(sealSize, sealSize - radius);
+    ctx.quadraticCurveTo(sealSize, sealSize, sealSize - radius, sealSize);
+    ctx.lineTo(radius, sealSize);
+    ctx.quadraticCurveTo(0, sealSize, 0, radius);
+    ctx.lineTo(0, radius);
+    ctx.quadraticCurveTo(0, 0, radius, 0);
     ctx.closePath();
     ctx.stroke();
 
-    // B. 加入隨機的印泥殘留噴點 (僅在邊框與文字附近)
-    ctx.fillStyle = 'rgba(160, 40, 30, 0.4)';
-    for(let i=0; i<400; i++) {
-      if (Math.random() > 0.7) { // 模擬不均勻感
-        ctx.fillRect(Math.random()*sealSize, Math.random()*sealSize, 3, 3);
-      }
-    }
-
-    // C. 印章文字 (改為紅色，達成刻印質感)
-    ctx.fillStyle = 'rgba(160, 40, 30, 0.9)';
-    ctx.font = 'bold 65px "Microsoft JhengHei"';
+    // B. 印章文字 (朱紅色、絕對置中)
+    ctx.fillStyle = 'rgba(160, 40, 30, 1)';
+    ctx.font = 'bold 60px "Microsoft JhengHei"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('新港文教', sealSize/2, sealSize/3 + 15);
-    ctx.fillText('基金會印', sealSize/2, (sealSize/3)*2 + 25);
+    
+    // 計算精確的田字型排版
+    const mid = sealSize / 2;
+    const offset = 55;
+    ctx.fillText('新港', mid, mid - offset);
+    ctx.fillText('文教', mid, mid + offset);
+    
+    // 這裡是為了達成「新港文教基金會印」的排列，我改用四字一組的傳統印章排版
+    // 或是依照您的文字分行：
+    ctx.clearRect(0,0,0,0); // 重置準備重新繪製精確位置
+    ctx.fillText('新港文教', mid, mid - 45);
+    ctx.fillText('基金會印', mid, mid + 45);
 
     ctx.restore();
   };
-  drawSeal(w - 550, h - 550);
+  drawSeal(w - 500, h - 500);
 
 
   return canvas.toDataURL('image/png');
