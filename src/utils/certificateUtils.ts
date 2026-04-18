@@ -49,7 +49,7 @@ export const generateCertificate = async (data: {
   ctx.strokeStyle = ritualGrad;
   
   // 繪製外環同心圓 (法陣結構)
-  [650, 700, 750].forEach((radius, idx) => {
+  [650, 700, 750].forEach((radius) => {
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI * 2); ctx.stroke();
   });
