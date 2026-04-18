@@ -34,28 +34,40 @@ export const useFirebaseListeners = (
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const certId = urlParams.get('certId');
-    if (certId && setFormData && setSubmitted && setLastSubmissionId && setCalculatedTotal) {
+    
+    // 關鍵修正：加入 !formData.name 判斷，若已有資料則不再重複抓取
+    if (certId && !formData.name && setFormData && setSubmitted && setLastSubmissionId && setCalculatedTotal) {
       const fetchCertData = async () => {
-        const docRef = doc(db, "registrations", certId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setFormData(prev => ({
-            ...prev,
-            name: data.name,
-            session: data.session,
-            pickupTime: data.pickupTime,
-            paymentMethod: data.paymentMethod,
-            email: data.email
-          }));
-          setCalculatedTotal(data.totalAmount || 0);
-          setLastSubmissionId(certId);
-          setSubmitted(true);
+        try {
+          const docRef = doc(db, "registrations", certId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setFormData({
+              name: data.name || '',
+              phone: data.phone || '',
+              email: data.email || '',
+              session: data.session || '',
+              quantity: data.quantity || 1,
+              participants: data.participants || 1,
+              pickupTime: data.pickupTime || '',
+              pickupLocation: data.pickupLocation || '',
+              paymentMethod: data.paymentMethod || '',
+              note: data.note || '',
+              bankLast5: data.bankLast5 || '',
+              isGroup: data.isGroup || false
+            });
+            setCalculatedTotal(data.totalAmount || 0);
+            setLastSubmissionId(certId);
+            setSubmitted(true);
+          }
+        } catch (err) {
+          console.error("Fetch Cert Error:", err);
         }
       };
       fetchCertData();
     }
-  }, [setFormData, setSubmitted, setLastSubmissionId, setCalculatedTotal]);
+  }, [setFormData, setSubmitted, setLastSubmissionId, setCalculatedTotal, formData.name]);
 
   useEffect(() => {
     const minEntryTime = 2500; 

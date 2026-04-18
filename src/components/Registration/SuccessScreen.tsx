@@ -46,6 +46,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
 
   // 手動觸發高品質下載
   const handleThemeDownload = async (selectedTheme: 'dark' | 'light') => {
+    // 只要有名字就能領取證書 (領取模式下無視 isFullyCompleted)
     if (!formData.name) return;
     setIsUpdating(true);
     try {

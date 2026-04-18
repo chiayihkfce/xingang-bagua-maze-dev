@@ -2,16 +2,21 @@
   <!-- 1. 精確八角形背景 (符合八卦外型) -->
   <path d="M30 0 L70 0 L100 30 L100 70 L70 100 L30 100 L0 70 L0 30 Z" fill="black"/>
   
-  <!-- 2. 太極中心 (S型曲線與陰陽眼) -->
-  <g transform="translate(50, 50) scale(0.35)">
-    <circle r="48" fill="white" stroke="white" stroke-width="1"/>
-    <!-- 陰陽魚 -->
-    <path d="M 0 -48 A 48 48 0 0 1 0 48 A 24 24 0 0 1 0 0 A 24 24 0 0 0 0 -48" fill="black"/>
-    <circle cy="-24" r="8" fill="white"/>
-    <circle cy="24" r="8" fill="black"/>
-  </g>
+    <!-- 2. 太極中心 (經典黑白風格，確保清晰對比) -->
+    <g transform="translate(50, 50) scale(0.35)">
+      <!-- 底圓 (白色) -->
+      <circle r="48" fill="white"/>
+      <!-- 陰魚 (黑色) -->
+      <path d="M 0 -48 A 48 48 0 0 1 0 48 A 24 24 0 0 1 0 0 A 24 24 0 0 0 0 -48" fill="black"/>
+      <!-- 陰中之陽眼 (黑色魚頭中的白點) -->
+      <circle cy="24" r="10" fill="white"/>
+      <!-- 陽中之陰眼 (白色魚頭中的黑點) -->
+      <circle cy="-24" r="10" fill="black"/>
+      <!-- 最外圈描邊 -->
+      <circle r="48" fill="none" stroke="white" stroke-width="2"/>
+    </g>
 
-  <!-- 3. 八卦卦象 (由內而外：初爻、二爻、三爻) -->
+  <!-- 3. 八卦卦象 (改回白色) -->
   <g fill="white" transform="translate(50, 50)">
     <defs>
       <!-- 陽爻 (連續線) -->
