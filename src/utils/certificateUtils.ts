@@ -48,18 +48,24 @@ export const generateCertificate = async (data: {
   ritualGrad.addColorStop(1, 'rgba(212, 175, 55, 0)');
   ctx.strokeStyle = ritualGrad;
   
-  // 繪製多重同心圓 (結構核心)
-  [280, 300, 320, 650, 700, 750].forEach((radius, idx) => {
-    ctx.lineWidth = idx > 2 ? 3 : 7;
+  // 繪製外環同心圓 (法陣結構)
+  [650, 700, 750].forEach((radius, idx) => {
+    ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI * 2); ctx.stroke();
   });
 
-  // 太極圓
+  // 太極圓 (單層圓 + S曲線 + 魚眼)
   const r = 320;
   ctx.lineWidth = 12;
   ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
   ctx.lineWidth = 6;
   ctx.beginPath(); ctx.arc(0, -r/2, r/2, Math.PI * 1.5, Math.PI * 0.5); ctx.arc(0, r/2, r/2, Math.PI * 1.5, Math.PI * 0.5, true); ctx.stroke();
+
+  // 繪製魚眼
+  ctx.fillStyle = ctx.strokeStyle; // 使用法陣相同的金色
+  ctx.beginPath(); ctx.arc(0, -r/2, 40, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(0, r/2, 40, 0, Math.PI * 2); ctx.fill();
+
   
   // 八卦爻位 (加粗清晰化並加入能量光暈)
   const trigrams = [ [1,1,1], [0,1,1], [1,0,1], [0,0,1], [1,1,0], [0,1,0], [1,0,0], [0,0,0] ];
@@ -152,27 +158,27 @@ export const generateCertificate = async (data: {
   ctx.textAlign = 'center';
   ctx.fillText('頒 發 給', centerX, 550);
 
-  // 姓名 (降權：縮小尺寸與亮度，去除強烈3D)
+  // 姓名 (降權並縮減間距)
   ctx.save();
   ctx.textAlign = 'center';
-  ctx.font = `bold 200px ${fontAntique}`; // 從 280px 調降
-  ctx.fillStyle = '#e5e1d3'; // 使用暖象牙白代替純白，降低衝擊力
+  ctx.font = `bold 200px ${fontAntique}`;
+  ctx.fillStyle = '#e5e1d3';
   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
   ctx.shadowBlur = 10;
-  ctx.fillText(data.name || '挑戰者', centerX, 850);
+  ctx.fillText(data.name || '挑戰者', centerX, 750); // 上移
   
   // 極細淡金描邊 (取代原本厚重的質感)
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
   ctx.lineWidth = 1.5;
-  ctx.strokeText(data.name || '挑戰者', centerX, 850);
+  ctx.strokeText(data.name || '挑戰者', centerX, 750);
   ctx.restore();
   
   // 名字下方的承托金線 (精簡為單線，降低視覺重量)
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
   ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(centerX - 350, 890); ctx.lineTo(centerX + 350, 890); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(centerX - 350, 790); ctx.lineTo(centerX + 350, 790); ctx.stroke();
 
-  // D. 恭賀說明文字 (調和色調與比例)
+  // D. 恭賀說明文字 (同步上移)
   const challengeTitle = '【新港八卦謎蹤】';
   ctx.font = `65px ${fontStandard}`;
   const wPrefix = ctx.measureText('恭喜完成 ').width;
@@ -185,26 +191,27 @@ export const generateCertificate = async (data: {
   ctx.textAlign = 'left';
   ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
   ctx.font = `65px ${fontStandard}`;
-  ctx.fillText('恭喜完成 ', startT, 1050);
+  ctx.fillText('恭喜完成 ', startT, 980); // 上移
   
-  ctx.fillStyle = '#d4af37'; // 與主標題一致的穩重金
+  ctx.fillStyle = '#d4af37'; 
   ctx.font = `bold 75px ${fontStandard}`;
-  ctx.fillText(challengeTitle, startT + wPrefix, 1050);
+  ctx.fillText(challengeTitle, startT + wPrefix, 980);
   
   ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
   ctx.font = `65px ${fontStandard}`;
-  ctx.fillText(' 挑戰！', startT + wPrefix + wTitle, 1080);
+  ctx.fillText(' 挑戰！', startT + wPrefix + wTitle, 980);
 
-  // E. 底部資訊 (大幅縮小字級展現精緻感)
+
+  // E. 底部資訊 (縮小比例並上移)
   ctx.textAlign = 'center';
   const sessionLabel = `活動場次：${data.session ? data.session.split('(')[0].trim() : '一般場次'}`;
   ctx.font = `38px ${fontStandard}`;
   ctx.fillStyle = 'rgba(212, 175, 55, 0.4)';
-  ctx.fillText(sessionLabel, centerX, 1220, w - 500);
+  ctx.fillText(sessionLabel, centerX, 1150, w - 500);
   
   ctx.font = `50px ${fontAntique}`;
   ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-  ctx.fillText(`${data.date} ｜ 新港文教基金會`, centerX, 1320);
+  ctx.fillText(`${data.date} ｜ 新港文教基金會`, centerX, 1250);
 
   // 7. 朱紅方形印章 (終極藝術化：破碎邊緣、印泥噴點、疊印感)
   const drawSeal = (x: number, y: number) => {
