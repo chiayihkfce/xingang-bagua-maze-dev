@@ -98,30 +98,33 @@ async function drawCertificateImage(data) {
   return canvas.toBuffer('image/jpeg', { quality: 0.3 }).toString('base64');
 }
 
-  async function run() {
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-  const dateStr = yesterday.toISOString().split('T')[0];
+async function run() {
+  const now = new Date();
+  const todayStart = now.toISOString().split('T')[0];
 
-  console.log(`[自動任務] 檢查日期：${dateStr}`);
+  console.log(`[自動任務] 正在掃描歷史紀錄，補發 ${todayStart} 以前尚未發送的證書...`);
 
   try {
     const snapshot = await db.collection('registrations')
-      .where('pickupTime', '>=', dateStr)
-      .where('pickupTime', '<', `${dateStr} \uf8ff`)
       .where('status', '==', '通過')
+      .where('pickupTime', '<', todayStart)
       .get();
 
-    console.log(`[自動任務] 資料庫搜尋結果：找到 ${snapshot.size} 筆符合條件的資料`);
+    console.log(`[自動任務] 資料庫搜尋結果：找到 ${snapshot.size} 筆潛在合格資料`);
+
+    let successCount = 0;
 
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.certSent === true) continue;
 
-      console.log(`正在處理：${data.name}...`);
+      const playDate = data.pickupTime ? data.pickupTime.split(' ')[0] : '未知日期';
+      console.log(`正在補寄給：${data.name} (${playDate})...`);
+      
       const base64Image = await drawCertificateImage({ 
         name: data.name, 
         session: data.session || '一般場次', 
-        date: dateStr 
+        date: playDate 
       });
 
       // 呼叫 EmailJS (使用 GitHub Pages 網址，加入預設主題參數)
