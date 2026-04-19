@@ -207,99 +207,47 @@ export const generateCertificate = async (data: {
   ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
   ctx.font = `50px ${fontAntique}`; ctx.fillText(`${data.date} ｜ 新港文教基金會`, centerX, 1250);
 
-  // 7. 朱紅官印 (群組邊界 & 跨裝置自適應版)
-  const drawSeal = (x: number, y: number) => {
-    const s = 280, r = 40;
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  // 7. 朱紅官印 (外部 SVG 載入 + 物理質感版)
+  const drawSeal = async (x: number, y: number) => {
+    const s = 280;
+    const img = new Image();
     
+    // 從 public 資料夾載入完美的向量印章模板
+    // 使用 URL 常數確保在不同環境下路徑正確
+    const sealUrl = new URL('/seal.svg', window.location.origin).href;
+    
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = sealUrl;
+    });
+
     const sealCanvas = document.createElement('canvas');
-    sealCanvas.width = s + 40; sealCanvas.height = s + 40;
+    sealCanvas.width = s; sealCanvas.height = s;
     const sCtx = sealCanvas.getContext('2d');
     if (!sCtx) return;
 
-    const jitter = (range = 2.5) => (Math.random() - 0.5) * range;
-    const sealColor = 'rgba(160, 40, 30, 0.95)';
+    // 將 SVG 繪入離屏畫布
+    sCtx.drawImage(img, 0, 0, s, s);
 
-    // A. 繪製邊框
-    sCtx.translate(20, 20);
-    sCtx.strokeStyle = sealColor;
-    sCtx.lineWidth = 14; sCtx.lineJoin = 'round';
-    sCtx.beginPath();
-    sCtx.moveTo(r + jitter(), jitter());
-    sCtx.lineTo(s - r + jitter(), jitter());
-    sCtx.quadraticCurveTo(s + jitter(), jitter(), s + jitter(), r + jitter());
-    sCtx.lineTo(s + jitter(), s - r + jitter());
-    sCtx.quadraticCurveTo(s + jitter(), s + jitter(), s - r + jitter(), s + jitter());
-    sCtx.lineTo(r + jitter(), s + jitter());
-    sCtx.quadraticCurveTo(jitter(), s + jitter(), jitter(), s - r + jitter());
-    sCtx.lineTo(jitter(), r + jitter());
-    sCtx.quadraticCurveTo(jitter(), jitter(), r + jitter(), jitter());
-    sCtx.stroke();
-// B. 繪製印文 (群組邊界控制 & 自適應比例)
-sCtx.save();
-// --- 實作「物理裁切」：放寬邊界解決截斷 ---
-sCtx.beginPath();
-sCtx.rect(5, 5, s - 10, s - 10); 
-sCtx.clip();
-
-sCtx.translate(s/2, s/2);
-
-// 1. 漢文區 (固定黃金比例)
-sCtx.save();
-sCtx.fillStyle = sealColor;
-sCtx.textAlign = 'center'; sCtx.textBaseline = 'middle';
-// 比例回歸：寬度 1.35，高度 1.65
-sCtx.scale(1.35, 1.65); 
-sCtx.font = 'bold 44px "LiSu", "STKaiti", "Microsoft JhengHei"';
-const yO = 38; const rx1 = 68, rx2 = 22; 
-
-    sCtx.fillText('新', rx1, -yO * 1.5); sCtx.fillText('港', rx1, -yO * 0.5);
-    sCtx.fillText('文', rx1,  yO * 0.5); sCtx.fillText('教', rx1,  yO * 1.5);
-    sCtx.fillText('基', rx2, -yO * 1.5); sCtx.fillText('金', rx2, -yO * 0.5);
-    sCtx.fillText('會', rx2,  yO * 0.5); sCtx.fillText('印', rx2,  yO * 1.5);
-    sCtx.restore();
-
-    // 2. 滿文區 (僅對滿文實作手機端高度縮減)
-    sCtx.save();
-    sCtx.fillStyle = sealColor;
-    sCtx.textAlign = 'center'; sCtx.textBaseline = 'middle';
-    const mL1 = "ᠰᡳᠨ ᡤᠠᠩ ᠸᡝᠨ ᠵᡳᠶᠣᠣ"; const mL2 = "ᠵᡳ ᠵᡳᠨ ᡥᡡᡳ ᡩᠣᡵᠣᠨ"; 
-    const drawSManchu = (txt: string, ox: number) => {
-      sCtx.save();
-      sCtx.translate(ox, 0); sCtx.rotate(Math.PI / 2);
-      // 滿文專屬：手機端高度降至 1.1x 確保不截斷，寬度維持 2.15x
-      const mH = isMobile ? 1.1 : 1.65;
-      sCtx.scale(mH, 2.15); 
-      sCtx.font = 'bold 34px "Mongolian Baiti", "Noto Sans Mongolian", serif';
-      sCtx.fillText(txt, 0, 0);
-      sCtx.restore();
-    };
-    // 修正讀序與座標：左側邊界縮至 -98 防止壓到左邊圓角
-    drawSManchu(mL1, -98); drawSManchu(mL2, -42); 
-    sCtx.restore();
-
-    sCtx.restore(); // 結束裁切區域
-
-    // C. 關鍵「物理挖空」：在離屏畫布上製造透明孔洞
+    // 實作「物理質感」：Canvas 隨機挖空 (維持手工印泥感)
     sCtx.globalCompositeOperation = 'destination-out';
     for (let i = 0; i < 550; i++) {
-      const px = Math.random() * (s + 20) - 10;
-      const py = Math.random() * (s + 20) - 10;
-      const size = Math.random() * 2.8 + 0.6;
-      sCtx.beginPath();
-      sCtx.arc(px, py, size, 0, Math.PI * 2);
-      sCtx.fill();
+      const px = Math.random() * s, py = Math.random() * s;
+      const sz = Math.random() * 2.5 + 0.5;
+      sCtx.beginPath(); sCtx.arc(px, py, sz, 0, Math.PI * 2); sCtx.fill();
     }
 
-    // D. 將「帶孔印章」合成回主畫布
+    // 將「完美的帶孔印章」貼回主證書
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(-0.015);
-    ctx.globalCompositeOperation = 'multiply'; // 與底色纖維完美融合
-    ctx.drawImage(sealCanvas, -20, -20);
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.drawImage(sealCanvas, 0, 0);
     ctx.restore();
   };
-  drawSeal(w - 500, h - 500);
+
+  await drawSeal(w - 500, h - 500);
 
   return canvas.toDataURL('image/png');
 };
