@@ -236,70 +236,49 @@ export const generateCertificate = async (data: {
     sCtx.quadraticCurveTo(jitter(), jitter(), r + jitter(), jitter());
     sCtx.stroke();
 
-    // B. 繪製印文 (滿漢文篆書合璧：左滿右漢、中央分隔)
+    // B. 繪製印文 (九疊比例修正版：端莊、飽滿、不溢出)
     sCtx.save();
-    sCtx.translate(s/2, s/2);
-    
-    // 中央分隔線 (清代官印經典特徵)
-    sCtx.strokeStyle = sealColor;
-    sCtx.lineWidth = 4;
-    sCtx.beginPath(); sCtx.moveTo(0, -120 + jitter(1)); sCtx.lineTo(0, 120 + jitter(1)); sCtx.stroke();
+    sCtx.translate(s/2, s/2 - 2);
 
-    // --- 漢文區 (右半邊：兩行拉長字體) ---
+    // --- 漢文區 (右半邊) ---
     sCtx.save();
     sCtx.fillStyle = sealColor;
-    sCtx.textAlign = 'center';
-    sCtx.textBaseline = 'middle';
-    sCtx.scale(0.65, 1.5); 
-    sCtx.font = 'bold 38px "LiSu", "STKaiti", "Microsoft JhengHei"';
-    
-    const yOff = 40;
-    // 右一 (最右)：新港文教
-    const x1 = 100;
-    sCtx.fillText('新', x1 + jitter(1), -yOff * 1.5 + jitter(1));
-    sCtx.fillText('港', x1 + jitter(1), -yOff * 0.5 + jitter(1));
-    sCtx.fillText('文', x1 + jitter(1),  yOff * 0.5 + jitter(1));
-    sCtx.fillText('教', x1 + jitter(1),  yOff * 1.5 + jitter(1));
-    // 右二 (偏中)：基金會印
-    const x2 = 35;
-    sCtx.fillText('基', x2 + jitter(1), -yOff * 1.5 + jitter(1));
-    sCtx.fillText('金', x2 + jitter(1), -yOff * 0.5 + jitter(1));
-    sCtx.fillText('會', x2 + jitter(1),  yOff * 0.5 + jitter(1));
-    sCtx.fillText('印', x2 + jitter(1),  yOff * 1.5 + jitter(1));
+    sCtx.textAlign = 'center'; sCtx.textBaseline = 'middle';
+    sCtx.scale(1.05, 1.55); 
+    sCtx.font = 'bold 44px "LiSu", "STKaiti", "Microsoft JhengHei"';
+
+    const yOff = 38; const rx1 = 65, rx2 = 18; 
+    sCtx.fillText('新', rx1 + jitter(0.5), -yOff * 1.5);
+    sCtx.fillText('港', rx1 + jitter(0.5), -yOff * 0.5);
+    sCtx.fillText('文', rx1 + jitter(0.5),  yOff * 0.5);
+    sCtx.fillText('教', rx1 + jitter(0.5),  yOff * 1.5);
+    sCtx.fillText('基', rx2 + jitter(0.5), -yOff * 1.5);
+    sCtx.fillText('金', rx2 + jitter(0.5), -yOff * 0.5);
+    sCtx.fillText('會', rx2 + jitter(0.5),  yOff * 0.5);
+    sCtx.fillText('印', rx2 + jitter(0.5),  yOff * 1.5);
     sCtx.restore();
 
-    // --- 滿文區 (左半邊：手工模擬蜿蜒字體與圈點) ---
-    sCtx.save();
-    sCtx.strokeStyle = sealColor;
-    sCtx.fillStyle = sealColor;
-    sCtx.lineWidth = 6;
-    sCtx.lineCap = 'round';
-    sCtx.lineJoin = 'round';
-    
-    const drawManchu = (ox: number) => {
-      // 主幹
-      sCtx.beginPath();
-      sCtx.moveTo(ox + jitter(2), -100);
-      sCtx.lineTo(ox + jitter(2), -60);
-      sCtx.quadraticCurveTo(ox - 18 + jitter(2), -40, ox + jitter(2), -20);
-      sCtx.lineTo(ox + jitter(2), 20);
-      sCtx.quadraticCurveTo(ox + 20 + jitter(2), 40, ox + jitter(2), 60);
-      sCtx.lineTo(ox + jitter(2), 90);
-      sCtx.quadraticCurveTo(ox - 15 + jitter(2), 110, ox - 5 + jitter(2), 120);
-      sCtx.stroke();
 
-      // 圈點與小撇
-      sCtx.beginPath(); sCtx.arc(ox + 14, -40, 3.5, 0, Math.PI*2); sCtx.fill();
-      sCtx.beginPath(); sCtx.arc(ox - 14, 40, 3.5, 0, Math.PI*2); sCtx.fill();
-      sCtx.beginPath(); sCtx.arc(ox + 12, 110, 3.5, 0, Math.PI*2); sCtx.fill();
-      
-      sCtx.beginPath(); sCtx.moveTo(ox, -80); sCtx.lineTo(ox + 15, -90); sCtx.stroke();
-      sCtx.beginPath(); sCtx.moveTo(ox, 10); sCtx.lineTo(ox - 15, 20); sCtx.stroke();
-      sCtx.beginPath(); sCtx.moveTo(ox, 75); sCtx.lineTo(ox + 15, 65); sCtx.stroke();
+    // --- 滿文區 (左半邊：安全縮放版) ---
+    sCtx.save();
+    sCtx.fillStyle = sealColor;
+    sCtx.textAlign = 'center'; sCtx.textBaseline = 'middle';
+    
+    const mLine1 = "ᠰᡳᠨ ᡤᠠᠩ ᠸᡝᠨ ᠵᡳᠶᠣᠣ"; 
+    const mLine2 = "ᠵᡳ ᠵᡳᠨ ᡥᡡᡳ ᡩᠣᡵᠣᠨ"; // 根據問題.log更新
+
+    const drawLongManchu = (text: string, ox: number) => {
+      sCtx.save();
+      sCtx.translate(ox, 0); 
+      sCtx.rotate(Math.PI / 2);
+      sCtx.scale(1.3, 1.1); 
+      sCtx.font = 'bold 36px "Mongolian Baiti", "Noto Sans Mongolian", serif';
+      sCtx.fillText(text, 0, 0);
+      sCtx.restore();
     };
 
-    drawManchu(-35);
-    drawManchu(-95);
+    drawLongManchu(mLine1, -22); 
+    drawLongManchu(mLine2, -88); 
     sCtx.restore();
 
     sCtx.restore();
