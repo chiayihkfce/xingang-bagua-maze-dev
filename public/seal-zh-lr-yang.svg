@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280">
+  <!-- 純漢文・左起版 (Yang)：新港文教(左) -> 基金會印(右) -->
+  
+  <!-- 邊框 -->
+  <rect x="7" y="7" width="266" height="266" rx="40" fill="none" stroke="#a0281e" stroke-width="14" />
+  
+  <!-- 漢文區 (左起：比例優化版) -->
+  <g transform="translate(140, 143) scale(1.4, 1.48)">
+    <!-- 左列：新港文教 -->
+    <text x="-50" y="-62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">新</text>
+    <text x="-50" y="-21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">港</text>
+    <text x="-50" y="21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">文</text>
+    <text x="-50" y="62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">教</text>
+    
+    <!-- 右列：基金會印 -->
+    <text x="50" y="-62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">基</text>
+    <text x="50" y="-21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">金</text>
+    <text x="50" y="21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">會</text>
+    <text x="50" y="62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="#a0281e" text-anchor="middle" dominant-baseline="central">印</text>
+  </g>
+</svg>

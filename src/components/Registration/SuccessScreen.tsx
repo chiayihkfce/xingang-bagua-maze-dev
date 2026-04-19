@@ -12,6 +12,7 @@ interface SuccessScreenProps {
   getPaymentMethodDisplay: (method: string) => string;
   resetForm: () => void;
   paymentMethods: any[];
+  sealConfig: any;
   lang: string;
   lastSubmissionId?: string | null;
   handleUpdateBankLast5?: (id: string, last5: string) => Promise<boolean>;
@@ -27,6 +28,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
   getPaymentMethodDisplay,
   resetForm,
   paymentMethods,
+  sealConfig,
   lang,
   lastSubmissionId,
   handleUpdateBankLast5,
@@ -56,7 +58,8 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
         date: formData.pickupTime.split(' ')[0],
         lang,
         t,
-        theme: selectedTheme
+        theme: selectedTheme,
+        activeSeal: sealConfig?.activeSeal
       });
       if (dataUrl) {
         const fileName = `【新港八卦謎蹤】成就證書_${formData.name || '挑戰者'}_${selectedTheme === 'dark' ? '黑金' : '米白'}.png`;

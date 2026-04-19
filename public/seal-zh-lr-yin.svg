@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280">
+  <!-- 純漢文・左起版 (Yin)：物理挖空 -->
+  
+  <defs>
+    <mask id="sealMaskLR">
+      <rect x="0" y="0" width="280" height="280" fill="white" />
+      <g transform="translate(140, 143) scale(1.4, 1.48)">
+        <!-- 左列：新港文教 -->
+        <text x="-50" y="-62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">新</text>
+        <text x="-50" y="-21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">港</text>
+        <text x="-50" y="21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">文</text>
+        <text x="-50" y="62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">教</text>
+        <!-- 右列：基金會印 -->
+        <text x="50" y="-62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">基</text>
+        <text x="50" y="-21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">金</text>
+        <text x="50" y="21" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">會</text>
+        <text x="50" y="62" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="42" fill="black" text-anchor="middle" dominant-baseline="central">印</text>
+      </g>
+    </mask>
+  </defs>
+
+  <rect x="0" y="0" width="280" height="280" rx="40" fill="#a0281e" mask="url(#sealMaskLR)" />
+</svg>

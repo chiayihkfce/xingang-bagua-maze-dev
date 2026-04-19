@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="-20 -20 320 320">
+  <!-- 陰刻透明挖空版：橫向溢出防護 -->
+  
+  <defs>
+    <mask id="sealMaskHoriz">
+      <rect x="-20" y="-20" width="320" height="320" fill="white" />
+      <g transform="translate(140, 140) scale(1.2, 1.4)">
+        <!-- 第一排：新港文教 -->
+        <text x="-75" y="-32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">新</text>
+        <text x="-25" y="-32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">港</text>
+        <text x="25" y="-32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">文</text>
+        <text x="75" y="-32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">教</text>
+        <!-- 第二排：基金會印 -->
+        <text x="-75" y="32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">基</text>
+        <text x="-25" y="32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">金</text>
+        <text x="25" y="32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">會</text>
+        <text x="75" y="32" font-family="LiSu, STKaiti, serif" font-weight="bold" font-size="38" fill="black" text-anchor="middle" dominant-baseline="central">印</text>
+      </g>
+    </mask>
+  </defs>
+
+  <rect x="0" y="0" width="280" height="280" rx="40" fill="#a0281e" mask="url(#sealMaskHoriz)" />
+</svg>
