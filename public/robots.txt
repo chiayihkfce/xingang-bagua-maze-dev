@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /config
+Disallow: /*?certId=*
+
+# 確保搜尋引擎能找到您的首頁
+Sitemap: https://chiayihkfce.github.io/xingang-bagua-maze/sitemap.xml
