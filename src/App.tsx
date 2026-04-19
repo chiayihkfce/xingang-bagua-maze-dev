@@ -35,21 +35,19 @@ function App() {
     // 1. Google Analytics 4 (GA4) 注入邏輯
     const GA_MEASUREMENT_ID = 'G-CFNQQ2LKD5';
     
-    if (GA_MEASUREMENT_ID !== 'G-XXXXXXXXXX') {
-      const gaScript = document.createElement('script');
-      gaScript.async = true;
-      gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-      document.head.appendChild(gaScript);
+    const gaScript = document.createElement('script');
+    gaScript.async = true;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(gaScript);
 
-      const gaInitScript = document.createElement('script');
-      gaInitScript.innerHTML = `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${GA_MEASUREMENT_ID}');
-      `;
-      document.head.appendChild(gaInitScript);
-    }
+    const gaInitScript = document.createElement('script');
+    gaInitScript.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${GA_MEASUREMENT_ID}');
+    `;
+    document.head.appendChild(gaInitScript);
 
     // 2. SEO 結構化資料注入邏輯
     const scriptId = 'google-event-jsonld';
