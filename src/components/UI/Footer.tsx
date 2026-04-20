@@ -36,9 +36,14 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
       </div>
       
       <div className="footer-bottom">
-        <div className="admin-trigger">
+        <a 
+          href="https://www.hkfce.org.tw/tw" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="admin-trigger"
+        >
           <img src="footer-logo.svg" alt="Hsinkang Foundation Logo" className="footer-admin-logo" />
-        </div>
+        </a>
         <p className="copy">{t.footerCopy}</p>
       </div>
     </footer>
