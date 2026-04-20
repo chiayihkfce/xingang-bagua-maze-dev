@@ -203,6 +203,7 @@ async function run() {
           console.error(`    ❌ 處理過程報錯 (${player.name}):`, err);
           orderSuccess = false;
         }
+        pIdx++; // 關鍵修正：確保每位隊員的索引編號正確遞增
       }
 
       // 3. 只有當所有人都發送嘗試完成後，才標記該訂單為已發送 (或依需求調整)
