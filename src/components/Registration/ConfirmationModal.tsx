@@ -48,7 +48,23 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <p><strong>{t.expectedTime}</strong> {formData.pickupTime}</p>
             <p><strong>{t.pickupLoc}</strong> {translateOption(getPickupLocationDisplay(formData.pickupLocation), lang)}</p>
             <p><strong>{t.paymentMethod}</strong> {translateOption(getPaymentMethodDisplay(formData.paymentMethod), lang)}</p>
-            <p><strong>{t.total}</strong> <span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
+            
+            {formData.playerList && formData.playerList.length > 1 && (
+              <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px dashed var(--border-subtle)' }}>
+                <p style={{ color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  {lang === 'en' ? 'Team Members:' : '隊員名單:'}
+                </p>
+                <div style={{ paddingLeft: '1rem' }}>
+                  {formData.playerList.map((player: any, idx: number) => (
+                    <p key={idx} style={{ margin: '0.3rem 0', fontSize: '0.9rem', opacity: 0.9 }}>
+                      {idx + 1}. {player.name} ({player.email})
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p style={{ marginTop: '1.5rem' }}><strong>{t.total}</strong> <span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
             {formData.notes && <p><strong>{t.notes}</strong> {formData.notes}</p>}
           </div>
         </div>

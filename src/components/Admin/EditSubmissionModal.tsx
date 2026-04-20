@@ -46,6 +46,40 @@ const EditSubmissionModal: React.FC<EditSubmissionModalProps> = ({
             </div>
             <div className="form-group"><label>份數</label><input type="number" value={editData.quantity} onChange={e => setEditData({...editData, quantity: e.target.value})} /></div>
             <div className="form-group"><label>遊玩人數</label><input type="text" value={editData.players} onChange={e => setEditData({...editData, players: e.target.value})} /></div>
+            
+            {/* 隊員名單編輯 */}
+            {editData.playerList && editData.playerList.length > 0 && (
+              <div className="admin-player-edit-section" style={{ gridColumn: '1 / -1', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--input-border)' }}>
+                <p style={{ color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '1rem' }}>隊員名單編輯 (用於證書發送)</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  {editData.playerList.map((p: any, idx: number) => (
+                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '10px', alignItems: 'center' }}>
+                      <input 
+                        type="text" 
+                        value={p.name} 
+                        placeholder="姓名"
+                        onChange={e => {
+                          const newList = [...editData.playerList];
+                          newList[idx] = { ...newList[idx], name: e.target.value };
+                          setEditData({ ...editData, playerList: newList });
+                        }} 
+                      />
+                      <input 
+                        type="email" 
+                        value={p.email} 
+                        placeholder="Email"
+                        onChange={e => {
+                          const newList = [...editData.playerList];
+                          newList[idx] = { ...newList[idx], email: e.target.value };
+                          setEditData({ ...editData, playerList: newList });
+                        }} 
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="form-group"><label>總金額</label><input type="number" value={editData.totalAmount} onChange={e => setEditData({...editData, totalAmount: e.target.value})} /></div>
             <div className="form-group">
               <label>繳費方式</label>

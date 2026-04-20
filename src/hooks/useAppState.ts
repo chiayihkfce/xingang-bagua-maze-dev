@@ -25,6 +25,7 @@ export const useAppState = () => {
     session: '',
     quantity: '1',
     players: '1',
+    playerList: [{ name: '', email: '' }], // 新增：預設初始化一位玩家
     totalAmount: '',
     paymentMethod: '現金支付',
     bankLast5: '',

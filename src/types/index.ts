@@ -31,6 +31,11 @@ export interface PaymentMethod {
   instructions?: string;
 }
 
+export interface PlayerInfo {
+  name: string;
+  email: string;
+}
+
 export interface FormData {
   email: string;
   name: string;
@@ -40,6 +45,7 @@ export interface FormData {
   session: string;
   quantity: string;
   players: string;
+  playerList: PlayerInfo[]; // 新增：儲存所有玩家的個人資訊
   totalAmount: string;
   paymentMethod: string;
   bankLast5: string;

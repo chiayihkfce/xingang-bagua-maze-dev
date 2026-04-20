@@ -53,7 +53,7 @@ export const useAdminData = ({
     if (!isAdmin) return;
 
     setIsDataLoading(true);
-    const header = ["報名時間", "狀態", "姓名", "電話", "Email", "場次名稱", "購買份數", "遊玩人數", "總金額", "付款方式", "末五碼", "預約日期時間", "取件地點", "得知管道", "備註"];
+    const header = ["報名時間", "狀態", "姓名", "電話", "Email", "場次名稱", "購買份數", "遊玩人數", "隊員名單", "總金額", "付款方式", "末五碼", "預約日期時間", "取件地點", "得知管道", "備註"];
     
     setSubmissions([header]);
     setTotalRows(0);
@@ -79,10 +79,13 @@ export const useAdminData = ({
     const unsubSubmissions = onSnapshot(qSub, (snapshot) => {
       let data = snapshot.docs.map(doc => {
         const d = doc.data();
+        // 格式化隊員名單為字串
+        const playerNamesStr = (d.playerList || []).map((p: any, i: number) => `${i+1}.${p.name}(${p.email})`).join(', ');
+        
         return [
           d.timestamp, d.status, d.name, d.phone, d.email, d.session, d.quantity, 
-          d.players, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
-          d.pickupLocation, d.referral, d.notes, doc.id, d.createdAt, d.certSent // 補上索引 17: certSent
+          d.players, playerNamesStr, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
+          d.pickupLocation, d.referral, d.notes, doc.id, d.createdAt, d.certSent // 索引 16 以後是輔助資訊
         ];
       });
 
@@ -108,10 +111,11 @@ export const useAdminData = ({
     const unsubBin = onSnapshot(qBin, (snapshot) => {
       const data = snapshot.docs.map(doc => {
         const d = doc.data();
+        const playerNamesStr = (d.playerList || []).map((p: any, i: number) => `${i+1}.${p.name}(${p.email})`).join(', ');
         return [
           d.timestamp, d.status, d.name, d.phone, d.email, d.session, d.quantity, 
-          d.players, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
-          d.pickupLocation, d.referral, d.notes, doc.id, d.createdAt, d.certSent // 補上索引 17: certSent
+          d.players, playerNamesStr, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
+          d.pickupLocation, d.referral, d.notes, doc.id, d.createdAt, d.certSent
         ];
       });
       setDeletedSubmissions(data);

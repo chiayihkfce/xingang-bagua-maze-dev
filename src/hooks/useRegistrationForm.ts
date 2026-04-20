@@ -38,17 +38,65 @@ export const useRegistrationForm = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
+    // A. 處理姓名 (同步更新隊員 1)
     if (name === 'name') {
       const filteredValue = formatName(value);
-      setFormData(prev => ({ ...prev, [name]: filteredValue }));
+      setFormData(prev => {
+        const newList = [...prev.playerList];
+        if (newList.length > 0) {
+          newList[0] = { ...newList[0], name: filteredValue };
+        } else {
+          newList.push({ name: filteredValue, email: prev.email });
+        }
+        return { ...prev, name: filteredValue, playerList: newList };
+      });
       validateField(name, filteredValue);
       return;
     }
-    if (name === 'bankLast5') {
-      const filteredValue = formatBankLast5(value);
-      setFormData(prev => ({ ...prev, [name]: filteredValue }));
+
+    // B. 處理 Email (同步更新隊員 1)
+    if (name === 'email') {
+      setFormData(prev => {
+        const newList = [...prev.playerList];
+        if (newList.length > 0) {
+          newList[0] = { ...newList[0], email: value };
+        } else {
+          newList.push({ name: prev.name, email: value });
+        }
+        return { ...prev, email: value, playerList: newList };
+      });
+      validateField(name, value);
       return;
     }
+
+    // C. 處理遊玩人數 (初始化隊員名單時自動帶入隊長資訊)
+    if (name === 'players') {
+      const numPlayers = parseInt(value) || 1;
+      setFormData(prev => {
+        const newList = [...prev.playerList];
+        
+        if (numPlayers > newList.length) {
+          // 增加人數
+          for (let i = newList.length; i < numPlayers; i++) {
+            newList.push({ name: '', email: '' });
+          }
+        } else if (numPlayers < newList.length) {
+          // 減少人數
+          newList.length = numPlayers;
+        }
+        
+        // 關鍵：確保第一位永遠跟隨目前的主要聯繫人
+        if (newList.length > 0) {
+          newList[0] = { name: prev.name, email: prev.email };
+        }
+
+        return { ...prev, players: value, playerList: newList };
+      });
+      return;
+    }
+
+    // D. 處理購買份數 (連動場次建議)
     if (name === 'quantity') {
       const qty = parseInt(value) || 0;
       setFormData(prev => {
@@ -60,6 +108,13 @@ export const useRegistrationForm = ({
         }
         return { ...prev, quantity: value, session: updatedSession };
       });
+      return;
+    }
+
+    // E. 其餘欄位處理
+    if (name === 'bankLast5') {
+      const filteredValue = formatBankLast5(value);
+      setFormData(prev => ({ ...prev, [name]: filteredValue }));
       return;
     }
     if (name === 'session') {
@@ -89,12 +144,23 @@ export const useRegistrationForm = ({
       validateField(name, filteredValue);
       return;
     }
-    if (name === 'email') {
-      setFormData(prev => ({ ...prev, [name]: value }));
-      validateField(name, value);
-      return;
-    }
+    
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePlayerInfoChange = (index: number, field: 'name' | 'email', value: string) => {
+    setFormData(prev => {
+      const newList = [...prev.playerList];
+      newList[index] = { ...newList[index], [field]: value };
+      
+      // 同步更新主要報名人的資訊 (如果修改的是第一個位子)
+      let extraUpdates = {};
+      if (index === 0) {
+        extraUpdates = { [field]: value };
+      }
+      
+      return { ...prev, ...extraUpdates, playerList: newList };
+    });
   };
 
   const handleDateChange = (date: Date | null) => {
@@ -130,6 +196,7 @@ export const useRegistrationForm = ({
     formErrors,
     setFormErrors,
     handleInputChange,
+    handlePlayerInfoChange, // 新增回傳
     handleDateChange,
     handleCheckboxChange,
     validateField

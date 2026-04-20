@@ -17,6 +17,7 @@ interface RegistrationFormProps {
   generalTimeSlots: string[];
   specialTimeSlots: string[];
   handleInputChange: (e: any) => void;
+  handlePlayerInfoChange: (index: number, field: 'name' | 'email', value: string) => void;
   handleCheckboxChange: (e: any) => void;
   handleDateChange: (date: Date | null) => void;
   handleSubmit: (e: React.FormEvent) => void;
@@ -38,6 +39,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   generalTimeSlots,
   specialTimeSlots,
   handleInputChange,
+  handlePlayerInfoChange,
   handleCheckboxChange,
   handleDateChange,
   handleSubmit,
@@ -321,6 +323,61 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                   ))}
                 </select>
               </div>
+
+              {/* 多人名單登記區塊 - 僅在人數大於 1 時顯示 */}
+              {Number(formData.players) > 1 && (
+                <div className="player-list-section" style={{ marginTop: '1.5rem' }}>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '0.5rem', borderLeft: '3px solid var(--accent-orange)', paddingLeft: '10px' }}>
+                    {lang === 'en' ? 'Player Details:' : '隊員名單資料:'}
+                  </p>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem', paddingLeft: '13px' }}>
+                    {lang === 'en' 
+                      ? 'Note: Pre-event notifications are sent only to Player 1. Individual certificates will be sent to each player email.' 
+                      : '註：行前通知僅寄送給隊員 1 (隊長)，電子成就證書將分別寄送給每位隊員。'}
+                  </p>
+                  {formData.playerList.map((player, index) => (
+                    <div key={index} className="player-input-row" style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '1fr 1fr', 
+                      gap: '10px', 
+                      marginBottom: '1rem',
+                      padding: '1rem',
+                      background: 'rgba(255,255,255,0.02)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255,255,255,0.05)'
+                    }}>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                          {index === 0 
+                            ? (lang === 'en' ? 'Registrant (You)' : '填表人 (您)') 
+                            : `${lang === 'en' ? 'Player' : '隊員'} ${index}`} - {lang === 'en' ? 'Name' : '姓名'}
+                        </label>                        <input 
+                          type="text" 
+                          value={player.name} 
+                          onChange={(e) => handlePlayerInfoChange(index, 'name', e.target.value)}
+                          placeholder={t.namePlaceholder}
+                          required
+                          style={index === 0 ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+                          readOnly={index === 0}
+                        />
+                      </div>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                          {lang === 'en' ? 'Email' : 'Email'}
+                        </label>
+                        <input 
+                          type="email" 
+                          value={player.email} 
+                          onChange={(e) => handlePlayerInfoChange(index, 'email', e.target.value)}
+                          placeholder={t.emailPlaceholder}
+                          required
+                          style={index === 0 ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+                          readOnly={index === 0}
+                        />
+                      </div>                    </div>
+                  ))}
+                </div>
+              )}
             </>
           )}
         </div>

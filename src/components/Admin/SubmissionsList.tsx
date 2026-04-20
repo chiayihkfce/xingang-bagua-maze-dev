@@ -39,7 +39,7 @@ const SubmissionsList: React.FC = () => {
     if (selectedIds.length === submissions.length - 1) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(submissions.slice(1).map(row => row[15]));
+      setSelectedIds(submissions.slice(1).map(row => row[16]));
     }
   };
 
@@ -281,12 +281,12 @@ const SubmissionsList: React.FC = () => {
         </thead>
         <tbody>
           {submissions.slice(1).map((row, i) => (
-            <tr key={row[15] || i} className={selectedIds.includes(row[15]) ? 'selected-row' : ''}>
+            <tr key={row[16] || i} className={selectedIds.includes(row[16]) ? 'selected-row' : ''}>
               <td>
                 <input 
                   type="checkbox" 
-                  checked={selectedIds.includes(row[15])} 
-                  onChange={() => toggleSelect(row[15])} 
+                  checked={selectedIds.includes(row[16])} 
+                  onChange={() => toggleSelect(row[16])} 
                 />
               </td>
               <td className="action-cell">
