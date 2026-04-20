@@ -75,17 +75,18 @@ body {
 
 .header h1 {
   font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.8rem, 8vw, 3.5rem); 
+  font-size: clamp(2.2rem, 10vw, 4.2rem); 
   color: var(--primary-gold);
   margin: 0.5rem 0;
-  line-height: 1.2;
+  line-height: 1.1;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .main-title {
   font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(1.1rem, 4.5vw, 1.8rem);
   color: var(--text-muted);
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   margin-top: 0.5rem;
 }
 
@@ -2317,8 +2318,35 @@ body.light-theme .admin-time-input::-webkit-calendar-picker-indicator {
   background: rgba(255,255,255,0.05);
 }
 
+/* 全平台響應式最後微調 */
+@media (max-width: 380px) {
+  .total-display .amount {
+    font-size: 1.6rem !important; /* 防止 iPhone SE 等極小螢幕金額溢出 */
+  }
+  .submit-btn {
+    padding: 0.8rem 1.2rem !important;
+    font-size: 0.95rem !important;
+  }
+}
+
 /* 當彈窗或載入畫面顯示時，禁止背景滑動 */
 body.modal-open {
   overflow: hidden !important;
 }
+/* 頁尾底部版權與後台入口 */
+.footer-bottom {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column; /* 改回垂直排列以利居中 */
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 1rem; /* 縮小間距讓視覺更緊湊 */
+}
 
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column-reverse; /* 手機版維持 Logo 在下方（隱藏入口） */
+  }
+}

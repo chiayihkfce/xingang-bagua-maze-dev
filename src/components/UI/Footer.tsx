@@ -36,7 +36,7 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
       </div>
       
       <div className="footer-bottom">
-        <div className="admin-logo-wrapper">
+        <div className="admin-trigger">
           <img src="footer-logo.svg" alt="Hsinkang Foundation Logo" className="footer-admin-logo" />
         </div>
         <p className="copy">{t.footerCopy}</p>
