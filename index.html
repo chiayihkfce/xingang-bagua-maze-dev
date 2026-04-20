@@ -16,6 +16,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>新港八卦謎蹤</title>
     
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="新港八卦謎蹤" />
+    <link rel="apple-touch-icon" href="https://chiayihkfce.github.io/xingang-bagua-maze/favicon.png" />
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW registered'))
+            .catch(err => console.log('SW error:', err));
+        });
+      }
+    </script>
+    
     <!-- Thumbnail for Google -->
     <meta name="thumbnail" content="https://chiayihkfce.github.io/xingang-bagua-maze/poster.jpg" />
     
@@ -51,12 +69,6 @@
     <meta property="twitter:title" content="新港八卦謎蹤 | 實境解謎活動" />
     <meta property="twitter:description" content="昭和九年，一場神祕疫病肆虐新港... 穿梭時空，解開隱藏在古鎮巷弄間的八卦謎團。" />
     <meta property="twitter:image" content="https://chiayihkfce.github.io/xingang-bagua-maze/poster.jpg" />
-
-    <!-- Apple Web App -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="新港八卦謎蹤" />
-    <link rel="apple-touch-icon" href="https://chiayihkfce.github.io/xingang-bagua-maze/favicon.png" />
 
     <link rel="preconnect" href="https://script.google.com">
     <link rel="preconnect" href="https://script.googleusercontent.com">
