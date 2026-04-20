@@ -54,40 +54,28 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   // 1. 入口選擇畫面
   if (viewMode === 'choice') {
     return (
-      <section className="registration-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '30px' }}>
-        <h2 style={{ color: '#d4af37', fontSize: '1.8rem', letterSpacing: '4px', marginBottom: '10px' }}>{t.chooseAction}</h2>
+      <section className="registration-section entry-choice-section">
+        <h2 className="choice-title">{t.chooseAction}</h2>
         
-        <div style={{ display: 'flex', gap: '25px', flexWrap: 'wrap', justifyContent: 'center', width: '100%', maxWidth: '800px' }}>
+        <div className="entry-cards-container">
           {/* 報名按鈕卡片 */}
           <button 
             onClick={() => setViewMode('form')}
-            style={{ 
-              flex: '1', minWidth: '280px', padding: '50px 30px', background: 'rgba(212, 175, 55, 0.05)', 
-              border: '2px solid #d4af37', borderRadius: '20px', cursor: 'pointer', transition: 'all 0.3s',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)'; e.currentTarget.style.transform = 'translateY(-5px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(212, 175, 55, 0.05)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            className="entry-card primary-card"
           >
-            <span style={{ fontSize: '3rem' }}>📜</span>
-            <span style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#d4af37', letterSpacing: '2px' }}>{t.startRegistration}</span>
-            <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>{t.regEntryDesc}</span>
+            <span className="entry-icon">📜</span>
+            <span className="entry-title">{t.startRegistration}</span>
+            <span className="entry-desc">{t.regEntryDesc}</span>
           </button>
 
           {/* 查詢按鈕卡片 */}
           <button 
             onClick={() => setIsLookupOpen(true)}
-            style={{ 
-              flex: '1', minWidth: '280px', padding: '50px 30px', background: 'rgba(255,255,255,0.02)', 
-              border: '1px solid rgba(255,255,255,0.2)', borderRadius: '20px', cursor: 'pointer', transition: 'all 0.3s',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.border = '1px solid #d4af37'; e.currentTarget.style.transform = 'translateY(-5px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            className="entry-card secondary-card"
           >
-            <span style={{ fontSize: '3rem' }}>🔍</span>
-            <span style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#fff', letterSpacing: '2px' }}>{t.checkStatus}</span>
-            <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)' }}>{t.lookupEntryDesc}</span>
+            <span className="entry-icon">🔍</span>
+            <span className="entry-title">{t.checkStatus}</span>
+            <span className="entry-desc">{t.lookupEntryDesc}</span>
           </button>
         </div>
 

@@ -184,7 +184,142 @@ body {
   font-size: 0.95rem;
 }
 
-/* 表單樣式 */
+/* 入口選擇畫面樣式 */
+.entry-choice-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 30px;
+}
+
+.choice-title {
+  color: var(--primary-gold);
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+  font-family: 'Noto Serif TC', serif;
+  text-align: center;
+}
+
+.entry-cards-container {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+.entry-card {
+  flex: 1;
+  min-width: 280px;
+  padding: 50px 30px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-decoration: none;
+  outline: none;
+}
+
+.primary-card {
+  background: rgba(212, 175, 55, 0.05);
+  border: 2px solid var(--primary-gold);
+}
+
+.secondary-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.entry-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.primary-card:hover {
+  background: rgba(212, 175, 55, 0.15);
+  box-shadow: 0 15px 30px rgba(212, 175, 55, 0.15);
+}
+
+.secondary-card:hover {
+  border-color: var(--primary-gold);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.entry-icon {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+}
+
+.entry-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-family: 'Noto Serif TC', serif;
+}
+
+.primary-card .entry-title {
+  color: var(--primary-gold);
+}
+
+.secondary-card .entry-title {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.entry-desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.primary-card .entry-desc {
+  color: rgba(212, 175, 55, 0.7);
+}
+
+.secondary-card .entry-desc {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 亮色模式優化 */
+body.light-theme .choice-title {
+  color: #b8860b; /* 更深的金色，確保在白色背景可讀 */
+}
+
+body.light-theme .primary-card {
+  background: #fffdf0;
+  border-color: #d4af37;
+  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.1);
+}
+
+body.light-theme .secondary-card {
+  background: #ffffff;
+  border-color: #ccd1d9;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .secondary-card .entry-title {
+  color: #2c3e50; /* 查詢按鈕標題改為深色 */
+}
+
+body.light-theme .secondary-card .entry-desc {
+  color: #7f8c8d; /* 查詢按鈕描述改為灰黑色 */
+}
+
+body.light-theme .primary-card .entry-desc {
+  color: #8b7500; /* 報名按鈕描述改為更深的橄欖金色 */
+}
+
+body.light-theme .entry-card:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 下面是原本的 CSS --- */
 .reg-form {
   display: flex;
   flex-direction: column;
