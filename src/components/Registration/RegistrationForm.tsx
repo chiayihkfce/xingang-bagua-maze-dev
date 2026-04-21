@@ -4,6 +4,7 @@ import { Session, FormData, FormErrors, TimeslotConfig, PaymentMethod } from '..
 import { translateOption } from '../../utils/translateOptions';
 import { translations } from '../../locales/translations';
 import StatusLookupModal from './StatusLookupModal';
+import BaguaQuiz from './BaguaQuiz';
 
 interface RegistrationFormProps {
   t: any;
@@ -79,6 +80,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             <span className="entry-title">{t.checkStatus}</span>
             <span className="entry-desc">{t.lookupEntryDesc}</span>
           </button>
+
+          {/* 八卦天命測驗 (佔滿整行) */}
+          <BaguaQuiz t={t} lang={lang} />
         </div>
 
         <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} />
