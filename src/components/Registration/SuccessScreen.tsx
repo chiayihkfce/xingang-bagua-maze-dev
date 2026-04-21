@@ -114,21 +114,23 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
   };
 
   const handleGoogleCalendar = () => {
+    const sessionName = translateOption(getSessionDisplayName(formData.session), lang);
     const url = generateGoogleCalendarUrl({
-      title: `【新港八卦謎蹤】${formData.session}`,
+      title: `【新港八卦謎蹤】${sessionName}`,
       startTime: formData.pickupTime,
-      location: formData.pickupLocation,
-      details: `感謝您的報名！\n訂單總額：NT$ ${calculatedTotal}\n報名序號：${lastSubmissionId || '待核對'}`
+      location: translateOption(formData.pickupLocation, lang),
+      details: `${t.thanks} ${formData.name}！\n\n${t.session} ${sessionName}\n${t.orderTotal} NT$ ${calculatedTotal}\n${t.pickupLocation}: ${translateOption(formData.pickupLocation, lang)}\n\n${t.regEntryDesc || ''}`
     });
-    window.open(url, '_blank');
+    if (url) window.open(url, '_blank');
   };
 
   const handleIcal = () => {
+    const sessionName = translateOption(getSessionDisplayName(formData.session), lang);
     downloadIcalFile({
-      title: `【新港八卦謎蹤】${formData.session}`,
+      title: `【新港八卦謎蹤】${sessionName}`,
       startTime: formData.pickupTime,
-      location: formData.pickupLocation,
-      details: `感謝您的報名！\n訂單總額：NT$ ${calculatedTotal}\n報名序號：${lastSubmissionId || '待核對'}`
+      location: translateOption(formData.pickupLocation, lang),
+      details: `${t.thanks} ${formData.name}！\n\n${t.session} ${sessionName}\n${t.orderTotal} NT$ ${calculatedTotal}\n${t.pickupLocation}: ${translateOption(formData.pickupLocation, lang)}`
     });
   };
 

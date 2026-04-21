@@ -7,10 +7,23 @@ export const generateGoogleCalendarUrl = (data: {
   location: string;
   details: string;
 }) => {
+  // 將 yyyy-MM-dd HH:mm 轉換為 Date 對象
+  // 處理 Safari 相容性，將 '-' 換成 '/'
   const start = new Date(data.startTime.replace(/-/g, '/'));
-  const end = new Date(start.getTime() + 90 * 60 * 1000); // 預設 90 分鐘
+  if (isNaN(start.getTime())) return '';
+  
+  const end = new Date(start.getTime() + 180 * 60 * 1000); // 延長至 3 小時
 
-  const format = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, '');
+  // 格式化為 Google 要求的本地時間格式 (YYYYMMDDTHHMMSS)
+  const format = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const h = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const s = String(date.getSeconds()).padStart(2, '0');
+    return `${y}${m}${d}T${h}${min}${s}`;
+  };
   
   const url = new URL('https://www.google.com/calendar/render');
   url.searchParams.append('action', 'TEMPLATE');
@@ -32,13 +45,25 @@ export const downloadIcalFile = (data: {
   details: string;
 }) => {
   const start = new Date(data.startTime.replace(/-/g, '/'));
-  const end = new Date(start.getTime() + 90 * 60 * 1000);
+  if (isNaN(start.getTime())) return;
+  
+  const end = new Date(start.getTime() + 180 * 60 * 1000);
 
-  const format = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, '');
+  // iCal 本地時間格式 (YYYYMMDDTHHMMSS)
+  const format = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const h = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const s = String(date.getSeconds()).padStart(2, '0');
+    return `${y}${m}${d}T${h}${min}${s}`;
+  };
 
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
+    'CALSCALE:GREGORIAN',
     'PROID:-//Xingang Bagua Maze//NONSGML v1.0//EN',
     'BEGIN:VEVENT',
     `DTSTART:${format(start)}`,
@@ -54,8 +79,9 @@ export const downloadIcalFile = (data: {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', 'event.ics');
+  link.setAttribute('download', 'xingang-bagua-maze.ics');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 };
