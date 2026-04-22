@@ -144,25 +144,29 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
           position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
           background: 'rgba(0,0,0,0.95)', zIndex: 9999,
           display: 'flex', justifyContent: 'center', alignItems: 'center',
-          backdropFilter: 'blur(10px)', padding: '20px'
+          backdropFilter: 'blur(10px)', padding: '10px',
+          boxSizing: 'border-box'
         }}>
           <div className="quiz-modal-content" style={{ 
-            width: '100%', maxWidth: '500px', textAlign: 'center',
+            width: '95%', maxWidth: '500px', textAlign: 'center',
             position: 'relative', maxHeight: '90vh', overflowY: 'auto',
-            padding: '20px 10px', scrollbarWidth: 'none' // 隱藏 Firefox 捲軸
+            padding: '40px 15px 20px', scrollbarWidth: 'none',
+            background: '#111', borderRadius: '30px', border: '1px solid var(--primary-gold)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            boxSizing: 'border-box', boxShadow: '0 0 50px rgba(0,0,0,1)'
           }}>
-            {/* 關閉按鈕 */}
             <button onClick={closeQuiz} style={{
-              position: 'sticky', top: '0', left: '100%',
-              background: 'rgba(0,0,0,0.5)', border: '1px solid #fff', color: '#fff',
+              position: 'absolute', top: '15px', right: '15px',
+              background: 'rgba(255,255,255,0.1)', border: '1px solid #fff', color: '#fff',
               borderRadius: '50%', width: '35px', height: '35px', cursor: 'pointer',
-              zIndex: 100, marginBottom: '-35px'
+              zIndex: 100, fontSize: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center'
             }}>✕</button>
 
             <h2 style={{ color: 'var(--primary-gold)', fontSize: '1.6rem', marginBottom: '20px', marginTop: '10px' }}>{t?.quizTitle}</h2>
 
             <div className="quiz-container" style={{ 
-              position: 'relative', width: '320px', height: '320px', margin: '0 auto'
+              position: 'relative', width: '320px', height: '320px', margin: '0 auto',
+              flexShrink: 0 // 關鍵：防止被下方的文字內容擠壓變形
             }}>
               {/* 指針 (不動) */}
               <div style={{
