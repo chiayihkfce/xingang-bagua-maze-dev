@@ -146,9 +146,24 @@ export const translations = {
         '+65': '新加坡 (+65)',
         '+60': '馬來西亞 (+60)',
         'landline': '市內電話'
+      },
+      quizTitle: '探索你的八卦天命',
+      quizBtn: '啟動命運之輪',
+      quizReplay: '再次問卜',
+      quizResultTitle: '【 您的天命方位 】',
+      quizIntro: '在踏入新港迷蹤之前，先測出你在八卦陣中的守護方位...',
+      baguaData: {
+        '乾': { role: '領袖 / 堅毅', desc: '天行健，君子以自強不息。你是隊伍中的核心，在迷霧中總能保持清晰的判斷力。', tip: '留意培桂堂的高處，答案往往在你看不到的視角。' },
+        '坤': { role: '守護 / 穩重', desc: '地勢坤，君子以厚德載物。你擁有極強的包容力與觀察力，是團隊最可靠的後盾。', tip: '注意巷弄間的碑文，歷史的細節隱藏在土地的記憶裡。' },
+        '震': { role: '先鋒 / 果決', desc: '震驚百里，動如雷霆。你行動力極強，遇到難關總能直擊痛點。', tip: '速度是你的優勢，但別忘了回頭看看隊友遺漏的線索。' },
+        '巽': { role: '策士 / 靈動', desc: '隨風潛行，無孔不入。你的思維敏捷，擅長從混亂中理出邏輯。', tip: '風吹過的地方必留痕跡，解謎包裡的附件或許有玄機。' },
+        '坎': { role: '洞察 / 深邃', desc: '水利萬物，深不見底。你擁有直覺般的洞察力，能看穿事物的本質。', tip: '小心水源之處，真相往往如倒影般虛實交錯。' },
+        '離': { role: '破譯 / 熱情', desc: '光明磊落，照亮黑暗。你是破解代碼的高手，總能為團隊帶來希望的曙光。', tip: '有光的地方就有影子，觀察光影的變化，那是時空的暗號。' },
+        '艮': { role: '沉思 / 堅定', desc: '安若泰山，止於至善。你遇事沉著，不被外界干擾，擅長處理繁瑣的細節。', tip: '停下腳步。有時答案不在前方的路上，而在你剛才經過的地方。' },
+        '兌': { role: '外交 / 歡愉', desc: '麗澤之悅，和諧共生。你是溝通的高手，能讓團隊在歡笑中解開最難的死結。', tip: '多與人交流。路人或店家的一句話，可能就是關鍵的拼圖。' }
       }
-    },
-    en: {
+      },
+      en: {
       submitSuccess: 'Registration Confirmed!',
       awaitingPayment: 'Awaiting Payment Action',
       thanks: 'Thank you for joining us, ',
@@ -298,6 +313,21 @@ export const translations = {
         '+65': 'Singapore (+65)',
         '+60': 'Malaysia (+60)',
         'landline': 'Landline'
+      },
+      quizTitle: 'Discover Your Bagua Fate',
+      quizBtn: 'Spin the Fate',
+      quizReplay: 'Re-divine',
+      quizResultTitle: '[ Your Divine Position ]',
+      quizIntro: 'Before entering the maze, find your guardian trigram...',
+      baguaData: {
+        '乾': { role: 'Leader / Strong', desc: 'Like Heaven, you are the core of the team.', tip: 'Look up at Pei-Gui Hall.' },
+        '坤': { role: 'Guardian / Steady', desc: 'Like Earth, you are the reliable support.', tip: 'Pay attention to old inscriptions.' },
+        '震': { role: 'Vanguard / Bold', desc: 'Like Thunder, you are decisive.', tip: 'Speed is your strength.' },
+        '巽': { role: 'Strategist / Flexible', desc: 'Like Wind, you are agile.', tip: 'Where wind blows, traces remain.' },
+        '坎': { role: 'Intuition / Deep', desc: 'Like Water, you see through the essence.', tip: 'Be careful near water.' },
+        '離': { role: 'Decoder / Passion', desc: 'Like Fire, you light up the dark.', tip: 'Watch the shadows.' },
+        '艮': { role: 'Thinker / Firm', desc: 'Like Mountain, you are calm.', tip: 'Pause. Answer might be behind you.' },
+        '兌': { role: 'Diplomat / Cheerful', desc: 'Like Lake, you bring harmony.', tip: 'Talk to local people.' }
       }
-    }
-  };
+      }
+      };

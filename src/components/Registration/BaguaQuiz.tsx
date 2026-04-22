@@ -32,25 +32,42 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
     if (!cardRef.current || isGenerating) return;
     setIsGenerating(true);
     try {
-      // 顯示隱藏的卡片以供截取
       const card = cardRef.current;
       card.style.display = 'block';
       
       const canvas = await html2canvas(card, {
         backgroundColor: '#0a0a0a',
-        scale: 2, // 提高解析度
+        scale: 2,
         logging: false,
         useCORS: true
       });
       
       card.style.display = 'none';
+      const dataUrl = canvas.toDataURL('image/png');
 
+      // 嘗試使用 Web Share API 分享圖片
+      if (navigator.share && navigator.canShare) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], `新港八卦謎蹤_天命卡片_${result}.png`, { type: 'image/png' });
+        
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: '新港八卦謎蹤 - 我的天命方位',
+            text: `我在新港謎蹤測出了【${result}】方位！你也快來測測看。`
+          });
+          setIsGenerating(false);
+          return;
+        }
+      }
+
+      // 如果不支援分享或分享失敗，則下載圖片
       const link = document.createElement('a');
       link.download = `新港八卦謎蹤_天命卡片_${result}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error('Card generate error:', err);
+      console.error('Share error:', err);
     } finally {
       setIsGenerating(false);
     }
@@ -225,16 +242,44 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                 <div style={{ marginTop: '15px', padding: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '10px', fontSize: '0.9rem', fontStyle: 'italic' }}>
                   💡 {t?.baguaData?.[result]?.tip || ''}
                 </div>
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '12px', 
+                  justifyContent: 'center', 
+                  alignItems: 'stretch', // 確保高度一致
+                  marginTop: '25px'
+                }}>
                   <button 
                     onClick={handleShareCard} 
                     disabled={isGenerating}
                     className="cta-button"
-                    style={{ padding: '10px 20px', fontSize: '0.9rem', background: 'var(--accent-orange)' }}
+                    style={{ 
+                      padding: '12px 10px', 
+                      fontSize: '0.9rem', 
+                      background: 'var(--accent-orange)',
+                      margin: 0,
+                      flex: '1',
+                      borderRadius: '12px',
+                      display: 'flex', justifyContent: 'center', alignItems: 'center'
+                    }}
                   >
-                    {isGenerating ? '...' : (lang === 'en' ? 'Save Card' : '儲存天命卡片')}
+                    {isGenerating ? '...' : (lang === 'en' ? 'Share' : '分享成就')}
                   </button>
-                  <button onClick={resetQuiz} style={{ background: 'transparent', color: '#888', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.9rem' }}>
+                  <button 
+                    onClick={resetQuiz} 
+                    style={{ 
+                      background: 'rgba(212, 175, 55, 0.1)', 
+                      color: 'var(--primary-gold)', 
+                      border: '1px solid var(--primary-gold)', 
+                      cursor: 'pointer', 
+                      fontSize: '0.9rem',
+                      padding: '12px 10px',
+                      borderRadius: '12px',
+                      flex: '1',
+                      transition: 'all 0.2s ease',
+                      display: 'flex', justifyContent: 'center', alignItems: 'center'
+                    }}
+                  >
                     {t?.quizReplay || '再次問卜'}
                   </button>
                 </div>
