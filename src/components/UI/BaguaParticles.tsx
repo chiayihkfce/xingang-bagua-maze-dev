@@ -15,21 +15,42 @@ const BaguaParticles: React.FC = () => {
     class Cloud {
       x: number;
       y: number;
-      baseRadius: number;
-      blobs: { ox: number, oy: number, r: number, o: number }[];
       speedX: number;
+      offscreenCanvas: HTMLCanvasElement;
 
       constructor() {
-        this.baseRadius = Math.random() * 120 + 100;
         this.speedX = Math.random() * 0.08 + 0.02;
-        this.blobs = Array.from({ length: 12 }).map(() => ({
-          ox: Math.random() * 200 - 100,
-          oy: Math.random() * 80 - 40,
-          r: Math.random() * 0.9 + 0.6,
-          o: Math.random() * 0.05 + 0.02
-        }));
+        this.offscreenCanvas = document.createElement('canvas');
         this.x = 0; this.y = 0;
+        this.preRender();
         this.resetPosition();
+      }
+
+      preRender() {
+        const baseRadius = Math.random() * 120 + 100;
+        this.offscreenCanvas.width = baseRadius * 4;
+        this.offscreenCanvas.height = baseRadius * 4;
+        const octx = this.offscreenCanvas.getContext('2d');
+        if (!octx) return;
+
+        const centerX = this.offscreenCanvas.width / 2;
+        const centerY = this.offscreenCanvas.height / 2;
+
+        Array.from({ length: 10 }).forEach(() => {
+          const r = baseRadius * (Math.random() * 0.8 + 0.5);
+          const ox = centerX + (Math.random() * baseRadius - baseRadius / 2);
+          const oy = centerY + (Math.random() * baseRadius / 3 - baseRadius / 6);
+          const o = Math.random() * 0.04 + 0.02;
+
+          const gradient = octx.createRadialGradient(ox, oy, 0, ox, oy, r);
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${o})`);
+          gradient.addColorStop(0.6, `rgba(200, 200, 200, ${o * 0.4})`);
+          gradient.addColorStop(1, 'transparent');
+          octx.fillStyle = gradient;
+          octx.beginPath();
+          octx.arc(ox, oy, r, 0, Math.PI * 2);
+          octx.fill();
+        });
       }
 
       resetPosition() {
@@ -58,21 +79,7 @@ const BaguaParticles: React.FC = () => {
 
       draw() {
         if (!ctx) return;
-        ctx.save();
-        this.blobs.forEach(b => {
-          const r = this.baseRadius * b.r;
-          const gx = this.x + b.ox;
-          const gy = this.y + b.oy;
-          const gradient = ctx.createRadialGradient(gx, gy, 0, gx, gy, r);
-          gradient.addColorStop(0, `rgba(255, 255, 255, ${b.o})`);
-          gradient.addColorStop(0.6, `rgba(200, 200, 200, ${b.o * 0.5})`);
-          gradient.addColorStop(1, 'transparent');
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
-          ctx.arc(gx, gy, r, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        ctx.restore();
+        ctx.drawImage(this.offscreenCanvas, this.x - this.offscreenCanvas.width / 2, this.y - this.offscreenCanvas.height / 2);
       }
     }
 
