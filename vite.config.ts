@@ -6,6 +6,7 @@ import javascriptObfuscator from 'vite-plugin-javascript-obfuscator'
 export default defineConfig({
   plugins: [
     react(),
+    /*
     javascriptObfuscator({
       options: {
         compact: true,
@@ -21,6 +22,7 @@ export default defineConfig({
         stringArrayThreshold: 0.5,
       },
     })
+    */
     ],
     base: './', 
     build: {

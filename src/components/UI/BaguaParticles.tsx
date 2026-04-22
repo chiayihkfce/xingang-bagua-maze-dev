@@ -4,20 +4,23 @@ const BaguaParticles: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
 
+  // 專門處理螢幕尺寸偵測
   useEffect(() => {
-    const checkMobile = () => {
+    const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    window.addEventListener('resize', checkMobile);
-    checkMobile();
-
-    if (isMobile) return () => window.removeEventListener('resize', checkMobile);
+  // 專門處理動畫邏輯
+  useEffect(() => {
+    if (isMobile) return;
 
     const canvas = canvasRef.current;
-    if (!canvas) return () => window.removeEventListener('resize', checkMobile);
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    if (!ctx) return () => window.removeEventListener('resize', checkMobile);
+    if (!ctx) return;
 
     let clouds: Cloud[] = [];
     const cloudCount = 10; // 稍微增加雲量補償粒子移除後的空缺
@@ -121,7 +124,6 @@ const BaguaParticles: React.FC = () => {
     animate();
     window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener('resize', checkMobile);
       window.removeEventListener('resize', handleResize);
     };
   }, [isMobile]);
