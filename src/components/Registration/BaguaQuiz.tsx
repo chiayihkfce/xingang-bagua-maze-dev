@@ -130,7 +130,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
           boxSizing: 'border-box'
         }}
       >
-        <span className="entry-icon" style={{ display: 'inline-block', transform: 'rotate(90deg)' }}>☯</span>
+        <span className="entry-icon" style={{ transform: 'rotate(90deg)', WebkitTransform: 'rotate(90deg)' }}>☯</span>
         <span className="entry-title">{t.quizTitle}</span>
         <span className="entry-desc">{t.quizIntro}</span>
         <div style={{ marginTop: '10px', color: 'var(--accent-orange)', fontWeight: 'bold', fontSize: '0.9rem' }}>
