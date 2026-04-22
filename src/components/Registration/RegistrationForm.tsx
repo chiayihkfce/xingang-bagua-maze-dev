@@ -65,6 +65,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <button 
             onClick={() => setViewMode('form')}
             className="entry-card primary-card"
+            style={{ flex: '1 1 280px' }} // 確保平分且具備最小寬度
           >
             <span className="entry-icon">📜</span>
             <span className="entry-title">{t.startRegistration}</span>
@@ -74,7 +75,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           {/* 查詢按鈕卡片 */}
           <button 
             onClick={() => setIsLookupOpen(true)}
-            className="entry-card secondary-card"
+            className="entry-card primary-card"
+            style={{ flex: '1 1 280px' }} // 與報名按鈕一致
           >
             <span className="entry-icon">🔍</span>
             <span className="entry-title">{t.checkStatus}</span>
