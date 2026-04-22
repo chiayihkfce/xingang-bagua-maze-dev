@@ -16,17 +16,18 @@ const BaguaParticles: React.FC = () => {
       x: number;
       y: number;
       speedX: number;
-      offscreenCanvas: HTMLCanvasElement;
+      offscreenCanvas: HTMLCanvasElement | null;
 
-      constructor() {
+      constructor(w: number, h: number) {
         this.speedX = Math.random() * 0.08 + 0.02;
         this.offscreenCanvas = document.createElement('canvas');
         this.x = 0; this.y = 0;
         this.preRender();
-        this.resetPosition();
+        this.resetPosition(w, h);
       }
 
       preRender() {
+        if (!this.offscreenCanvas) return;
         const baseRadius = Math.random() * 120 + 100;
         this.offscreenCanvas.width = baseRadius * 4;
         this.offscreenCanvas.height = baseRadius * 4;
@@ -53,45 +54,50 @@ const BaguaParticles: React.FC = () => {
         });
       }
 
-      resetPosition() {
-        const centerX = canvas!.width / 2;
-        const centerY = canvas!.height / 2;
+      resetPosition(w: number, h: number) {
+        const centerX = w / 2;
+        const centerY = h / 2;
         let valid = false;
         while (!valid) {
-          this.x = Math.random() * canvas!.width;
-          this.y = Math.random() * canvas!.height;
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
           const dist = Math.hypot(this.x - centerX, this.y - centerY);
           if (dist > 350) valid = true;
         }
       }
 
-      update() {
+      update(w: number, h: number) {
         this.x += this.speedX;
-        if (this.x - 400 > canvas!.width) {
+        if (this.x - 400 > w) {
           this.x = -400;
-          this.resetPosition();
+          this.resetPosition(w, h);
         }
-        const centerX = canvas!.width / 2;
-        const centerY = canvas!.height / 2;
+        const centerX = w / 2;
+        const centerY = h / 2;
         const dist = Math.hypot(this.x - centerX, this.y - centerY);
         if (dist < 300) this.y += (this.y > centerY ? 1 : -1);
       }
 
       draw() {
-        if (!ctx) return;
+        if (!ctx || !this.offscreenCanvas) return;
         ctx.drawImage(this.offscreenCanvas, this.x - this.offscreenCanvas.width / 2, this.y - this.offscreenCanvas.height / 2);
       }
     }
 
     const init = () => {
+      const w = canvas.width;
+      const h = canvas.height;
+      if (w === 0 || h === 0) return;
       clouds = [];
-      for (let i = 0; i < cloudCount; i++) clouds.push(new Cloud());
+      for (let i = 0; i < cloudCount; i++) clouds.push(new Cloud(w, h));
     };
 
     const animate = () => {
       if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      clouds.forEach(c => { c.update(); c.draw(); });
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      clouds.forEach(c => { c.update(w, h); c.draw(); });
       requestAnimationFrame(animate);
     };
 
