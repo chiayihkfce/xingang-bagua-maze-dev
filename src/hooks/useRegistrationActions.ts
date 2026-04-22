@@ -79,6 +79,31 @@ export const useRegistrationActions = ({
   };
 
   /**
+   * 傳送 LINE 通知給管理員 (透過 Google Apps Script 中轉)
+   */
+  const sendLineNotification = async (data: any) => {
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors', // 使用 no-cors 以避開 GAS 的 CORS 限制
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'new_registration',
+          id: data.id || data.lastSubmissionId, // 確保傳送 ID
+          name: data.name,
+          phone: data.phone,
+          session: data.session,
+          pickupTime: data.pickupTime,
+          amount: data.totalAmount
+        })
+      });
+    } catch (e) {
+      console.error("LINE Notification failed:", e);
+    }
+  };
+
+  /**
    * 執行最終資料寫入的函數 (核心存檔邏輯)
    */
   const executeFinalSubmission = async (last5?: string) => {
@@ -104,6 +129,10 @@ export const useRegistrationActions = ({
       const docRef = await addDoc(collection(db, "registrations"), submissionData);
       setLastSubmissionId(docRef.id);
       await addLog('報名提交', `${formData.name} 提交了報名 (${formData.session})`);
+      
+      // 成功後傳送 LINE 通知
+      sendLineNotification(submissionData);
+      
       return docRef.id;
     } catch (err) {
       console.error("提交失敗:", err);
