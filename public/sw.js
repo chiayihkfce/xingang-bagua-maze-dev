@@ -1,5 +1,5 @@
 // Updated Service Worker for Hsinkang Bagua Maze
-const CACHE_NAME = 'bagua-maze-v1';
+// Optimized for stability and PWA installability
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -11,17 +11,11 @@ self.addEventListener('activate', (event) => {
 
 /**
  * Standard fetch handler to satisfy PWA criteria.
- * Includes a catch block to prevent "Failed to fetch" errors from crashing the app.
+ * By not calling event.respondWith(), we allow the browser to handle 
+ * all requests normally, preventing any "Failed to fetch" or 
+ * "Failed to convert value to Response" errors.
  */
 self.addEventListener('fetch', (event) => {
-  // We only intercept GET requests to avoid issues with Firebase/API calls
-  if (event.request.method !== 'GET') return;
-
-  event.respondWith(
-    fetch(event.request).catch((error) => {
-      // If network fails (or blocked by AdBlock), return nothing instead of throwing an error
-      console.log('Network request failed, but app remains stable.');
-      return; 
-    })
-  );
+  // PWA requires a fetch listener to be present, but it doesn't have to intercept.
+  // Letting the browser handle it is the most stable approach.
 });
