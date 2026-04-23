@@ -82,7 +82,8 @@ export const useRegistrationActions = ({
    * 傳送 LINE 通知給管理員 (透過 Google Apps Script 中轉)
    */
   const sendLineNotification = async (data: any) => {
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
+    // ⚠️ 請務必在此替換為您新創的 GAS 部署網址
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxakCReNaHCX3BK7XpJZLZ8Gdp_d6quOXfReq6Ev5S-emwdQSxuzM2OILkXjEp9WVM9ug/exec';
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
