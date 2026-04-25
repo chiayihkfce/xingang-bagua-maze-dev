@@ -207,6 +207,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
 
         <button 
           onClick={handleShare}
+          className="share-achievement-btn cta-button"
           style={{ 
             marginTop: '40px', padding: '12px 30px', background: 'transparent', color: '#d4af37', border: '1px solid #d4af37', 
             borderRadius: '50px', cursor: 'pointer', fontSize: '1.1rem', letterSpacing: '2px', transition: 'all 0.3s'

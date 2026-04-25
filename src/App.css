@@ -21,9 +21,17 @@ body.awakened-mode {
 body.awakened-mode .entry-title,
 body.awakened-mode .main-title,
 body.awakened-mode h2,
-body.awakened-mode .cta-button {
-  text-shadow: 0 0 15px rgba(255, 235, 59, 0.8);
+body.awakened-mode .cta-button,
+body.awakened-mode .share-achievement-btn {
+  text-shadow: 0 0 15px rgba(255, 235, 59, 0.8), 0 0 5px rgba(0, 0, 0, 0.5);
   animation: pulse-glow 2s infinite alternate;
+  color: #ffeb3b !important;
+}
+
+body.awakened-mode .share-achievement-btn {
+  border-color: #ffeb3b !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  font-weight: 900 !important;
 }
 
 @keyframes pulse-glow {
