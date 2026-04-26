@@ -109,64 +109,28 @@ const LogsTable: React.FC<LogsTableProps> = ({ logs, handleClearLogs, currentAdm
             </tr>
           </thead>
           <tbody>
-            {currentRows.map((row, i) => {
-              // 1. 取得日期部分 (yyyy/mm/dd)
-              const timestampStr = String(row[0] || '');
-              const datePart = timestampStr.split(' ')[0];
-              
-              // 2. 判斷是否為「今天」 (處理 yyyy/mm/dd 或 yyyy-mm-dd 格式)
-              const today = new Date();
-              const todayStr = today.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-              const displayDate = datePart === todayStr ? '今天' : datePart;
-
-              // 3. 檢查是否需要顯示分組標題 (比較當前與上一筆的日期)
-              const prevDatePart = i > 0 && currentRows[i-1][0] ? String(currentRows[i-1][0]).split(' ')[0] : '';
-              const showDateHeader = datePart !== prevDatePart;
-
-              // 4. 提取純時間部分 (移除日期)
-              const timePart = timestampStr.includes(' ') 
-                ? timestampStr.substring(timestampStr.indexOf(' ') + 1) 
-                : timestampStr;
-
-              return (
-                <React.Fragment key={i}>
-                  {showDateHeader && (
-                    <tr className="date-group-header">
-                      <td colSpan={header.length} style={{ 
-                        background: 'rgba(var(--primary-rgb, 46, 204, 113), 0.1)', 
-                        padding: '0.8rem 1.2rem', 
+            {currentRows.map((row, i) => (
+              <tr key={i}>
+                {row.map((cell: any, j: number) => (
+                  <td key={j}>
+                    {j === 0 ? (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{cell}</span>
+                    ) : (j === 1 ? (
+                      <span style={{
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '4px',
+                        fontSize: '0.8rem',
                         fontWeight: 'bold',
-                        color: 'var(--primary-color)',
-                        fontSize: '0.9rem',
-                        borderLeft: '4px solid var(--primary-color)'
-                      }}>
-                        📅 {displayDate}
-                      </td>
-                    </tr>
-                  )}
-                  <tr>
-                    {row.map((cell: any, j: number) => (
-                      <td key={j}>
-                        {j === 0 ? (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{timePart}</span>
-                        ) : (j === 1 ? (
-                          <span style={{
-                            padding: '0.2rem 0.6rem',
-                            borderRadius: '4px',
-                            fontSize: '0.8rem',
-                            fontWeight: 'bold',
-                            background: getLogTypeColor(cell),
-                            color: 'white'
-                          }}>{cell}</span>
-                        ) : (j === 2 ? (
-                          <strong style={{ color: 'var(--primary-color)' }}>{cell}</strong>
-                        ) : cell))}
-                      </td>
-                    ))}
-                  </tr>
-                </React.Fragment>
-              );
-            })}
+                        background: getLogTypeColor(cell),
+                        color: 'white'
+                      }}>{cell}</span>
+                    ) : (j === 2 ? (
+                      <strong style={{ color: 'var(--primary-color)' }}>{cell}</strong>
+                    ) : cell))}
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
