@@ -15,6 +15,7 @@ interface UseAdminAuthProps {
  */
 export const useAdminAuth = (props?: UseAdminAuthProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [adminUser, setAdminUser] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [currentAdmin, setCurrentAdmin] = useState<AdminAccount | null>(null);
@@ -28,6 +29,7 @@ export const useAdminAuth = (props?: UseAdminAuthProps) => {
 
       if (lineUid && props) {
         const { addLog, setIsDataLoading, showAlert } = props;
+        setIsAuthenticating(true);
         setIsDataLoading(true);
         try {
           // 搜尋擁有此 LINE UID 的管理者
@@ -63,6 +65,7 @@ export const useAdminAuth = (props?: UseAdminAuthProps) => {
           console.error("LINE Auto Login error:", error);
         } finally {
           setIsDataLoading(false);
+          setIsAuthenticating(false);
         }
       }
     };

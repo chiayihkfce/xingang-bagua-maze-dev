@@ -30,7 +30,11 @@ const LoadingFallback = () => (
  */
 function AppContent() {
   const app = useAppContext();
-  const { SECRET_ADMIN_PATH, currentPath, submitted } = app;
+  const { SECRET_ADMIN_PATH, currentPath, submitted, isAuthenticating } = app;
+
+  if (isAuthenticating) {
+    return <LoadingFallback />;
+  }
 
   return (
     <Suspense fallback={<LoadingFallback />}>
