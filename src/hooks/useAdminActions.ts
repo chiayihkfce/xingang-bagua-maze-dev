@@ -319,9 +319,6 @@ export const useAdminActions = ({
         const fieldNames = ["報名時間", "狀態", "姓名", "電話", "Email", "場次", "份數", "人數", "金額", "支付方式", "末五碼", "預約時間", "地點", "得知管道", "備註"];
         // 對比前 15 個欄位
         for (let i = 1; i <= 14; i++) {
-          const oldVal = String(original[i] || "無");
-          const newVal = String((editData as any)[Object.keys(editData)[i]] || "無");
-          
           // 這裡由於 editData 的 key 順序不一定對等，改用明確欄位對比
           const fieldMap: any = {
             1: 'status', 2: 'name', 3: 'phone', 4: 'email', 5: 'session', 
