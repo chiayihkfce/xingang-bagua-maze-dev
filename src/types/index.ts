@@ -5,6 +5,7 @@ export interface AdminAccount {
   id: string;
   username: string;
   password?: string;
+  lineUid?: string; // 新增：用於 LINE 一鍵登入
   nickname?: string;
   role: 'super' | 'admin';
   lastLogin?: string;

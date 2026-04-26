@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { collection, query, where, limit, getDocs, updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import { AdminAccount } from '../types';
@@ -18,6 +18,58 @@ export const useAdminAuth = (props?: UseAdminAuthProps) => {
   const [adminUser, setAdminUser] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [currentAdmin, setCurrentAdmin] = useState<AdminAccount | null>(null);
+
+  // --- 新增：LINE 一鍵登入自動偵測邏輯 ---
+  useEffect(() => {
+    const handleLineAutoLogin = async () => {
+      // 偵測 URL 參數中的 uid
+      const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || window.location.search);
+      const lineUid = urlParams.get('uid');
+
+      if (lineUid && props) {
+        const { addLog, setIsDataLoading, showAlert } = props;
+        setIsDataLoading(true);
+        try {
+          // 搜尋擁有此 LINE UID 的管理者
+          const q = query(
+            collection(db, "admins"), 
+            where("lineUid", "==", lineUid),
+            limit(1)
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const adminDoc = querySnapshot.docs[0];
+            const adminData = { id: adminDoc.id, ...adminDoc.data() } as AdminAccount;
+
+            setCurrentAdmin(adminData);
+            setIsAdmin(true);
+
+            // 更新最後登入時間
+            await updateDoc(doc(db, "admins", adminDoc.id), {
+              lastLogin: formatFullDateTime(new Date())
+            });
+
+            addLog('系統', `管理者 [${adminData.nickname || adminData.username}] 透過 LINE 一鍵登入成功`, adminData.nickname || adminData.username);
+            
+            // 清除網址列的 uid，避免重複觸發或分享網址時洩漏
+            const cleanUrl = window.location.href.split('?')[0];
+            window.history.replaceState({}, document.title, cleanUrl);
+          } else {
+            showAlert('LINE 登入失敗：此帳號未綁定 LINE ID');
+          }
+        } catch (error) {
+          console.error("LINE Auto Login error:", error);
+        } finally {
+          setIsDataLoading(false);
+        }
+      }
+    };
+
+    handleLineAutoLogin();
+  }, [props]);
+  // --- 結束 LINE 自動登入邏輯 ---
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
