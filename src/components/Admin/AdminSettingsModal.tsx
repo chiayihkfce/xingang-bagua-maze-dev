@@ -38,6 +38,7 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
   const [nickname, setNickname] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [lineUid, setLineUid] = useState(''); // 新增：LINE ID 狀態
   
   // 身分金額狀態 (用於新增/編輯)
   const [editingIp, setEditingIp] = useState<Partial<IdentityPricing> | null>(null);
@@ -54,6 +55,7 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
       setNickname(currentAdmin.nickname || currentAdmin.username);
       setUsername(currentAdmin.username);
       setPassword(currentAdmin.password || '');
+      setLineUid(currentAdmin.lineUid || ''); // 載入 LINE ID
       fetchAdmins();
     }
   }, [show, currentAdmin]);
@@ -106,6 +108,7 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
         username,
         password,
         nickname: nickname || username,
+        lineUid: lineUid.trim(), // 儲存 LINE ID
         updatedAt: serverTimestamp()
       };
       
@@ -300,6 +303,13 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>管理員帳號</label>
                 <input type="text" value={username} onChange={e => setUsername(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)' }} />
+              </div>
+              <div className="form-group">
+                <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  <span>LINE 使用者 ID (lineUid)</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--primary-gold)' }}>💡 請在 LINE 輸入「取得ID」獲取</span>
+                </label>
+                <input type="text" value={lineUid} onChange={e => setLineUid(e.target.value)} placeholder="Uxxxxxxxxxxxxxxx..." style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)', fontFamily: 'monospace' }} />
               </div>
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>修改密碼</label>
