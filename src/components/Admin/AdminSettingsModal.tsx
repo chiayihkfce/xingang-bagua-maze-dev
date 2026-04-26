@@ -305,7 +305,7 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               </div>
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>管理員帳號</label>
-                <input type="text" value={username} onChange={e => setUsername(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)' }} />
+                <input type="text" value={username} onChange={e => setUsername(e.target.value)} required style={{ width: '100%', padding: '0.8rem', border: '1px solid var(--border-subtle)', borderRadius: '8px', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)', boxSizing: 'border-box' }} />
               </div>
               <div className="form-group">
                 <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
@@ -346,11 +346,11 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
                   </div>
                 )}
 
-                <input type="text" value={lineUid} onChange={e => setLineUid(e.target.value)} placeholder="Uxxxxxxxxxxxxxxx..." style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)', fontFamily: 'monospace' }} />
+                <input type="text" value={lineUid} onChange={e => setLineUid(e.target.value)} placeholder="Uxxxxxxxxxxxxxxx..." style={{ width: '100%', padding: '0.8rem', border: '1px solid var(--border-subtle)', borderRadius: '8px', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)', fontFamily: 'monospace', boxSizing: 'border-box' }} />
               </div>
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>修改密碼</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)' }} />
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '0.8rem', border: '1px solid var(--border-subtle)', borderRadius: '8px', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)', boxSizing: 'border-box' }} />
               </div>
               <button type="submit" className="submit-btn" disabled={isSubmitting} style={{
                 marginTop: '1rem',
