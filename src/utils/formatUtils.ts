@@ -21,7 +21,25 @@ export const formatBankLast5 = (value: string): string => {
  * 格式化電話：僅保留數字並根據國碼限制長度
  */
 export const formatPhone = (value: string, countryCode: string): string => {
-  const filtered = value.replace(/\D/g, '');
+  let clean = value.trim();
+  
+  // 針對台灣國碼的處理：如果使用者貼上了帶國碼的號碼，幫他把國碼去掉，以免超出 10 碼限制
+  if (countryCode === '+886') {
+    if (clean.startsWith('+886')) {
+      clean = clean.slice(4);
+    } else if (clean.startsWith('886')) {
+      clean = clean.slice(3);
+    }
+    
+    // 如果去掉後變成 00 開頭 (例如原為 +88609...)，則去掉一個 0
+    if (clean.startsWith('00')) {
+      clean = clean.slice(1);
+    }
+  }
+
+  // 僅保留數字
+  const filtered = clean.replace(/\D/g, '');
+
   const rules: { [key: string]: number } = { 
     '+886': 10, 
     '+852': 8, 
@@ -42,15 +60,15 @@ export const formatPhoneForDB = (countryCode: string, phone: string): string => 
   
   let cleanPhone = phone.trim();
 
-  // 針對台灣號碼的特別處理：如果選擇了 +886 且輸入是以 0 開頭 (如 09...)
-  // 則直接回傳該號碼 (不帶 +886)，確保存入清單為民眾習慣的 09... 格式
+  // 針對台灣號碼的特別處理：不存國碼，且在存檔前補 0
   if (countryCode === '+886') {
     if (cleanPhone.startsWith('0')) {
       return cleanPhone;
-    } else {
-      // 如果沒打 0 (如打 912...)，則幫他補 0
+    } else if (cleanPhone.startsWith('9')) {
+      // 在這裡才補 0
       return `0${cleanPhone}`;
     }
+    return cleanPhone;
   }
   
   return `${countryCode}${cleanPhone}`;
