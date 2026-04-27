@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './CustomCursor.css';
 
 const CustomCursor: React.FC = () => {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const cursorVisible = useRef(false);
-  const [shouldRender, setShouldRender] = React.useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
     // 1. 偵測裝置環境：如果是觸控裝置 (coarse pointer) 或不支援 hover，則完全停用
@@ -19,18 +19,15 @@ const CustomCursor: React.FC = () => {
 
     setShouldRender(true);
 
-    // 2. 核心移動邏輯 (使用 requestAnimationFrame 並直接操作樣式)
-    const onMouseMove = (e: MouseEvent) => {
+    // 2. 核心移動邏輯
+    const updateCursor = (x: number, y: number) => {
       if (!cursorVisible.current) {
         cursorVisible.current = true;
         dotRef.current?.classList.add('visible');
         ringRef.current?.classList.add('visible');
-        // 只有在自定義鼠標開始運作時才隱藏原生鼠標
         document.body.classList.add('custom-cursor-active');
       }
-      
-      const { clientX: x, clientY: y } = e;
-      
+
       requestAnimationFrame(() => {
         if (dotRef.current) {
           dotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
@@ -41,7 +38,10 @@ const CustomCursor: React.FC = () => {
       });
     };
 
-    // 3. 核心 Hover 邏輯
+    const onMouseMove = (e: MouseEvent) => {
+      updateCursor(e.clientX, e.clientY);
+    };
+
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const isClickable = !!target.closest('button, a, input, select, textarea, .radio-group label, .checkbox-grid label, .clickable, .admin-trigger, .close-btn, .slot-tag i');
@@ -62,20 +62,24 @@ const CustomCursor: React.FC = () => {
       document.body.classList.remove('custom-cursor-active');
     };
 
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-    window.addEventListener('mouseover', onMouseOver, { passive: true });
-    document.addEventListener('mouseleave', onMouseLeave);
-    document.addEventListener('mouseenter', () => {
+    const onMouseEnter = (e: MouseEvent) => {
       cursorVisible.current = true;
       dotRef.current?.classList.add('visible');
       ringRef.current?.classList.add('visible');
       document.body.classList.add('custom-cursor-active');
-    });
+      updateCursor(e.clientX, e.clientY);
+    };
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('mouseover', onMouseOver, { passive: true });
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseenter', onMouseEnter);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseover', onMouseOver);
       document.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('mouseenter', onMouseEnter);
       document.body.classList.remove('custom-cursor-active');
     };
   }, []);
@@ -84,8 +88,8 @@ const CustomCursor: React.FC = () => {
 
   return (
     <>
-      <div ref={dotRef} className="custom-cursor-dot" style={{ left: 0, top: 0 }} />
-      <div ref={ringRef} className="custom-cursor-ring" style={{ left: 0, top: 0 }}>
+      <div ref={dotRef} className="custom-cursor-dot" style={{ position: 'fixed', left: 0, top: 0, pointerEvents: 'none', zIndex: 99999 }} />
+      <div ref={ringRef} className="custom-cursor-ring" style={{ position: 'fixed', left: 0, top: 0, pointerEvents: 'none', zIndex: 99998 }}>
         <svg viewBox="0 0 100 100">
           <path 
             className="bagua-octagon"
