@@ -66,7 +66,6 @@ const MiniGames: React.FC<MiniGamesProps> = ({ show, onClose }) => {
  * 遊戲一：八卦旋轉陣 (隨機出題聯動版)
  */
 const RotationGame: React.FC<{ onWin: () => void }> = ({ onWin }) => {
-  const [level, setLevel] = useState(1);
   const [angles, setAngles] = useState([0, 0, 0]);
   const isReady = useRef(false);
   const trigrams = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
@@ -92,7 +91,7 @@ const RotationGame: React.FC<{ onWin: () => void }> = ({ onWin }) => {
     }
   };
 
-  useEffect(() => { generateNewPuzzle(); }, [level]);
+  useEffect(() => { generateNewPuzzle(); }, []);
 
   const handleLinkedRotate = (index: number) => {
     if (!isReady.current) return;
