@@ -214,14 +214,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         </div>
       </header>
 
-      </header>
-
       {/* 安全提醒區域 (拆分為獨立區塊) */}
       {currentAdmin && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
           
-          {/* 1. 密碼安全性警告 (紅色) */}
-          {currentAdmin.password && currentAdmin.password.toLowerCase().includes('admin') && (
+          {/* 1. 帳號密碼重大安全隱患 (紅色) */}
+          {(currentAdmin.username.toLowerCase().includes('admin') || 
+            (currentAdmin.password && currentAdmin.password.toLowerCase().includes('admin'))) && (
             <div style={{
               background: 'rgba(231, 76, 60, 0.1)',
               border: '1px solid #e74c3c',
@@ -236,9 +235,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <span style={{ fontSize: '1.5rem' }}>🚨</span>
                 <div>
-                  <h4 style={{ margin: 0, color: '#e74c3c', fontSize: '1rem' }}>極高風險：密碼安全警告</h4>
+                  <h4 style={{ margin: 0, color: '#e74c3c', fontSize: '1rem' }}>重大安全隱患：帳號或密碼未修改</h4>
                   <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-light)' }}>
-                    您的帳號仍在使用預設格式的密碼 (包含 admin)，極易被破解，請務必立即修改。
+                    偵測到您的帳號或密碼仍在使用預設關鍵字 (admin)，這存在極大安全風險，請立即修改。
                   </p>
                 </div>
               </div>
@@ -255,7 +254,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                   fontSize: '0.9rem'
                 }}
               >
-                ✏️ 立即修改密碼
+                ✏️ 前往個人設定
               </button>
             </div>
           )}
@@ -278,7 +277,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 <div>
                   <h4 style={{ margin: 0, color: 'var(--primary-gold)', fontSize: '1rem' }}>功能提醒：未綁定 LINE ID</h4>
                   <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-light)' }}>
-                    您的帳號尚未綁定 LINE ID，將無法使用「一鍵登入」與「LINE 遠端管理」功能。
+                    您的帳號尚未綁定 LINE ID，將無法使用「一鍵登入」功能。
                   </p>
                 </div>
               </div>
@@ -299,7 +298,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
               </button>
             </div>
           )}
-
         </div>
       )}
 
