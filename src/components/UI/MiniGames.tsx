@@ -51,8 +51,12 @@ const MiniGames: React.FC<MiniGamesProps> = ({ show, onClose }) => {
         {isWin && (
           <div className="win-overlay">
             <div className="win-card">
-              <h3>🎉 破陣成功！</h3>
-              <p>您已成功引導氣流，獲得「迷宮智者」稱號。</p>
+              <h3>🎉 {activeGame === 'rotation' ? '陣法已破！' : activeGame === 'maze' ? '尋得生門！' : '萬象歸宗！'}</h3>
+              <p>
+                {activeGame === 'rotation' && '您已成功感應八卦氣息，撥雲見日，陣法已開。'}
+                {activeGame === 'maze' && '您在重重迷霧中找到了出口，展現了卓越的智慧。'}
+                {activeGame === 'match' && '所有卦象皆已歸位，混亂的氣流已平息。'}
+              </p>
               <button onClick={() => setIsWin(false)}>再玩一次</button>
             </div>
           </div>
