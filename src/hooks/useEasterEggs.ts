@@ -1,10 +1,78 @@
 import { useEffect, useState } from 'react';
+import { useAppContext } from '../context/AppContext';
 
 /**
  * 新港八卦謎蹤 - 彩蛋 Hook
  */
 export const useEasterEggs = () => {
   const [isAwakened, setIsAwakened] = useState(false);
+  const { isFlashlightOn, setIsFlashlightOn } = useAppContext();
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const lens = document.getElementById('bagua-lens-cursor');
+      const overlay = document.getElementById('bagua-lens-overlay');
+      if (!lens || !overlay) return;
+
+      lens.style.left = `${e.clientX}px`;
+      lens.style.top = `${e.clientY}px`;
+      overlay.style.webkitMaskImage = `radial-gradient(circle 150px at ${e.clientX}px ${e.clientY}px, transparent 0%, black 100%)`;
+      
+      document.querySelectorAll('.hidden-clue').forEach((clue: any) => {
+        const rect = clue.getBoundingClientRect();
+        const dist = Math.sqrt(Math.pow(e.clientX - (rect.left + rect.width/2), 2) + Math.pow(e.clientY - (rect.top + rect.height/2), 2));
+        clue.style.opacity = dist < 150 ? '1' : '0';
+      });
+    };
+
+    if (isFlashlightOn) {
+      const existingLens = document.getElementById('bagua-lens-overlay');
+      if (existingLens) return;
+
+      const overlay = document.createElement('div');
+      overlay.id = 'bagua-lens-overlay';
+      overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.92); z-index: 150000; pointer-events: none;
+        -webkit-mask-image: radial-gradient(circle 150px at 0px 0px, transparent 100%, black 100%);
+      `;
+
+      const lens = document.createElement('div');
+      lens.id = 'bagua-lens-cursor';
+      lens.innerHTML = '☯';
+      lens.style.cssText = `
+        position: fixed; width: 300px; height: 300px;
+        border: 2px solid #d4af37; border-radius: 50%;
+        top: 0; left: 0; transform: translate(-50%, -50%);
+        z-index: 150001; pointer-events: none;
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(212, 175, 55, 0.3); font-size: 10rem;
+        box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
+      `;
+
+      const tip = document.createElement('div');
+      tip.id = 'bagua-lens-tip';
+      tip.innerHTML = '【探照模式】移動滑鼠尋找隱藏線索... (再按一次手電筒關閉)';
+      tip.style.cssText = `position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #d4af37; z-index: 150002; font-family: \'Noto Serif TC\', serif; background: rgba(0,0,0,0.8); padding: 5px 20px; border-radius: 20px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);`;
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(lens);
+      document.body.appendChild(tip);
+      document.body.classList.add('lens-mode');
+      window.addEventListener('mousemove', handleMouseMove);
+    } else {
+      const existing = document.getElementById('bagua-lens-overlay');
+      if (existing) {
+        existing.remove();
+        document.getElementById('bagua-lens-cursor')?.remove();
+        document.getElementById('bagua-lens-tip')?.remove();
+        document.body.classList.remove('lens-mode');
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
+    }
+
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isFlashlightOn]);
 
   useEffect(() => {
     // 1. 控制台預言 (Console Easter Egg)
@@ -58,8 +126,6 @@ export const useEasterEggs = () => {
     // 4. 解謎密令 (Keywords)
     let clueIndex = 0;
     const clueCode = ['c', 'l', 'u', 'e'];
-    let revealIndex = 0;
-    const revealCode = ['r', 'e', 'v', 'e', 'a', 'l'];
     let baguaIndex = 0;
     const baguaCode = ['b', 'a', 'g', 'u', 'a'];
 
@@ -84,15 +150,6 @@ export const useEasterEggs = () => {
         }
       } else clueIndex = 0;
 
-      // 檢查 REVEAL
-      if (key === revealCode[revealIndex]) {
-        revealIndex++;
-        if (revealIndex === revealCode.length) {
-          toggleBaguaLens();
-          revealIndex = 0;
-        }
-      } else revealIndex = 0;
-
       // 檢查 BAGUA
       if (key === baguaCode[baguaIndex]) {
         baguaIndex++;
@@ -115,70 +172,6 @@ export const useEasterEggs = () => {
       setTimeout(() => { pulse.remove(); notify.remove(); setIsAwakened(false); }, 3000);
     };
 
-    const toggleBaguaLens = () => {
-      const existingLens = document.getElementById('bagua-lens-overlay');
-      if (existingLens) {
-        existingLens.remove();
-        document.getElementById('bagua-lens-cursor')?.remove();
-        document.getElementById('bagua-lens-tip')?.remove();
-        document.body.classList.remove('lens-mode');
-        return;
-      }
-
-      const overlay = document.createElement('div');
-      overlay.id = 'bagua-lens-overlay';
-      overlay.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.92); z-index: 150000; pointer-events: none;
-        -webkit-mask-image: radial-gradient(circle 150px at 0px 0px, transparent 100%, black 100%);
-      `;
-
-      const lens = document.createElement('div');
-      lens.id = 'bagua-lens-cursor';
-      lens.innerHTML = '☯';
-      lens.style.cssText = `
-        position: fixed; width: 300px; height: 300px;
-        border: 2px solid #d4af37; border-radius: 50%;
-        top: 0; left: 0; transform: translate(-50%, -50%);
-        z-index: 150001; pointer-events: none;
-        display: flex; align-items: center; justify-content: center;
-        color: rgba(212, 175, 55, 0.3); font-size: 10rem;
-        box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
-      `;
-
-      const tip = document.createElement('div');
-      tip.id = 'bagua-lens-tip';
-      tip.innerHTML = '【顯影模式】移動滑鼠尋找隱藏線索... (再輸入一次 REVEAL 關閉)';
-      tip.style.cssText = `
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        color: #d4af37; z-index: 150002; font-family: 'Noto Serif TC', serif;
-        background: rgba(0,0,0,0.8); padding: 5px 20px; border-radius: 20px;
-      `;
-
-      document.body.appendChild(overlay);
-      document.body.appendChild(lens);
-      document.body.appendChild(tip);
-      document.body.classList.add('lens-mode');
-
-      const handleMouseMove = (e: MouseEvent) => {
-        lens.style.left = `${e.clientX}px`;
-        lens.style.top = `${e.clientY}px`;
-        overlay.style.webkitMaskImage = `radial-gradient(circle 150px at ${e.clientX}px ${e.clientY}px, transparent 0%, black 100%)`;
-        
-        document.querySelectorAll('.hidden-clue').forEach((clue: any) => {
-          const rect = clue.getBoundingClientRect();
-          const dist = Math.sqrt(Math.pow(e.clientX - (rect.left + rect.width/2), 2) + Math.pow(e.clientY - (rect.top + rect.height/2), 2));
-          clue.style.opacity = dist < 150 ? '1' : '0';
-        });
-      };
-
-      window.addEventListener('mousemove', handleMouseMove);
-      setTimeout(() => { 
-        window.removeEventListener('mousemove', handleMouseMove);
-        overlay.remove(); lens.remove(); tip.remove();
-        document.body.classList.remove('lens-mode');
-      }, 60000);
-    };
 
     const triggerBaguaUltimate = () => {
       setIsAwakened(true);
