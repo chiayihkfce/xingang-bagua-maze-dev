@@ -6,7 +6,7 @@ import { translations } from '../../locales/translations';
 import StatusLookupModal from './StatusLookupModal';
 import BaguaQuiz from './BaguaQuiz';
 import { useAppContext } from '../../context/AppContext';
-import { useEasterEggs } from '../../hooks/useEasterEggs';
+// import { useEasterEggs } from '../../hooks/useEasterEggs';
 
 interface RegistrationFormProps {
   t: any;
@@ -71,7 +71,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   showAlert,
   setShowGames
 }) => {
-  const { hasFlashlight, hasPoetrySlip, isFlashlightOn, setIsFlashlightOn, isBagOpen, setIsBagOpen } = useAppContext();
+  const { 
+    hasFlashlight, hasPoetrySlip, hasTigerSeal,
+    isFlashlightOn, setIsFlashlightOn, 
+    isBagOpen, setIsBagOpen,
+    triggerBaguaBox
+  } = useAppContext();
   const [isLookupOpen, setIsLookupOpen] = useState(false);
   const [isScrollOpen, setIsScrollOpen] = useState(false); 
   const [viewMode, setViewMode] = useState<'choice' | 'form'>('choice'); 
@@ -163,6 +168,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           onClose={() => setIsBagOpen(false)} 
           hasFlashlight={hasFlashlight}
           hasPoetrySlip={hasPoetrySlip}
+          hasTigerSeal={hasTigerSeal}
           isFlashlightOn={isFlashlightOn}
           onToggleFlashlight={() => {
             const nextState = !isFlashlightOn;
@@ -172,6 +178,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             }
           }}
           showMysticScroll={() => setIsScrollOpen(true)}
+          triggerBaguaBox={triggerBaguaBox}
         />
 
         {/* 詩籤彈窗 (React 實作) */}
@@ -883,10 +890,12 @@ const BagModal: React.FC<{
   onClose: () => void;
   hasFlashlight: boolean;
   hasPoetrySlip: boolean;
+  hasTigerSeal: boolean;
   isFlashlightOn: boolean;
   onToggleFlashlight: () => void;
   showMysticScroll: () => void;
-}> = ({ isOpen, onClose, hasFlashlight, hasPoetrySlip, isFlashlightOn, onToggleFlashlight, showMysticScroll }) => {
+  triggerBaguaBox: () => void;
+}> = ({ isOpen, onClose, hasFlashlight, hasPoetrySlip, hasTigerSeal, isFlashlightOn, onToggleFlashlight, showMysticScroll, triggerBaguaBox }) => {
   if (!isOpen) return null;
 
   return (
@@ -896,7 +905,7 @@ const BagModal: React.FC<{
           <ChestIcon size={30} />
           <h2 style={{ color: 'var(--primary-gold)', margin: 0 }}>我的道具箱</h2>
         </div>
-        
+
         <div className="modal-body" style={{ padding: '30px 20px', textAlign: 'center' }}>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '25px' }}>
             點擊道具以使用或查看
@@ -904,13 +913,13 @@ const BagModal: React.FC<{
 
           <div style={{ display: 'flex', gap: '25px', justifyContent: 'center', flexWrap: 'wrap' }}>
             {/* 手電筒道具 */}
-            <div 
+            <div
               onClick={hasFlashlight ? onToggleFlashlight : undefined}
               style={{
                 width: '90px',
                 height: '90px',
-                background: hasFlashlight 
-                  ? (isFlashlightOn ? 'var(--primary-gold)' : 'rgba(212, 175, 55, 0.1)') 
+                background: hasFlashlight
+                  ? (isFlashlightOn ? 'var(--primary-gold)' : 'rgba(212, 175, 55, 0.1)')
                   : 'rgba(255,255,255,0.05)',
                 border: `2px solid ${hasFlashlight ? (isFlashlightOn ? '#fff' : 'var(--primary-gold)') : '#444'}`,
                 borderRadius: '16px',
@@ -925,9 +934,9 @@ const BagModal: React.FC<{
                 position: 'relative'
               }}
             >
-              <span style={{ 
-                fontSize: '2.8rem', 
-                filter: isFlashlightOn ? 'drop-shadow(0 0 15px #fff) brightness(1.2)' : 'grayscale(1) opacity(0.7)' 
+              <span style={{
+                fontSize: '2.8rem',
+                filter: isFlashlightOn ? 'drop-shadow(0 0 15px #fff) brightness(1.2)' : 'grayscale(1) opacity(0.7)'
               }}>
                 {hasFlashlight ? '🔦' : '🔒'}
               </span>
@@ -979,8 +988,38 @@ const BagModal: React.FC<{
                 {hasPoetrySlip ? '神祕詩籤' : '未獲得'}
               </span>
             </div>
-          </div>
 
+            {/* 虎爺符令道具 */}
+            <div 
+              onClick={hasTigerSeal ? () => { onClose(); triggerBaguaBox(); } : undefined}
+              style={{
+                width: '90px',
+                height: '90px',
+                background: hasTigerSeal ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.05)',
+                border: `2px solid ${hasTigerSeal ? 'var(--primary-gold)' : '#444'}`,
+                borderRadius: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: hasTigerSeal ? 'pointer' : 'not-allowed',
+                transition: 'all 0.3s ease',
+                opacity: hasTigerSeal ? 1 : 0.4,
+                position: 'relative'
+              }}
+            >
+              <span style={{ fontSize: '2.8rem' }}>
+                {hasTigerSeal ? '🐯' : '🔒'}
+              </span>
+              <span style={{ 
+                position: 'absolute', bottom: '-28px', fontSize: '0.8rem', 
+                color: hasTigerSeal ? 'var(--primary-gold)' : '#666',
+                whiteSpace: 'nowrap', fontWeight: 'bold'
+              }}>
+                {hasTigerSeal ? '虎爺符令' : '未獲得'}
+              </span>
+            </div>
+          </div>
           {/* 祕令輸入區 (手機玩家救星) */}
           <div style={{ marginTop: '50px', borderTop: '1px dashed rgba(212, 175, 55, 0.3)', paddingTop: '20px' }}>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '10px' }}>—— 輸入感應到的密令 ——</p>
