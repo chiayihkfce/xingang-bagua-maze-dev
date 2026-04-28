@@ -150,7 +150,8 @@ export const useEasterEggs = () => {
       if (key === clueCode[clueIndex]) {
         clueIndex++;
         if (clueIndex === clueCode.length) {
-          showMysticScroll();
+          setHasPoetrySlip(true); // 獲得道具
+          triggerPulse('📜 獲得道具：【神祕詩籤】📜', false); // 僅跳出獲得提示
           clueIndex = 0;
         }
       } else clueIndex = 0;
@@ -165,16 +166,27 @@ export const useEasterEggs = () => {
       } else baguaIndex = 0;
     };
 
-    const triggerPulse = (msg: string) => {
+    const triggerPulse = (msg: string, showVisual = true) => {
       setIsAwakened(true);
-      const pulse = document.createElement('div');
-      pulse.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%); z-index: 100000; pointer-events: none; animation: pulseFade 1.5s ease-out forwards;`;
-      document.body.appendChild(pulse);
+      
+      // 只有在需要時才顯示背景光圈特效
+      let pulse: HTMLDivElement | null = null;
+      if (showVisual) {
+        pulse = document.createElement('div');
+        pulse.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%); z-index: 100000; pointer-events: none; animation: pulseFade 1.5s ease-out forwards;`;
+        document.body.appendChild(pulse);
+      }
+
       const notify = document.createElement('div');
       notify.innerHTML = msg;
       notify.style.cssText = `position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%); padding: 20px 40px; background: rgba(0,0,0,0.9); color: #d4af37; border: 2px solid #d4af37; border-radius: 50px; z-index: 100001; font-size: 1.5rem; font-family: 'Noto Serif TC', serif; box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); pointer-events: none; animation: fadeOutUp 3s forwards;`;
       document.body.appendChild(notify);
-      setTimeout(() => { pulse.remove(); notify.remove(); setIsAwakened(false); }, 3000);
+
+      setTimeout(() => {
+        if (pulse) pulse.remove();
+        notify.remove();
+        setIsAwakened(false);
+      }, 3000);
     };
 
 
@@ -265,7 +277,7 @@ export const useEasterEggs = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isFlashlightOn, setIsFlashlightOn, setHasPoetrySlip]); 
 
-  return { isAwakened };
+  return { isAwakened }; 
 };
