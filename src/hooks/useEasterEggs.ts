@@ -52,7 +52,7 @@ export const useEasterEggs = () => {
 
       const tip = document.createElement('div');
       tip.id = 'bagua-lens-tip';
-      tip.innerHTML = '【探照模式】移動滑鼠尋找隱藏線索... (再按一次手電筒關閉)';
+      tip.innerHTML = '【探照模式】移動滑鼠尋找隱藏線索... (再按一次手電筒或 Esc 鍵關閉)';
       tip.style.cssText = `position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #d4af37; z-index: 150002; font-family: \'Noto Serif TC\', serif; background: rgba(0,0,0,0.8); padding: 5px 20px; border-radius: 20px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);`;
 
       document.body.appendChild(overlay);
@@ -132,6 +132,11 @@ export const useEasterEggs = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       
+      // 按下 Esc 關閉手電筒
+      if (e.key === 'Escape' && isFlashlightOn) {
+        setIsFlashlightOn(false);
+      }
+
       // 檢查 Konami
       if (e.key === konamiCode[konamiIndex]) {
         konamiIndex++;
