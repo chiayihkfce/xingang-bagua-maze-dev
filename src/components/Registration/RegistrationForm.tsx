@@ -166,6 +166,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           onToggleFlashlight={() => setIsFlashlightOn(!isFlashlightOn)}
         />
 
+        {/* 道具箱彈窗 */}
+        <BagModal 
+          isOpen={isBagOpen} 
+          onClose={() => setIsBagOpen(false)} 
+          hasFlashlight={hasFlashlight}
+          hasPoetrySlip={hasPoetrySlip}
+          isFlashlightOn={isFlashlightOn}
+          onToggleFlashlight={() => setIsFlashlightOn(!isFlashlightOn)}
+          showMysticScroll={showMysticScroll}
+        />
+
         <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} />
       </section>
     );
