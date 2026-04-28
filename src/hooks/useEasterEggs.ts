@@ -243,7 +243,7 @@ export const useEasterEggs = () => {
                <div style="position: relative;">
                  <img 
                    src="/8cdd1348-ba1c-4fee-89d4-f8255934d7d3-Photoroom.png" 
-                   alt="新港神龍玉璽" 
+                   alt="新港八卦虎印" 
                    style="width: 180px; height: auto; filter: drop-shadow(0 0 30px rgba(212,175,55,0.6));"
                  />
                  <!-- 底部印面金色光暈 -->
@@ -252,7 +252,7 @@ export const useEasterEggs = () => {
             </div>
           </div>
           
-          <div id="box-text" style="color: #d4af37; font-size: 1.6rem; letter-spacing: 12px; opacity: 0; transition: all 1.5s ease 1.5s; font-family: 'Noto Serif TC', serif; text-shadow: 0 0 20px rgba(212,175,55,0.6);">—— 奉天承運：獲得新港龍印 ——</div>
+          <div id="box-text" style="color: #d4af37; font-size: 1.6rem; letter-spacing: 12px; opacity: 0; transition: all 1.5s ease 1.5s; font-family: 'Noto Serif TC', serif; text-shadow: 0 0 20px rgba(212,175,55,0.6);">—— 奉天承運：獲得新港八卦虎印 ——</div>
           
           <style>
             @keyframes ribbon-move { 0%, 100% { transform: rotate(15deg) translateY(0); } 50% { transform: rotate(20deg) translateY(5px); } }
