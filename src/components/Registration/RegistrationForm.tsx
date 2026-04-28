@@ -5,6 +5,7 @@ import { translateOption } from '../../utils/translateOptions';
 import { translations } from '../../locales/translations';
 import StatusLookupModal from './StatusLookupModal';
 import BaguaQuiz from './BaguaQuiz';
+import { useAppContext } from '../../context/AppContext';
 
 interface RegistrationFormProps {
   t: any;
@@ -31,6 +32,20 @@ interface RegistrationFormProps {
   setShowGames: (show: boolean) => void;
 }
 
+/**
+ * 寶箱 SVG 圖示組件
+ */
+const ChestIcon: React.FC<{ size?: number }> = ({ size = 50 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 9V17C20 18.1046 19.1046 19 18 19H6C4.89543 19 4 18.1046 4 17V9H20Z" stroke="var(--primary-gold)" strokeWidth="2" strokeLinejoin="round"/>
+    <path d="M20 9V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V9H20Z" stroke="var(--primary-gold)" strokeWidth="2" strokeLinejoin="round"/>
+    <rect x="10" y="8" width="4" height="4" rx="1" fill="#000" stroke="var(--primary-gold)" strokeWidth="1"/>
+    <circle cx="12" cy="10" r="0.5" fill="var(--primary-gold)"/>
+    <path d="M8 5V19" stroke="var(--primary-gold)" strokeWidth="1" strokeDasharray="2 2" opacity="0.5"/>
+    <path d="M16 5V19" stroke="var(--primary-gold)" strokeWidth="1" strokeDasharray="2 2" opacity="0.5"/>
+  </svg>
+);
+
 const RegistrationForm: React.FC<RegistrationFormProps> = ({
   t,
   lang,
@@ -55,15 +70,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   showAlert,
   setShowGames
 }) => {
+  const { hasFlashlight, isFlashlightOn, setIsFlashlightOn, isBagOpen, setIsBagOpen } = useAppContext();
   const [isLookupOpen, setIsLookupOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'choice' | 'form'>('choice'); // 預設顯示選擇入口
+  const [viewMode, setViewMode] = useState<'choice' | 'form'>('choice'); 
   const pad = (n: number) => String(n).padStart(2, '0');
   const selectedPaymentDetail = (paymentMethods || []).find(m => m.name === formData.paymentMethod);
 
   // 1. 入口選擇畫面
   if (viewMode === 'choice') {
     return (
-      <section className="registration-section entry-choice-section">
+      <section className="registration-section entry-choice-section" style={{ position: 'relative' }}>
         <h2 className="choice-title">{t.chooseAction}</h2>
         
         <div className="entry-cards-container">
@@ -71,7 +87,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <button 
             onClick={() => setViewMode('form')}
             className="entry-card primary-card"
-            style={{ flex: '1 1 280px' }} // 確保平分且具備最小寬度
+            style={{ flex: '1 1 280px' }}
           >
             <span className="entry-icon">📜</span>
             <span className="entry-title">{t.startRegistration}</span>
@@ -82,25 +98,21 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <button 
             onClick={() => setIsLookupOpen(true)}
             className="entry-card primary-card"
-            style={{ flex: '1 1 280px' }} // 與報名按鈕一致
+            style={{ flex: '1 1 280px' }}
           >
             <span className="entry-icon">🔍</span>
             <span className="entry-title">{t.checkStatus}</span>
             <span className="entry-desc">{t.lookupEntryDesc}</span>
           </button>
 
-          {/* 八卦天命測驗 (佔滿整行) */}
+          {/* 八卦天命測驗 */}
           <BaguaQuiz t={t} lang={lang} />
 
-          {/* 遊戲入口區 - 更換圖示為羅盤並優化質感 */}
+          {/* 遊戲入口區 */}
           <button 
             onClick={() => setShowGames(true)}
             className="entry-card primary-card"
-            style={{ 
-              width: '100%', 
-              flex: '1 1 100%',
-              marginTop: '15px'
-            }}
+            style={{ width: '100%', flex: '1 1 100%', marginTop: '15px' }}
           >
             <span className="entry-icon" style={{ 
               fontSize: '2.8rem', 
@@ -109,7 +121,61 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             <span className="entry-title">陣法挑戰</span>
             <span className="entry-desc">在進入迷宮前，先試著感應八卦氣息吧！</span>
           </button>
+
+          {/* 我的道具箱入口按鈕 - 樣式完全統一 */}
+          <button 
+            onClick={() => setIsBagOpen(true)}
+            className="entry-card primary-card"
+            style={{ 
+              width: '100%', 
+              flex: '1 1 100%', 
+              marginTop: '15px'
+            }}
+          >
+            <span className="entry-icon">
+              <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* 寶箱主體 */}
+                <path d="M20 9V17C20 18.1046 19.1046 19 18 19H6C4.89543 19 4 18.1046 4 17V9H20Z" stroke="var(--primary-gold)" strokeWidth="2" strokeLinejoin="round"/>
+                {/* 寶箱蓋 */}
+                <path d="M20 9V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V9H20Z" stroke="var(--primary-gold)" strokeWidth="2" strokeLinejoin="round"/>
+                {/* 鎖頭 */}
+                <rect x="10" y="8" width="4" height="4" rx="1" fill="#000" stroke="var(--primary-gold)" strokeWidth="1"/>
+                <circle cx="12" cy="10" r="0.5" fill="var(--primary-gold)"/>
+                {/* 裝飾線條 */}
+                <path d="M8 5V19" stroke="var(--primary-gold)" strokeWidth="1" strokeDasharray="2 2" opacity="0.5"/>
+                <path d="M16 5V19" stroke="var(--primary-gold)" strokeWidth="1" strokeDasharray="2 2" opacity="0.5"/>
+              </svg>
+            </span>
+            <span className="entry-title">我的道具箱</span>
+            <span className="entry-desc">存放著您在冒險中獲得的神祕寶物</span>
+          </button>
+
+          {/* 彩蛋提示小字 - 僅在手電筒開啟時顯現 */}
+          <div style={{ 
+            width: '100%', 
+            textAlign: 'center', 
+            marginTop: '30px', 
+            fontSize: '0.85rem', 
+            color: 'var(--primary-gold)', 
+            opacity: isFlashlightOn ? 1 : 0,
+            transition: 'all 0.5s ease',
+            fontStyle: 'italic',
+            letterSpacing: '1px',
+            textShadow: '0 0 10px rgba(212,175,55,0.8)',
+            transform: isFlashlightOn ? 'translateY(0)' : 'translateY(-10px)'
+          }}>
+            {isFlashlightOn ? '—— 傳說輸入「CLUE」獲取殘卷，或「REVEAL」開啟顯影天眼 ——' : ''}
+          </div>
         </div>
+
+        {/* 道具袋彈窗 */}
+        <BagModal 
+          isOpen={isBagOpen} 
+          onClose={() => setIsBagOpen(false)} 
+          hasFlashlight={hasFlashlight}
+          isFlashlightOn={isFlashlightOn}
+          onToggleFlashlight={() => setIsFlashlightOn(!isFlashlightOn)}
+        />
 
         <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} />
       </section>
@@ -748,6 +814,103 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} />
 
     </section>
+  );
+};
+
+/**
+ * 🎒 我的道具箱彈窗
+ */
+const BagModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  hasFlashlight: boolean;
+  isFlashlightOn: boolean;
+  onToggleFlashlight: () => void;
+}> = ({ isOpen, onClose, hasFlashlight, isFlashlightOn, onToggleFlashlight }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+        <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', borderBottom: '1px solid rgba(212, 175, 55, 0.2)', paddingBottom: '15px' }}>
+          <ChestIcon size={30} />
+          <h2 style={{ color: 'var(--primary-gold)', margin: 0 }}>我的道具箱</h2>
+        </div>
+        
+        <div className="modal-body" style={{ padding: '30px 20px', textAlign: 'center' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '25px' }}>
+            點擊道具以使用或查看
+          </p>
+
+          <div style={{ display: 'flex', gap: '25px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {/* 手電筒道具 */}
+            <div 
+              onClick={hasFlashlight ? onToggleFlashlight : undefined}
+              style={{
+                width: '90px',
+                height: '90px',
+                background: hasFlashlight 
+                  ? (isFlashlightOn ? 'var(--primary-gold)' : 'rgba(212, 175, 55, 0.1)') 
+                  : 'rgba(255,255,255,0.05)',
+                border: `2px solid ${hasFlashlight ? (isFlashlightOn ? '#fff' : 'var(--primary-gold)') : '#444'}`,
+                borderRadius: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: hasFlashlight ? 'pointer' : 'not-allowed',
+                transition: 'all 0.3s ease',
+                boxShadow: isFlashlightOn ? '0 0 35px var(--primary-gold), inset 0 0 15px rgba(255,255,255,0.5)' : 'none',
+                opacity: hasFlashlight ? 1 : 0.4,
+                position: 'relative'
+              }}
+            >
+              <span style={{ 
+                fontSize: '2.8rem', 
+                filter: isFlashlightOn ? 'drop-shadow(0 0 15px #fff) brightness(1.2)' : 'grayscale(1) opacity(0.7)' 
+              }}>
+                {hasFlashlight ? '🔦' : '🔒'}
+              </span>
+              {isFlashlightOn && (
+                <div style={{ 
+                  position: 'absolute', top: '-10px', right: '-10px', 
+                  background: '#ff4d4d', color: '#fff', fontSize: '0.65rem',
+                  padding: '2px 6px', borderRadius: '10px', fontWeight: 'bold',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.3)'
+                }}>ON</div>
+              )}
+              <span style={{ 
+                position: 'absolute', bottom: '-28px', fontSize: '0.8rem', 
+                color: hasFlashlight ? 'var(--primary-gold)' : '#666',
+                whiteSpace: 'nowrap', fontWeight: 'bold',
+                textShadow: isFlashlightOn ? '0 0 10px var(--primary-gold)' : 'none'
+              }}>
+                {hasFlashlight ? '八卦手電筒' : '未獲得'}
+              </span>
+            </div>
+
+            {/* 空插槽 (未來擴充) */}
+            {[1, 2].map(i => (
+              <div key={i} style={{
+                width: '90px', height: '90px',
+                background: 'rgba(255,255,255,0.02)',
+                border: '2px dashed #333',
+                borderRadius: '16px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: '1.5rem', opacity: 0.1 }}>?</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="modal-actions" style={{ marginTop: '20px' }}>
+          <button className="submit-btn" onClick={onClose} style={{ width: '100%', background: 'transparent', border: '1px solid var(--primary-gold)', color: 'var(--primary-gold)' }}>
+            關閉
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
