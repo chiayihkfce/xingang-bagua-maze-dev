@@ -979,16 +979,31 @@ const BagModal: React.FC<{
                 {hasPoetrySlip ? '神祕詩籤' : '未獲得'}
               </span>
             </div>
+          </div>
 
-            {/* 空插槽 (未來擴充) */}
-            <div style={{
-              width: '90px', height: '90px',
-              background: 'rgba(255,255,255,0.02)',
-              border: '2px dashed #333',
-              borderRadius: '16px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <span style={{ fontSize: '1.5rem', opacity: 0.1 }}>?</span>
+          {/* 祕令輸入區 (手機玩家救星) */}
+          <div style={{ marginTop: '50px', borderTop: '1px dashed rgba(212, 175, 55, 0.3)', paddingTop: '20px' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '10px' }}>—— 輸入感應到的密令 ——</p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <input 
+                id="secret-input"
+                type="text" 
+                placeholder="在此輸入密令..."
+                style={{
+                  flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid #444',
+                  borderRadius: '20px', padding: '8px 15px', color: '#fff', fontSize: '0.9rem'
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const val = (e.currentTarget.value || '').toLowerCase().trim();
+                    window.dispatchEvent(new KeyboardEvent('keydown', { key: val[0] })); // 模擬觸發
+                    // 為了簡單起見，我們直接手動分發全字串
+                    const event = new CustomEvent('secret-command', { detail: val });
+                    window.dispatchEvent(event);
+                    e.currentTarget.value = '';
+                  }
+                }}
+              />
             </div>
           </div>
         </div>
