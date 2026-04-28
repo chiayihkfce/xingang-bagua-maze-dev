@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useAppContext } from '../context/AppContext';
-
 /**
  * 新港八卦謎蹤 - 彩蛋 Hook
  */
-export const useEasterEggs = () => {
+export const useEasterEggs = (props?: {
+  isFlashlightOn: boolean;
+  setIsFlashlightOn: (val: boolean) => void;
+  setHasPoetrySlip: (val: boolean) => void;
+  setHasTigerSeal: (val: boolean) => void;
+}) => {
   const [isAwakened, setIsAwakened] = useState(false);
-  const { isFlashlightOn, setIsFlashlightOn, setHasPoetrySlip, setHasTigerSeal } = useAppContext();
+  
+  // 優先使用 props，若無則不執行（相容舊邏輯但避免崩潰）
+  const isFlashlightOn = props?.isFlashlightOn ?? false;
+  const setIsFlashlightOn = props?.setIsFlashlightOn ?? (() => {});
+  const setHasPoetrySlip = props?.setHasPoetrySlip ?? (() => {});
+  const setHasTigerSeal = props?.setHasTigerSeal ?? (() => {});
 
   // 1. 顯示神祕詩籤
   const showMysticScroll = () => {

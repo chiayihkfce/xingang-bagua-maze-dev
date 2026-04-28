@@ -11,6 +11,7 @@ import { useAdminData } from './useAdminData';
 import { useAdminActions } from './useAdminActions';
 import { useSettingsActions } from './useSettingsActions';
 import { useRegistrationActions } from './useRegistrationActions';
+import { useEasterEggs } from './useEasterEggs';
 import { formatFullDateTime, generateTimeSlots, toggleTimeInString } from '../utils/dateUtils';
 import { copyToClipboard, generatePrintContent } from '../utils/displayUtils';
 import { exportToExcel, readExcelFile } from '../utils/excelUtils';
@@ -31,6 +32,12 @@ export const useAppController = () => {
   const display = useDisplayLogic({ lang: theme.lang, sessions: firebase.sessions, t: theme.t });
   const form = useRegistrationForm({ formData: state.formData, setFormData: state.setFormData, sessions: firebase.sessions, timeslotConfig: firebase.timeslotConfig, generalTimeSlots: firebase.generalTimeSlots, specialTimeSlots: firebase.specialTimeSlots, t: theme.t });
   const modal = useSystemModal();
+  const easterEggs = useEasterEggs({
+    isFlashlightOn: state.isFlashlightOn,
+    setIsFlashlightOn: state.setIsFlashlightOn,
+    setHasPoetrySlip: state.setHasPoetrySlip,
+    setHasTigerSeal: state.setHasTigerSeal
+  });
 
   const addLog = async (type: string, details: string, operatorOverride?: string) => {
     try {
@@ -220,6 +227,7 @@ export const useAppController = () => {
     ...adminActions, 
     ...settingsActions, 
     ...registrationActions,
+    ...easterEggs,
     dashboardStats: adminData.dashboardStats || { pendingCount: 0, totalRevenue: 0, todayKits: 0, todayPlayers: 0 },
     handleCopyAccount, getDisplayStats, handleDownloadExcel, handleImportExcel, handleDateFilter, handleSort, toggleFixedTime, formatFullDateTime, generateTimeSlots, loadPage, addLog,
     handlePrintCheckInSheet,
