@@ -36,7 +36,8 @@ export const useAppController = () => {
     isFlashlightOn: state.isFlashlightOn,
     setIsFlashlightOn: state.setIsFlashlightOn,
     setHasPoetrySlip: state.setHasPoetrySlip,
-    setHasTigerSeal: state.setHasTigerSeal
+    setHasTigerSeal: state.setHasTigerSeal,
+    showAlert: modal.showAlert
   });
 
   const addLog = async (type: string, details: string, operatorOverride?: string) => {

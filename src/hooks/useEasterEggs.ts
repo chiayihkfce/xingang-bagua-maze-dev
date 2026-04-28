@@ -7,6 +7,7 @@ export const useEasterEggs = (props?: {
   setIsFlashlightOn: (val: boolean) => void;
   setHasPoetrySlip: (val: boolean) => void;
   setHasTigerSeal: (val: boolean) => void;
+  showAlert: (message: string, title?: string) => void;
 }) => {
   const [isAwakened, setIsAwakened] = useState(false);
   
@@ -15,6 +16,7 @@ export const useEasterEggs = (props?: {
   const setIsFlashlightOn = props?.setIsFlashlightOn ?? (() => {});
   const setHasPoetrySlip = props?.setHasPoetrySlip ?? (() => {});
   const setHasTigerSeal = props?.setHasTigerSeal ?? (() => {});
+  const showAlert = props?.showAlert ?? (() => {});
 
   // 1. 顯示神祕詩籤
   const showMysticScroll = () => {
@@ -153,7 +155,7 @@ export const useEasterEggs = (props?: {
       const key = e.key.toLowerCase();
       if (e.key === 'Escape' && isFlashlightOn) setIsFlashlightOn(false);
       if (e.key === konamiCode[kIdx]) { kIdx++; if (kIdx === konamiCode.length) { kIdx = 0; setIsAwakened(true); } } else kIdx = 0;
-      if (key === clueCode[cIdx]) { cIdx++; if (cIdx === clueCode.length) { cIdx = 0; setHasPoetrySlip(true); } } else cIdx = 0;
+      if (key === clueCode[cIdx]) { cIdx++; if (cIdx === clueCode.length) { cIdx = 0; setHasPoetrySlip(true); showAlert('獲得了【神祕詩籤】！已放入道具箱。', '📜 獲得道具'); } } else cIdx = 0;
       if (key === baguaCode[bIdx]) { bIdx++; if (bIdx === baguaCode.length) { bIdx = 0; triggerBaguaBox(); } } else bIdx = 0;
       if (key === buguaCode[buIdx]) { buIdx++; if (buIdx === buguaCode.length) { buIdx = 0; triggerBaguaBox(); } } else buIdx = 0;
     };
