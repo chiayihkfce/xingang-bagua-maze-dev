@@ -256,6 +256,7 @@ export const useEasterEggs = () => {
             <div style="color: #d4af37; font-size: 1.8rem; letter-spacing: 12px; font-family: 'Noto Serif TC', serif; text-shadow: 0 0 20px rgba(212,175,55,0.6); margin-bottom: 20px;">—— 虎爺符令 ——</div>
             <div style="color: rgba(255,255,255,0.9); font-size: 1rem; line-height: 2.2; letter-spacing: 2.5px; font-style: italic; padding: 0 30px; text-align: justify; background: rgba(212, 175, 55, 0.05); border-left: 2px solid var(--primary-gold); border-right: 2px solid var(--primary-gold);">
               中間斷裂用鐵片包覆，嘉慶年間奉天宮立廟時之虎爺大符印，上刻書「新南港 奉天宮 虎將軍」。古笨港沖毀後，街分南北，笨南港東遷麻園寮演變為「新南港」。奉天宮虎爺受封，奉於案桌上為全台獨有。
+              <div style="text-align: right; font-size: 0.75rem; opacity: 0.6; margin-top: 15px; letter-spacing: 1px;">—— 資訊來源：新港奉天宮官方文獻 ——</div>
             </div>
           </div>
           
