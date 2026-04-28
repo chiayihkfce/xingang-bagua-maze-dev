@@ -242,7 +242,7 @@ export const useEasterEggs = () => {
             <div id="mystic-seal" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: 0; z-index: 3; transition: all 2s ease 0.8s; pointer-events: none;">
                <div style="position: relative;">
                  <img 
-                   src="/8cdd1348-ba1c-4fee-89d4-f8255934d7d3-Photoroom.png" 
+                   src="/tiger-seal.png" 
                    alt="新港八卦虎印" 
                    style="width: 180px; height: auto; filter: drop-shadow(0 0 30px rgba(212,175,55,0.6));"
                  />
