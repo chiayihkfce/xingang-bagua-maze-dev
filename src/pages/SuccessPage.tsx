@@ -24,7 +24,6 @@ const SuccessPage: React.FC = () => {
   } = useAppContext();
   return (
     <>
-      <CustomCursor />
       <SuccessScreen 
         {...{ 
           t, 

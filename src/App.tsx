@@ -6,6 +6,7 @@ import { zhTW } from './utils/dateUtils'
 import { AppProvider, useAppContext } from './context/AppContext'
 import AdminPage from './pages/AdminPage';
 import { useEasterEggs } from './hooks/useEasterEggs';
+import CustomCursor from './components/UI/CustomCursor';
 
 // 註冊語系
 registerLocale('zh', zhTW as any);
@@ -53,6 +54,7 @@ function AppContent() {
 
         return <RegistrationPage />;
       })()}
+      <CustomCursor />
     </Suspense>
   );
 }

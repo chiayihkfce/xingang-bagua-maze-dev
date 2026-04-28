@@ -88,8 +88,8 @@ const CustomCursor: React.FC = () => {
 
   return (
     <>
-      <div ref={dotRef} className="custom-cursor-dot" style={{ position: 'fixed', left: 0, top: 0, pointerEvents: 'none', zIndex: 99999 }} />
-      <div ref={ringRef} className="custom-cursor-ring" style={{ position: 'fixed', left: 0, top: 0, pointerEvents: 'none', zIndex: 99998 }}>
+      <div ref={dotRef} className="custom-cursor-dot" style={{ position: 'fixed', left: 0, top: 0, pointerEvents: 'none', zIndex: 2147483647 }} />
+      <div ref={ringRef} className="custom-cursor-ring" style={{ position: 'fixed', left: 0, top: 0, pointerEvents: 'none', zIndex: 2147483646 }}>
         <svg viewBox="0 0 100 100">
           <path 
             className="bagua-octagon"

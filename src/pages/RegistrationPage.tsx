@@ -1,5 +1,4 @@
 import React from 'react';
-import CustomCursor from '../components/UI/CustomCursor';
 import Header from '../components/UI/Header';
 import BaguaParticles from '../components/UI/BaguaParticles';
 import StorySection from '../components/Registration/StorySection';
@@ -25,7 +24,6 @@ const RegistrationPage: React.FC = () => {
     } = useAppContext();
   return (
     <div className="container">
-      <CustomCursor />
       <BaguaParticles />
       <MiniGames show={showGames} onClose={() => setShowGames(false)} />
       <RegistrationOverlays 
