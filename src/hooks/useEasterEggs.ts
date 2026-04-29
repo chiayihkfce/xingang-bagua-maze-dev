@@ -171,17 +171,31 @@ export const useEasterEggs = (props?: {
     // 處理自定義密令事件 (支援中文)
     const handleSecretCommand = (e: any) => {
       const command = (e.detail || '').trim();
+      const { hasPoetrySlip, hasTigerSeal, hasDuckSoup } = props || {};
+
       if (command === '培桂堂') {
         setHasPoetrySlip(true);
         showAlert('感應到培桂堂的氣息...獲得了【神祕詩籤】！', '📜 獲得道具');
       } else if (command === '乾坤') {
-        triggerBaguaBox();
+        if (hasPoetrySlip) {
+          triggerBaguaBox();
+        } else {
+          showAlert('雖然唸出了咒語，但似乎還缺少了某種指引的憑據...', '☯ 毫無反應');
+        }
       } else if (command === '鴨肉羹') {
-        setHasDuckSoup(true);
-        showAlert('聞到了大火爆香的鴨肉與筍絲香味...獲得了【新港鴨肉羹】！', '🍜 獲得美食');
+        if (hasTigerSeal) {
+          setHasDuckSoup(true);
+          showAlert('有了虎爺符令的加持，你順利連結了新港地氣...獲得了【新港鴨肉羹】！', '🍜 獲得美食');
+        } else {
+          showAlert('聞到了香味，但你似乎還沒準備好與這股在地靈力產生連結。', '🍜 香氣飄散');
+        }
       } else if (command === '老鼠糖' || command === '新港飴') {
-        setHasCandy(true);
-        showAlert('嚼著香 Q 帶勁的花生麥芽糖...獲得了【新港飴(老鼠糖)】！', '🍬 獲得美食');
+        if (hasDuckSoup) {
+          setHasCandy(true);
+          showAlert('品嚐完正餐後，一份古早味的甘甜圓滿了這場冒險...獲得了【新港飴(老鼠糖)】！', '🍬 獲得美食');
+        } else {
+          showAlert('甘甜的滋味就在附近，但空著肚子恐怕無法體會這份圓滿。', '🍬 尚未解鎖');
+        }
       } else if (command === '太平') {
         showAlert('萬象歸宗，天下太平。', '☯ 啟示');
       }
