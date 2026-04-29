@@ -58,7 +58,7 @@ export const formatPhone = (value: string, countryCode: string): string => {
 export const formatPhoneForDB = (countryCode: string, phone: string): string => {
   if (countryCode === 'landline') return `市內電話${phone}`;
   
-  let cleanPhone = phone.trim();
+  const cleanPhone = phone.trim();
 
   // 針對台灣號碼的特別處理：不存國碼，且在存檔前補 0
   if (countryCode === '+886') {

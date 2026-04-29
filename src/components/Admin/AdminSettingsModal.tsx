@@ -53,42 +53,6 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
   // 新增：控制 LINE ID 教學顯示
   const [showLineGuide, setShowLineGuide] = useState(false);
 
-  useEffect(() => {
-    if (show && currentAdmin) {
-      setNickname(currentAdmin.nickname || currentAdmin.username);
-      setUsername(currentAdmin.username);
-      setPassword(currentAdmin.password || '');
-      setLineUid(currentAdmin.lineUid || ''); // 載入 LINE ID
-      fetchAdmins();
-    }
-  }, [show, currentAdmin]);
-
-  const handleStartEditIp = (ip: IdentityPricing) => {
-    setEditingIp(ip);
-    setIpName(ip.name);
-    setIpPrice(ip.price);
-  };
-
-  const handleCancelEditIp = () => {
-    setEditingIp(null);
-    setIpName('');
-    setIpPrice(0);
-  };
-
-  const handleSaveIp = async () => {
-    if (!ipName) {
-      showAlert('請輸入身分名稱');
-      return;
-    }
-    await saveIdentityPricing({
-      id: editingIp?.id,
-      name: ipName,
-      price: Number(ipPrice) || 0,
-      enabled: editingIp ? editingIp.enabled : true
-    });
-    handleCancelEditIp();
-  };
-
   const fetchAdmins = async () => {
     try {
       const q = query(collection(db, "admins"), orderBy("username"));
@@ -99,6 +63,17 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
       console.error("Error fetching admins:", e);
     }
   };
+
+  useEffect(() => {
+    if (show && currentAdmin) {
+      // 僅在值真正改變時才更新狀態，避免串聯渲染
+      setNickname(prev => prev !== (currentAdmin.nickname || currentAdmin.username) ? (currentAdmin.nickname || currentAdmin.username) : prev);
+      setUsername(prev => prev !== currentAdmin.username ? currentAdmin.username : prev);
+      setPassword(prev => prev !== (currentAdmin.password || '') ? (currentAdmin.password || '') : prev);
+      setLineUid(prev => prev !== (currentAdmin.lineUid || '') ? (currentAdmin.lineUid || '') : prev);
+      fetchAdmins();
+    }
+  }, [show, currentAdmin]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();

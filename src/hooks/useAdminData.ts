@@ -124,7 +124,7 @@ export const useAdminData = ({
     const qLogs = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(1000));
     const unsubLogs = onSnapshot(qLogs, (snapshot) => {
       const logHeader = ["時間", "操作類型", "操作者", "詳細內容"];
-      let data = snapshot.docs.map(doc => {
+      const data = snapshot.docs.map(doc => {
         const d = doc.data();
         return [d.timestamp, d.type, d.operator || '系統', d.details];
       });

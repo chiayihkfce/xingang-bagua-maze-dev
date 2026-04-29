@@ -313,7 +313,7 @@ export const useAdminActions = ({
       
       // 找出原始資料
       const original = submissions.find(row => row[16] === editData.id);
-      let diffLogs = [];
+      const diffLogs = [];
       
       if (original) {
         const fieldNames = ["報名時間", "狀態", "姓名", "電話", "Email", "場次", "份數", "人數", "金額", "支付方式", "末五碼", "預約時間", "地點", "得知管道", "備註"];

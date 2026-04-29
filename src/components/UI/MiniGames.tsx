@@ -86,13 +86,28 @@ const MiniGames: React.FC<MiniGamesProps> = ({ show, onClose }) => {
  * 遊戲一：八卦旋轉陣 (隨機出題聯動版)
  */
 const RotationGame: React.FC<{ onWin: () => void }> = ({ onWin }) => {
-  const [angles, setAngles] = useState([0, 0, 0]);
-  const isReady = useRef(false);
+  const [angles, setAngles] = useState(() => {
+    const generate = (): number[] => {
+      const a = [0, 0, 0];
+      const scrambleMoves = 4 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < scrambleMoves; i++) {
+        const idx = Math.floor(Math.random() * 3);
+        a[idx] = (a[idx] + 45) % 360;
+        if (idx === 0) a[1] = (a[1] + 45) % 360;
+        if (idx === 1) a[2] = (a[2] + 45) % 360;
+        if (idx === 2) a[0] = (a[0] + 45) % 360;
+      }
+      return a.every(val => val === 0) ? generate() : a;
+    };
+    return generate();
+  });
+  
+  const isReady = useRef(true);
   const trigrams = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
 
   const generateNewPuzzle = () => {
     isReady.current = false;
-    let newAngles = [0, 0, 0];
+    const newAngles = [0, 0, 0];
     const scrambleMoves = 4 + Math.floor(Math.random() * 3);
     for (let i = 0; i < scrambleMoves; i++) {
       const idx = Math.floor(Math.random() * 3);
@@ -106,12 +121,11 @@ const RotationGame: React.FC<{ onWin: () => void }> = ({ onWin }) => {
       generateNewPuzzle();
     } else {
       setAngles(newAngles);
-      // 給予一點延遲確保渲染後才開啟判定
       setTimeout(() => { isReady.current = true; }, 100);
     }
   };
 
-  useEffect(() => { generateNewPuzzle(); }, []);
+  // 移除初始化 Effect，因為已改用 useState 初始值
 
   const handleLinkedRotate = (index: number) => {
     if (!isReady.current) return;

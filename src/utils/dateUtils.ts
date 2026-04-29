@@ -27,7 +27,7 @@ export const parseDateSafely = (dateStr: any) => {
   // 如果是數字 (Excel 序號格式)
   if (typeof dateStr === 'number') return new Date(dateStr);
 
-  let str = String(dateStr).trim();
+  const str = String(dateStr).trim();
   if (!str || str === 'NaN' || str === 'undefined') return new Date();
 
   // 1. 嘗試原生產解析
@@ -35,11 +35,11 @@ export const parseDateSafely = (dateStr: any) => {
   if (!isNaN(d.getTime())) return d;
 
   // 2. 針對「下午/上午」進行預處理
-  let isPM = str.includes('下午');
-  let isAM = str.includes('上午');
+  const isPM = str.includes('下午');
+  const isAM = str.includes('上午');
 
   // 移除中文字並統一分隔符
-  let cleanStr = str.replace(/[上下]午/g, ' ')
+  const cleanStr = str.replace(/[上下]午/g, ' ')
                     .replace(/\//g, '-')
                     .replace(/\s+/g, ' ')
                     .trim();
@@ -48,12 +48,12 @@ export const parseDateSafely = (dateStr: any) => {
   try {
     const parts = cleanStr.split(/[- :]/);
     if (parts.length >= 3) {
-      let year = parseInt(parts[0]);
-      let month = parseInt(parts[1]) - 1;
-      let day = parseInt(parts[2]);
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const day = parseInt(parts[2]);
       let hour = parts[3] ? parseInt(parts[3]) : 0;
-      let min = parts[4] ? parseInt(parts[4]) : 0;
-      let sec = parts[5] ? parseInt(parts[5]) : 0;
+      const min = parts[4] ? parseInt(parts[4]) : 0;
+      const sec = parts[5] ? parseInt(parts[5]) : 0;
 
       if (isPM && hour < 12) hour += 12;
       if (isAM && hour === 12) hour = 0;
@@ -92,7 +92,7 @@ export const findEarliestSlot = (
   currentSessionName?: string,
   sessionType?: '一般預約' | '特別預約' | ''
 ) => {
-  let checkDate = new Date();
+  const checkDate = new Date();
   const selectedSession = currentSessions.find(s => s.name === (targetSessionName || currentSessionName));
   
   // 修正：優先從時段陣列抓取第一個值，而非全域設定的開始時間
@@ -186,7 +186,7 @@ export const findEarliestSlot = (
  */
 export const generateTimeSlots = (start: string, end: string, interval: number) => {
   const slots = [];
-  let current = new Date(`2026-01-01T${start}:00`);
+  const current = new Date(`2026-01-01T${start}:00`);
   const last = new Date(`2026-01-01T${end}:00`);
   while (current <= last) {
     slots.push(`${pad(current.getHours())}:${pad(current.getMinutes())}`);

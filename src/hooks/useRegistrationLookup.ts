@@ -17,7 +17,7 @@ export const useRegistrationLookup = () => {
     try {
       const registrationsRef = collection(db, "registrations");
       const rawKeyword = keyword.trim();
-      let cleanKeyword = rawKeyword.replace(/[\s-]/g, '');
+      const cleanKeyword = rawKeyword.replace(/[\s-]/g, '');
 
       // 準備查詢集合 (使用 Set 避免重複條件)
       const queryList = new Set<string>();

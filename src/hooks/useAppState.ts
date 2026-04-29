@@ -11,7 +11,7 @@ export const useAppState = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calculatedTotal, setCalculatedTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loadTime] = useState(Date.now());
+  const [loadTime] = useState(() => Date.now());
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
