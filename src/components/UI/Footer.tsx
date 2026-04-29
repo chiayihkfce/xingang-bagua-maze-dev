@@ -6,32 +6,39 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ t }) => {
-  const { APP_VERSION } = useAppContext();
+  const { APP_VERSION, setHasDuckSoup, setHasCandy, showAlert } = useAppContext();
   const [clickCount, setClickCount] = useState(0);
   const [showEgg, setShowEgg] = useState(false);
+  const [currentTrivia, setCurrentTrivia] = useState<any>(null);
   const timerRef = useRef<any>(null);
 
   const handleEggTrigger = (e: React.MouseEvent) => {
-    // 防止點擊圖片時直接跳轉外部網頁 (如果是在開發彩蛋期間)
-    // e.preventDefault(); 
-    
     setClickCount(prev => prev + 1);
     
-    // 視覺震動回饋
     const target = e.currentTarget as HTMLElement;
     target.style.transform = 'scale(0.9) rotate(5deg)';
     setTimeout(() => { target.style.transform = ''; }, 100);
 
     if (timerRef.current) clearTimeout(timerRef.current);
-
-    timerRef.current = setTimeout(() => {
-      setClickCount(0);
-    }, 2000); // 2秒內沒繼續點就歸零
+    timerRef.current = setTimeout(() => { setClickCount(0); }, 2000);
 
     if (clickCount + 1 >= 3) {
+      const randomTrivia = TRIVIA_LIST[Math.floor(Math.random() * TRIVIA_LIST.length)];
+      setCurrentTrivia(randomTrivia);
       setShowEgg(true);
       setClickCount(0);
     }
+  };
+
+  const handleCloseEgg = () => {
+    if (currentTrivia?.title.includes("鴨肉羹")) {
+      setHasDuckSoup(true);
+      showAlert('恭喜！在閱讀在地文化時，你發現了隱藏的美食氣息...獲得了【新港鴨肉羹】！', '🍜 獲得美食');
+    } else if (currentTrivia?.title.includes("新港飴")) {
+      setHasCandy(true);
+      showAlert('恭喜！在追尋老鼠糖的故事時，你獲得了這份甘甜...獲得了【新港飴】！', '🍬 獲得美食');
+    }
+    setShowEgg(false);
   };
 
   const TRIVIA_LIST = [
@@ -46,7 +53,7 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
     { title: "✉️ 給時空旅人的訊息", content: "感謝您來到新港。這款解謎遊戲是由一群熱愛鄉土的夥伴共同研發。希望透過時空穿梭，讓您能感受到這座古鎮真實的溫度。 —— 製作小組敬啟" }
   ];
 
-  const randomTrivia = TRIVIA_LIST[Math.floor(Math.random() * TRIVIA_LIST.length)];
+  // const randomTrivia = TRIVIA_LIST[Math.floor(Math.random() * TRIVIA_LIST.length)];
 
   return (
     <footer className="footer">
@@ -99,7 +106,7 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
       </div>
 
       {/* 彩蛋彈窗 */}
-      {showEgg && (
+      {showEgg && currentTrivia && (
         <div 
           style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -107,7 +114,7 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             backdropFilter: 'blur(5px)', animation: 'fadeIn 0.3s'
           }}
-          onClick={() => setShowEgg(false)}
+          onClick={handleCloseEgg}
         >
           <div 
             style={{
@@ -120,13 +127,13 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
           >
             <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📜</div>
             <h3 style={{ color: 'var(--primary-gold)', marginBottom: '15px', fontFamily: 'serif' }}>
-              {randomTrivia.title}
+              {currentTrivia.title}
             </h3>
             <p style={{ color: '#ecf0f1', lineHeight: '1.6', fontSize: '1.05rem', textAlign: 'justify' }}>
-              {randomTrivia.content}
+              {currentTrivia.content}
             </p>
             <button 
-              onClick={() => setShowEgg(false)}
+              onClick={handleCloseEgg}
               style={{
                 marginTop: '25px', padding: '10px 30px', borderRadius: '50px',
                 background: 'var(--primary-gold)', color: '#000', border: 'none',
