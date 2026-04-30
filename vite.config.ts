@@ -31,7 +31,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
           'vendor-utils': ['xlsx', 'gsap', 'recharts'],
           'vendor-firebase': [
             'firebase/app',

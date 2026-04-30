@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FormData, FormErrors, Session, TimeslotConfig } from '../types';
 import { validateFieldLogic } from '../utils/validationUtils';
 import { formatName, formatBankLast5, formatPhone } from '../utils/formatUtils';

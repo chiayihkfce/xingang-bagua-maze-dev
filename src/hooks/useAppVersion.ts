@@ -21,8 +21,8 @@ export const useAppVersion = (appVersion: string) => {
       localStorage.setItem('app_version', appVersion);
 
       // 如果是從舊版本升級，可視情況強制重新載入頁面確保狀態乾淨
-      if (savedVersion) {
-        window.location.reload();
+      if (savedVersion && !window.location.search.includes('reloaded=true')) {
+        window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'reloaded=true';
       }
     }
   }, [appVersion]);

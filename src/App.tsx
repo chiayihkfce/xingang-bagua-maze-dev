@@ -5,7 +5,6 @@ import { registerLocale } from 'react-datepicker';
 import { zhTW } from './utils/dateUtils';
 import { AppProvider, useAppContext } from './context/AppContext';
 import AdminPage from './pages/AdminPage';
-import { useEasterEggs } from './hooks/useEasterEggs';
 import CustomCursor from './components/UI/CustomCursor';
 
 // 註冊語系
@@ -37,9 +36,6 @@ const LoadingFallback = () => (
  * 應用程式內容區：負責根據 Context 狀態切換頁面
  */
 function AppContent() {
-  // 注入彩蛋邏輯
-  useEasterEggs();
-
   const app = useAppContext();
   const { SECRET_ADMIN_PATH, currentPath, submitted, isAuthenticating } = app;
 
