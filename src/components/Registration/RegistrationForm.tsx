@@ -241,6 +241,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         }}
         showMysticScroll={() => setIsScrollOpen(true)}
         triggerBaguaBox={triggerBaguaBox}
+        showAlert={showAlert}
       />
 
       <StatusLookupModal

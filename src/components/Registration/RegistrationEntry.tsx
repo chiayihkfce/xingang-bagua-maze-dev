@@ -1,6 +1,6 @@
 import React from 'react';
 import BaguaQuiz from './BaguaQuiz';
-import { ChestIcon } from './BagModal';
+import { ChestIcon, CompassIcon, ScrollIcon, SearchIcon } from './BagModal';
 import { useAppContext } from '../../context/AppContext';
 
 interface RegistrationEntryProps {
@@ -34,7 +34,9 @@ const RegistrationEntry: React.FC<RegistrationEntryProps> = ({
           className="entry-card primary-card"
           style={{ flex: '1 1 280px' }}
         >
-          <span className="entry-icon">📜</span>
+          <span className="entry-icon">
+            <ScrollIcon size={52} />
+          </span>
           <span className="entry-title">{t.startRegistration}</span>
           <span className="entry-desc">{t.regEntryDesc}</span>
         </button>
@@ -45,7 +47,9 @@ const RegistrationEntry: React.FC<RegistrationEntryProps> = ({
           className="entry-card primary-card"
           style={{ flex: '1 1 280px' }}
         >
-          <span className="entry-icon">🔍</span>
+          <span className="entry-icon">
+            <SearchIcon size={52} />
+          </span>
           <span className="entry-title">{t.checkStatus}</span>
           <span className="entry-desc">{t.lookupEntryDesc}</span>
         </button>
@@ -57,17 +61,10 @@ const RegistrationEntry: React.FC<RegistrationEntryProps> = ({
         <button
           onClick={() => setShowGames(true)}
           className="entry-card primary-card"
-          style={{ width: '100%', flex: '1 1 100%', marginTop: '15px' }}
+          style={{ flex: '1 1 280px' }}
         >
-          <span
-            className="entry-icon"
-            style={{
-              fontSize: '2.8rem',
-              filter:
-                'sepia(1) saturate(5) hue-rotate(-10deg) drop-shadow(0 0 5px rgba(212, 175, 55, 0.5))'
-            }}
-          >
-            🧭
+          <span className="entry-icon">
+            <CompassIcon size={52} />
           </span>
           <span className="entry-title">陣法挑戰</span>
           <span className="entry-desc">
@@ -79,14 +76,10 @@ const RegistrationEntry: React.FC<RegistrationEntryProps> = ({
         <button
           onClick={() => setIsBagOpen(true)}
           className="entry-card primary-card"
-          style={{
-            width: '100%',
-            flex: '1 1 100%',
-            marginTop: '15px'
-          }}
+          style={{ flex: '1 1 280px' }}
         >
           <span className="entry-icon">
-            <ChestIcon size={50} />
+            <ChestIcon size={52} />
           </span>
           <span className="entry-title">我的道具箱</span>
           <span className="entry-desc">存放著您在冒險中獲得的神祕寶物</span>
@@ -108,7 +101,7 @@ const RegistrationEntry: React.FC<RegistrationEntryProps> = ({
             transform: isFlashlightOn ? 'translateY(0)' : 'translateY(-10px)'
           }}
         >
-          {isFlashlightOn ? '—— 傳說輸入「CLUE」獲取殘卷 ——' : ''}
+          {isFlashlightOn ? '—— 傳說輸入「培桂堂」獲取殘卷 ——' : ''}
         </div>
       </div>
     </section>

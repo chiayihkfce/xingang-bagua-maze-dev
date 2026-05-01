@@ -169,7 +169,7 @@ export const translations = {
     quizReplay: '再次問卜',
     quizResultTitle: '【 您的天命方位 】',
     quizIntro: '在踏入新港迷蹤之前，先測出你在八卦陣中的守護方位...',
-    baguaData: {
+    trigramData: {
       乾: {
         role: '領袖 / 堅毅',
         desc: '天行健，君子以自強不息。你是隊伍中的核心，在迷霧中總能保持清晰的判斷力。',
@@ -396,7 +396,7 @@ export const translations = {
     quizReplay: 'Re-divine',
     quizResultTitle: '[ Your Divine Position ]',
     quizIntro: 'Before entering the maze, find your guardian trigram...',
-    baguaData: {
+    trigramData: {
       乾: {
         role: 'Leader / Strong',
         desc: 'Like Heaven, you are the core of the team.',

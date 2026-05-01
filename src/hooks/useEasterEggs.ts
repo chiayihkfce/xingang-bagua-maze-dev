@@ -198,7 +198,7 @@ export const useEasterEggs = (props?: {
 
     // 英文備用密令
     const clueCode = ['c', 'l', 'u', 'e'];
-    const baguaCode = ['b', 'a', 'g', 'u', 'a'];
+    const bCode = ['b', 'a', 'g', 'u', 'a']; // 保留原英文作為技術後門
     let kIdx = 0,
       cIdx = 0,
       bIdx = 0;
@@ -225,9 +225,10 @@ export const useEasterEggs = (props?: {
           showAlert('獲得了【神祕詩籤】！已放入道具箱。', '📜 獲得道具');
         }
       } else cIdx = 0;
-      if (key === baguaCode[bIdx]) {
+
+      if (key === bCode[bIdx]) {
         bIdx++;
-        if (bIdx === baguaCode.length) {
+        if (bIdx === bCode.length) {
           bIdx = 0;
           triggerBaguaBox();
         }
@@ -241,7 +242,7 @@ export const useEasterEggs = (props?: {
       if (command === '培桂堂') {
         setHasPoetrySlip(true);
         showAlert('感應到培桂堂的氣息...獲得了【神祕詩籤】！', '📜 獲得道具');
-      } else if (command === '乾坤') {
+      } else if (command === '乾坤' || command === '八卦') {
         triggerBaguaBox();
       } else if (command === '鴨肉羹') {
         setHasDuckSoup(true);

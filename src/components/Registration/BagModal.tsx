@@ -51,6 +51,128 @@ export const ChestIcon: React.FC<{ size?: number }> = ({ size = 50 }) => (
   </svg>
 );
 
+/**
+ * 卷軸 SVG 圖示組件 (用於開始報名)
+ */
+export const ScrollIcon: React.FC<{ size?: number }> = ({ size = 50 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ filter: 'drop-shadow(0 0 5px rgba(212, 175, 55, 0.4))' }}
+  >
+    <path
+      d="M4 19V5C4 3.89543 4.89543 3 6 3H18C19.1046 3 20 3.89543 20 5V19M4 19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19M4 19C4 17.8954 4.89543 17 6 17H20M10 7H16M10 11H16M10 15H14"
+      stroke="var(--primary-gold)"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <path
+      d="M6 17C7.10457 17 8 17.8954 8 19C8 20.1046 7.10457 21 6 21"
+      stroke="var(--primary-gold)"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
+/**
+ * 放大鏡 SVG 圖示組件 (用於查詢進度)
+ */
+export const SearchIcon: React.FC<{ size?: number }> = ({ size = 50 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ filter: 'drop-shadow(0 0 5px rgba(212, 175, 55, 0.4))' }}
+  >
+    <circle
+      cx="11"
+      cy="11"
+      r="7"
+      stroke="var(--primary-gold)"
+      strokeWidth="2"
+    />
+    <path
+      d="M20 20L16 16"
+      stroke="var(--primary-gold)"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M9 8C9 8 9.5 7 11 7"
+      stroke="var(--primary-gold)"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+/**
+ * 指南針 SVG 圖示組件 (用於陣法挑戰)
+ */
+export const CompassIcon: React.FC<{ size?: number }> = ({ size = 50 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.5))' }}
+  >
+    {/* 外圈裝飾 */}
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="var(--primary-gold)"
+      strokeWidth="0.5"
+      strokeDasharray="1 2"
+      opacity="0.5"
+    />
+    <circle
+      cx="12"
+      cy="12"
+      r="8.5"
+      stroke="var(--primary-gold)"
+      strokeWidth="1.5"
+    />
+
+    {/* 指針背景 */}
+    <path
+      d="M12 4L13.5 12L12 20L10.5 12L12 4Z"
+      fill="rgba(212, 175, 55, 0.1)"
+    />
+
+    {/* 北方指針 */}
+    <path
+      d="M12 4L14.5 12L12 11L9.5 12L12 4Z"
+      fill="var(--primary-gold)"
+      stroke="var(--primary-gold)"
+      strokeWidth="0.5"
+    />
+    {/* 南方指針 */}
+    <path
+      d="M12 20L9.5 12L12 13L14.5 12L12 20Z"
+      fill="none"
+      stroke="var(--primary-gold)"
+      strokeWidth="1"
+    />
+
+    {/* 中心軸 */}
+    <circle cx="12" cy="12" r="1" fill="#000" stroke="var(--primary-gold)" />
+
+    {/* 刻度 */}
+    <path d="M12 2V3.5" stroke="var(--primary-gold)" strokeWidth="1" />
+    <path d="M12 20.5V22" stroke="var(--primary-gold)" strokeWidth="1" />
+    <path d="M2 12H3.5" stroke="var(--primary-gold)" strokeWidth="1" />
+    <path d="M20.5 12H22" stroke="var(--primary-gold)" strokeWidth="1" />
+  </svg>
+);
+
 interface BagModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -63,6 +185,7 @@ interface BagModalProps {
   onToggleFlashlight: () => void;
   showMysticScroll: () => void;
   triggerBaguaBox: () => void;
+  showAlert: (message: string, title?: string) => void;
 }
 
 /**
@@ -79,9 +202,24 @@ const BagModal: React.FC<BagModalProps> = ({
   isFlashlightOn,
   onToggleFlashlight,
   showMysticScroll,
-  triggerBaguaBox
+  triggerBaguaBox,
+  showAlert
 }) => {
   if (!isOpen) return null;
+
+  const showDuckSoupInfo = () => {
+    showAlert(
+      '「新港鴨肉羹」是造訪新港奉天宮必嚐的在地美食。其靈魂在於將鴨肉與洋蔥、蔥段在大火中快速爆炒，鎖住肉質鮮甜並產生迷人的「鑊氣」（焦香味），隨後加入清脆筍絲與大骨高湯勾芡而成。湯頭微酸微甜，口感層次分明，搭配特製的「五印醋」更能勾勒出鮮味。',
+      '🍜 關於新港鴨肉羹'
+    );
+  };
+
+  const showCandyInfo = () => {
+    showAlert(
+      '「新港飴」創始於清光緒年間。創始人盧其代先生原本是在奉天宮前販賣「庚仔粩」（一種以糯米與芋頭製成的傳統麻粩）及花生糖。某次因連日陰雨，花生糖受潮變軟，他不忍浪費，便將其與糖漿、麵粉重新揉捏熬煮，意外創造出Q彈不黏牙的新口感。因最初外型像小老鼠，被稱為「老鼠糖」或「雙仁糖」，是新港最具代表性的百年傳統甜點。',
+      '🍬 關於新港飴'
+    );
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
@@ -137,7 +275,12 @@ const BagModal: React.FC<BagModalProps> = ({
           >
             {/* 1. 手電筒 */}
             <div
-              onClick={hasFlashlight ? onToggleFlashlight : undefined}
+              onClick={
+                hasFlashlight
+                  ? onToggleFlashlight
+                  : () => showAlert('前往「陣法挑戰」破除迷陣，即可獲得此照明神器。', '🔍 獲取線索')
+              }
+              title={hasFlashlight ? '點擊開關手電筒' : '尚未獲得：需破除陣法'}
               style={{
                 width: '80px',
                 height: '80px',
@@ -157,7 +300,8 @@ const BagModal: React.FC<BagModalProps> = ({
                   hasFlashlight && isFlashlightOn
                     ? '0 0 20px var(--primary-gold)'
                     : 'none',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
               }}
             >
               <span style={{ fontSize: '2.2rem' }}>
@@ -178,7 +322,12 @@ const BagModal: React.FC<BagModalProps> = ({
             </div>
             {/* 2. 詩籤 */}
             <div
-              onClick={hasPoetrySlip ? showMysticScroll : undefined}
+              onClick={
+                hasPoetrySlip
+                  ? showMysticScroll
+                  : () => showAlert('感應先人足跡... 試著在下方輸入這座古蹟的名字。', '🔍 獲取線索')
+              }
+              title={hasPoetrySlip ? '點擊查看詩籤內容' : '尚未獲得：需感應地靈'}
               style={{
                 width: '80px',
                 height: '80px',
@@ -191,7 +340,8 @@ const BagModal: React.FC<BagModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                opacity: hasPoetrySlip ? 1 : 0.5
+                opacity: hasPoetrySlip ? 1 : 0.5,
+                cursor: 'pointer'
               }}
             >
               <span style={{ fontSize: '2.2rem' }}>
@@ -218,8 +368,9 @@ const BagModal: React.FC<BagModalProps> = ({
                       onClose();
                       triggerBaguaBox();
                     }
-                  : undefined
+                  : () => showAlert('感悟天地之理。試著在下方輸入這場冒險的核心「兩個字」。', '🔍 獲取線索')
               }
+              title={hasTigerSeal ? '點擊啟動符令' : '尚未獲得：需感悟八卦'}
               style={{
                 width: '80px',
                 height: '80px',
@@ -232,7 +383,8 @@ const BagModal: React.FC<BagModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                opacity: hasTigerSeal ? 1 : 0.5
+                opacity: hasTigerSeal ? 1 : 0.5,
+                cursor: 'pointer'
               }}
             >
               <span style={{ fontSize: '2.2rem' }}>
@@ -253,6 +405,12 @@ const BagModal: React.FC<BagModalProps> = ({
             </div>
             {/* 4. 鴨肉羹 */}
             <div
+              onClick={
+                hasDuckSoup
+                  ? showDuckSoupInfo
+                  : () => showAlert('聞到了大火爆炒的香氣... 在下方輸入這道美食的名字。', '🔍 獲取線索')
+              }
+              title={hasDuckSoup ? '點擊查看美食知識' : '尚未獲得：需尋訪美味'}
               style={{
                 width: '80px',
                 height: '80px',
@@ -265,7 +423,8 @@ const BagModal: React.FC<BagModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                opacity: hasDuckSoup ? 1 : 0.5
+                opacity: hasDuckSoup ? 1 : 0.5,
+                cursor: 'pointer'
               }}
             >
               <span style={{ fontSize: '2.2rem' }}>
@@ -286,6 +445,12 @@ const BagModal: React.FC<BagModalProps> = ({
             </div>
             {/* 5. 新港飴 */}
             <div
+              onClick={
+                hasCandy
+                  ? showCandyInfo
+                  : () => showAlert('傳承百年的甜蜜回憶，輸入它的正式名稱或趣味暱稱來獲得。', '🔍 獲取線索')
+              }
+              title={hasCandy ? '點擊查看甜點知識' : '尚未獲得：需尋訪甜蜜'}
               style={{
                 width: '80px',
                 height: '80px',
@@ -298,7 +463,8 @@ const BagModal: React.FC<BagModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                opacity: hasCandy ? 1 : 0.5
+                opacity: hasCandy ? 1 : 0.5,
+                cursor: 'pointer'
               }}
             >
               <span style={{ fontSize: '2.2rem' }}>

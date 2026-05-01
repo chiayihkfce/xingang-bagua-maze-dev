@@ -127,8 +127,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
         className="entry-card primary-card bagua-quiz-entry-btn"
         onClick={() => setIsOpen(true)}
         style={{
-          width: '100%',
-          flex: '0 0 100%', // 佔滿整行
+          flex: '1 1 280px',
           margin: 0,
           cursor: 'pointer',
           boxSizing: 'border-box'
@@ -139,14 +138,15 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
           style={{
             transform: 'rotate(180deg)',
             WebkitTransform: 'rotate(180deg)',
-            width: '60px',
-            height: '60px',
+            width: '44px',
+            height: '44px',
             borderRadius: '50%',
             border: '2px solid var(--primary-gold)',
-            background: 'linear-gradient(to right, #fff 50%, #000 50%)',
+            background: 'linear-gradient(to right, var(--primary-gold) 50%, #000 50%)',
             position: 'relative',
             overflow: 'hidden',
-            display: 'inline-block'
+            display: 'inline-block',
+            boxShadow: '0 0 10px rgba(241, 196, 15, 0.4)'
           }}
         >
           <div
@@ -156,7 +156,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
               left: '25%',
               width: '50%',
               height: '50%',
-              background: '#fff',
+              background: 'var(--primary-gold)',
               borderRadius: '50%',
               display: 'flex',
               justifyContent: 'center',
@@ -190,7 +190,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
               style={{
                 width: '25%',
                 height: '25%',
-                background: '#fff',
+                background: 'var(--primary-gold)',
                 borderRadius: '50%'
               }}
             ></div>
@@ -392,7 +392,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                         height: '100%',
                         borderRadius: '50%',
                         background:
-                          'linear-gradient(to right, #fff 50%, #000 50%)',
+                          'linear-gradient(to right, var(--primary-gold) 50%, #000 50%)',
                         position: 'relative'
                       }}
                     >
@@ -403,7 +403,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                           left: '25%',
                           width: '50%',
                           height: '50%',
-                          background: '#fff',
+                          background: 'var(--primary-gold)',
                           borderRadius: '50%',
                           display: 'flex',
                           justifyContent: 'center',
@@ -437,7 +437,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                           style={{
                             width: '25%',
                             height: '25%',
-                            background: '#fff',
+                            background: 'var(--primary-gold)',
                             borderRadius: '50%'
                           }}
                         ></div>
@@ -479,7 +479,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                   {t?.quizResultTitle || '【 您的天命方位 】'} {result}
                 </h3>
                 <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>
-                  性格：{t?.baguaData?.[result]?.role || '---'}
+                  性格：{t?.trigramData?.[result]?.role || '---'}
                 </p>
                 <p
                   style={{
@@ -488,7 +488,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                     lineHeight: '1.6'
                   }}
                 >
-                  {t?.baguaData?.[result]?.desc || ''}
+                  {t?.trigramData?.[result]?.desc || ''}
                 </p>
                 <div
                   style={{
@@ -500,7 +500,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                     fontStyle: 'italic'
                   }}
                 >
-                  💡 {t?.baguaData?.[result]?.tip || ''}
+                  💡 {t?.trigramData?.[result]?.tip || ''}
                 </div>
                 <div
                   style={{
@@ -604,7 +604,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
             paddingBottom: '10px'
           }}
         >
-          {result && t.baguaData[result].role}
+          {result && t.trigramData[result].role}
         </div>
         <p
           style={{
@@ -614,7 +614,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
             opacity: 0.9
           }}
         >
-          {result && t.baguaData[result].desc}
+          {result && t.trigramData[result].desc}
         </p>
         <div
           style={{
@@ -630,7 +630,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
             天命指引
           </div>
           <div style={{ fontSize: '1.1rem', fontStyle: 'italic' }}>
-            {result && t.baguaData[result].tip}
+            {result && t.trigramData[result].tip}
           </div>
         </div>
         <div style={{ marginTop: '40px', fontSize: '0.8rem', opacity: 0.5 }}>
