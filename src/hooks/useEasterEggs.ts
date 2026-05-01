@@ -71,8 +71,7 @@ export const useEasterEggs = (props?: {
           </div>
           <div id="mystic-seal" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: 0; z-index: 3; transition: all 2s ease 0.8s; pointer-events: none;">
              <div style="position: relative;">
-               <img src="/奉天宮虎印.png" alt="新港奉天宮虎印" style="width: 220px; height: auto; filter: drop-shadow(0 0 30px rgba(212,175,55,0.7));" />
-               <div style="position: absolute; bottom: -10px; left: 10%; width: 80%; height: 30px; background: radial-gradient(ellipse, #d4af37 0%, transparent 70%); filter: blur(15px); opacity: 0.6;"></div>
+               <img src="./tiger-seal-hq.png" alt="新港奉天宮虎印" style="width: 220px; height: auto; filter: drop-shadow(0 0 30px rgba(212,175,55,0.7));" />               <div style="position: absolute; bottom: -10px; left: 10%; width: 80%; height: 30px; background: radial-gradient(ellipse, #d4af37 0%, transparent 70%); filter: blur(15px); opacity: 0.6;"></div>
              </div>
           </div>
         </div>
