@@ -207,29 +207,20 @@ const BagModal: React.FC<BagModalProps> = ({
   showAlert,
   setIsEasterEggActive
 }) => {
-  // 追蹤開啟時是否已經集齊，用於判斷「集齊瞬間」
-  const [alreadyCompletedOnOpen] = React.useState(() => 
-    hasFlashlight && 
-    hasPoetrySlip && 
-    hasTigerSeal && 
-    hasDuckSoup && 
-    hasCandy
-  );
+  // 輔助函式：檢查目前是否集齊五個信物
+  const checkIsCollected = () => 
+    hasFlashlight && hasPoetrySlip && hasTigerSeal && hasDuckSoup && hasCandy;
 
   if (!isOpen) return null;
 
   const handleClose = () => {
-    // 檢查目前是否集齊五個信物
-    const isNowCollected = 
-      hasFlashlight && 
-      hasPoetrySlip && 
-      hasTigerSeal && 
-      hasDuckSoup && 
-      hasCandy;
+    // 檢查是否已集齊，且尚未觸發過彩蛋 (避免重複播放干擾)
+    const isCollected = checkIsCollected();
+    const hasTriggered = localStorage.getItem('luanqing_egg_triggered') === 'true';
 
-    // 如果「開啟時未集齊」且「現在集齊了」，則是集齊瞬間
-    if (isNowCollected && !alreadyCompletedOnOpen && setIsEasterEggActive) {
+    if (isCollected && !hasTriggered && setIsEasterEggActive) {
       setIsEasterEggActive(true);
+      localStorage.setItem('luanqing_egg_triggered', 'true');
     }
     
     onClose();

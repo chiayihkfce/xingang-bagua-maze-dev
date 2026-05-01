@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>白鸞卿紙偶劇場原型</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark: #000000;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Noto Serif TC', serif;
+        }
+        #theater {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            cursor: pointer;
+        }
+        #spotlight {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1);
+            opacity: 0;
+        }
+        #character-container {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+        }
+        /* SVG 角色樣式 */
+        .character-part {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 1.2;
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+        }
+        .character-fill {
+            fill: rgba(212, 175, 55, 0.15);
+        }
+        #dialogue-box {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gold);
+            padding: 20px;
+            border-radius: 15px;
+            color: var(--gold);
+            text-align: center;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div id="theater">
+        <div id="spotlight"></div>
+        <div id="character-container">
+            <!-- 白鸞卿向量紙偶示意 -->
+            <svg width="200" height="320" viewBox="0 0 200 320">
+                <!-- 軀幹 -->
+                <path class="character-part character-fill" d="M70 120 L130 120 L140 220 L60 220 Z" />
+                <!-- 頭部 -->
+                <g id="head">
+                    <circle class="character-part character-fill" cx="100" cy="80" r="35" />
+                    <!-- 眼鏡 -->
+                    <circle class="character-part" cx="88" cy="85" r="8" />
+                    <circle class="character-part" cx="112" cy="85" r="8" />
+                    <line class="character-part" x1="96" y1="85" x2="104" y2="85" />
+                    <!-- 髮絲意象 -->
+                    <path class="character-part" d="M75 60 Q100 40 125 60" />
+                </g>
+                <!-- 手部 -->
+                <g id="left-arm">
+                    <path class="character-part" d="M70 130 L40 180" />
+                    <circle class="character-part" cx="35" cy="185" r="5" />
+                </g>
+                <g id="right-arm">
+                    <path class="character-part" d="M130 130 L160 180" />
+                    <!-- 摺扇 -->
+                    <path class="character-part character-fill" d="M160 180 L180 160 L190 190 Z" />
+                </g>
+                <!-- 腿部 -->
+                <path class="character-part" d="M85 220 L80 290" />
+                <path class="character-part" d="M115 220 L120 290" />
+            </svg>
+        </div>
+        <div id="dialogue-box">
+            <div id="text">「呵呵，看來這一路上的挑戰難不倒你...」</div>
+            <div style="font-size: 0.7rem; margin-top: 10px; opacity: 0.5;">[ 點擊畫面繼續 ]</div>
+        </div>
+    </div>
+
+    <script>
+        const tl = gsap.timeline();
+
+        // 登場動畫
+        tl.to("#spotlight", { opacity: 1, duration: 2 })
+          .to("#character-container", { 
+            opacity: 1, 
+            y: -20, 
+            duration: 1.5, 
+            ease: "back.out(1.7)" 
+          }, "-=1")
+          .to("#dialogue-box", { opacity: 1, y: -10, duration: 1 });
+
+        // 紙偶晃動循環
+        gsap.to("#character-container", {
+            y: "+=10",
+            rotation: 2,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+
+        gsap.to("#head", {
+            rotation: 3,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            transformOrigin: "center bottom"
+        });
+    </script>
+</body>
+</html>

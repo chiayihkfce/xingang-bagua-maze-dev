@@ -210,7 +210,14 @@ export const translations = {
         desc: '麗澤之悅，和諧共生。你是溝通的高手，能讓團隊在歡笑中解開最難的死結。',
         tip: '多與人交流。路人或店家的一句話，可能就是關鍵的拼圖。'
       }
-    }
+    },
+    luanqingDialogues: [
+      '「呵呵，看來這一路上的挑戰難不倒你。虎爺跟我說，有個細心的人正在收集合攏這破碎的記憶。」',
+      '「這塊新港飴、這盞舊燈...對你來說或許只是道具，但對我來說，它們是接通百年時空的頻率。」',
+      '「你證明了，新港的靈魂並沒有被遺忘。即使在不同的年代，我們依然感應著同樣的八卦氣息。」',
+      '「現在，這場傳說的大門已經為你敞開。勇敢地走下去吧，完成我未竟的旅程。」',
+      '「我在這八卦陣的彼端，看著你的每一步。加油，新任的天命者。」'
+    ]
   },
   en: {
     submitSuccess: 'Registration Confirmed!',
@@ -437,6 +444,13 @@ export const translations = {
         desc: 'Like Lake, you bring harmony.',
         tip: 'Talk to local people.'
       }
-    }
+    },
+    luanqingDialogues: [
+      '"Haha, it seems the challenges along the way are no match for you. Tiger General told me that a careful person is gathering these shattered memories."',
+      '"This Xingang candy, this old lamp... to you they may just be props, but to me, they are frequencies connecting a hundred years of time and space."',
+      '"You proved that the soul of Xingang has not been forgotten. Even in different eras, we still sense the same Bagua aura."',
+      '"Now, the door to this legend has opened for you. Go forward bravely and complete the journey I never finished."',
+      '"I am at the other end of this Bagua formation, watching your every step. Keep going, the new Chosen One."'
+    ]
   }
 };

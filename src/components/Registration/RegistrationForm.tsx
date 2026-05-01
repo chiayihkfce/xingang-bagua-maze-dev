@@ -232,31 +232,35 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       )}
 
       {/* 統一彈窗渲染層 */}
-      <BagModal
-        isOpen={isBagOpen}
-        onClose={() => setIsBagOpen(false)}
-        hasFlashlight={hasFlashlight}
-        hasPoetrySlip={hasPoetrySlip}
-        hasTigerSeal={hasTigerSeal}
-        hasDuckSoup={hasDuckSoup}
-        hasCandy={hasCandy}
-        isFlashlightOn={isFlashlightOn}
-        onToggleFlashlight={() => {
-          const nextState = !isFlashlightOn;
-          setIsFlashlightOn(nextState);
-          if (nextState) setIsBagOpen(false);
-        }}
-        showMysticScroll={() => setIsScrollOpen(true)}
-        triggerBaguaBox={triggerBaguaBox}
-        showAlert={showAlert}
-        setIsEasterEggActive={setIsEasterEggActive}
-      />
+      {isBagOpen && (
+        <BagModal
+          isOpen={isBagOpen}
+          onClose={() => setIsBagOpen(false)}
+          hasFlashlight={hasFlashlight}
+          hasPoetrySlip={hasPoetrySlip}
+          hasTigerSeal={hasTigerSeal}
+          hasDuckSoup={hasDuckSoup}
+          hasCandy={hasCandy}
+          isFlashlightOn={isFlashlightOn}
+          onToggleFlashlight={() => {
+            const nextState = !isFlashlightOn;
+            setIsFlashlightOn(nextState);
+            if (nextState) setIsBagOpen(false);
+          }}
+          showMysticScroll={() => setIsScrollOpen(true)}
+          triggerBaguaBox={triggerBaguaBox}
+          showAlert={showAlert}
+          setIsEasterEggActive={setIsEasterEggActive}
+        />
+      )}
 
-      <StatusLookupModal
-        isOpen={isLookupOpen}
-        onClose={() => setIsLookupOpen(false)}
-        lang={lang}
-      />
+      {isLookupOpen && (
+        <StatusLookupModal
+          isOpen={isLookupOpen}
+          onClose={() => setIsLookupOpen(false)}
+          lang={lang}
+        />
+      )}
 
       {isScrollOpen && (
         <div
