@@ -1,28 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ClosedDaysConfig, ClosedDaysMode } from '../../../types';
+import { TAIWAN_HOLIDAYS_2026 } from '../../../utils/dateUtils';
 
 interface SettingsClosedDaysTabProps {
   closedDaysConfig: ClosedDaysConfig;
   saveClosedDaysConfig: (config: ClosedDaysConfig) => Promise<void>;
 }
-
-const TAIWAN_HOLIDAYS_2026 = [
-  '2026-01-01',
-  '2026-02-16',
-  '2026-02-17',
-  '2026-02-18',
-  '2026-02-19',
-  '2026-02-20',
-  '2026-02-21',
-  '2026-02-28',
-  '2026-04-03',
-  '2026-04-04',
-  '2026-05-01',
-  '2026-06-19',
-  '2026-09-25',
-  '2026-10-09',
-  '2026-10-10'
-];
 
 const SettingsClosedDaysTab: React.FC<SettingsClosedDaysTabProps> = ({
   closedDaysConfig,
