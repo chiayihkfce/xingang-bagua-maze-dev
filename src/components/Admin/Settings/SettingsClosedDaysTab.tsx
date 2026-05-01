@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DatePicker from 'react-datepicker';
 import { ClosedDaysConfig, ClosedDaysMode } from '../../../types';
 import { TAIWAN_HOLIDAYS_2026 } from '../../../utils/dateUtils';
 
@@ -12,7 +13,7 @@ const SettingsClosedDaysTab: React.FC<SettingsClosedDaysTabProps> = ({
   saveClosedDaysConfig
 }) => {
   const [localConfig, setLocalConfig] = useState<ClosedDaysConfig>(closedDaysConfig);
-  const [newDate, setNewDate] = useState('');
+  const [newDate, setNewDate] = useState<Date | null>(null);
 
   useEffect(() => {
     setLocalConfig(closedDaysConfig);
@@ -35,12 +36,16 @@ const SettingsClosedDaysTab: React.FC<SettingsClosedDaysTabProps> = ({
   };
 
   const addManualDate = () => {
-    if (!newDate || localConfig.manualClosedDates.includes(newDate)) return;
+    if (!newDate) return;
+    const dateStr = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}-${String(newDate.getDate()).padStart(2, '0')}`;
+    
+    if (localConfig.manualClosedDates.includes(dateStr)) return;
+    
     setLocalConfig({
       ...localConfig,
-      manualClosedDates: [...localConfig.manualClosedDates, newDate].sort()
+      manualClosedDates: [...localConfig.manualClosedDates, dateStr].sort()
     });
-    setNewDate('');
+    setNewDate(null);
   };
 
   const removeManualDate = (date: string) => {
@@ -101,9 +106,41 @@ const SettingsClosedDaysTab: React.FC<SettingsClosedDaysTabProps> = ({
 
             <div className="manual-dates-section">
               <h5 style={{ color: 'var(--text-muted)', marginBottom: '0.8rem', fontSize: '0.85rem' }}>➕ 手動排除特定日期 (例如活動衝突)</h5>
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
-                <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} style={{ flex: 1, padding: '0.6rem', borderRadius: '6px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg)', color: '#fff' }} />
-                <button onClick={addManualDate} style={{ padding: '0.6rem 1.2rem', borderRadius: '6px', background: 'var(--primary-gold)', color: '#000', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}>加入</button>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem', alignItems: 'center' }}>
+                <div className="filter-input-wrapper" style={{ flex: 1, margin: 0, height: '42px' }}>
+                  <div className="filter-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                  <DatePicker
+                    selected={newDate}
+                    onChange={(date: Date | null) => setNewDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="選擇排除日期..."
+                    className="date-picker-input"
+                  />
+                </div>
+                <button 
+                  onClick={addManualDate} 
+                  disabled={!newDate}
+                  style={{ 
+                    height: '42px',
+                    padding: '0 1.2rem', 
+                    borderRadius: '8px', 
+                    background: 'var(--primary-gold)', 
+                    color: '#000', 
+                    fontWeight: 'bold', 
+                    border: 'none', 
+                    cursor: newDate ? 'pointer' : 'not-allowed',
+                    opacity: newDate ? 1 : 0.5
+                  }}
+                >
+                  加入
+                </button>
               </div>
               
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
