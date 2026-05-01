@@ -14,6 +14,7 @@ import RegistrationPersonalFields from './RegistrationPersonalFields';
 import RegistrationSessionFields from './RegistrationSessionFields';
 import RegistrationPaymentFields from './RegistrationPaymentFields';
 import BagModal from './BagModal';
+import LuanQingTheater from './LuanQingTheater';
 import { useAppContext } from '../../context/AppContext';
 // import { useEasterEggs } from '../../hooks/useEasterEggs';
 
@@ -87,7 +88,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     hasTigerSeal,
     hasDuckSoup,
     hasCandy,
-    triggerBaguaBox
+    triggerBaguaBox,
+    isEasterEggActive,
+    setIsEasterEggActive
   } = useAppContext();
 
   const [viewMode, setViewMode] = useState<'choice' | 'form'>('choice');
@@ -96,6 +99,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   // 渲染邏輯
   return (
     <>
+      {isEasterEggActive && (
+        <LuanQingTheater onClose={() => setIsEasterEggActive(false)} />
+      )}
+
       {viewMode === 'choice' ? (
         <RegistrationEntry
           t={t}
@@ -242,6 +249,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         showMysticScroll={() => setIsScrollOpen(true)}
         triggerBaguaBox={triggerBaguaBox}
         showAlert={showAlert}
+        setIsEasterEggActive={setIsEasterEggActive}
       />
 
       <StatusLookupModal

@@ -186,6 +186,7 @@ interface BagModalProps {
   showMysticScroll: () => void;
   triggerBaguaBox: () => void;
   showAlert: (message: string, title?: string) => void;
+  setIsEasterEggActive?: (active: boolean) => void;
 }
 
 /**
@@ -203,9 +204,36 @@ const BagModal: React.FC<BagModalProps> = ({
   onToggleFlashlight,
   showMysticScroll,
   triggerBaguaBox,
-  showAlert
+  showAlert,
+  setIsEasterEggActive
 }) => {
+  // 追蹤開啟時是否已經集齊，用於判斷「集齊瞬間」
+  const [alreadyCompletedOnOpen] = React.useState(() => 
+    hasFlashlight && 
+    hasPoetrySlip && 
+    hasTigerSeal && 
+    hasDuckSoup && 
+    hasCandy
+  );
+
   if (!isOpen) return null;
+
+  const handleClose = () => {
+    // 檢查目前是否集齊五個信物
+    const isNowCollected = 
+      hasFlashlight && 
+      hasPoetrySlip && 
+      hasTigerSeal && 
+      hasDuckSoup && 
+      hasCandy;
+
+    // 如果「開啟時未集齊」且「現在集齊了」，則是集齊瞬間
+    if (isNowCollected && !alreadyCompletedOnOpen && setIsEasterEggActive) {
+      setIsEasterEggActive(true);
+    }
+    
+    onClose();
+  };
 
   const showDuckSoupInfo = () => {
     showAlert(
@@ -222,7 +250,7 @@ const BagModal: React.FC<BagModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
+    <div className="modal-overlay" onClick={handleClose} style={{ zIndex: 10000 }}>
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
@@ -365,7 +393,7 @@ const BagModal: React.FC<BagModalProps> = ({
               onClick={
                 hasTigerSeal
                   ? () => {
-                      onClose();
+                      handleClose();
                       triggerBaguaBox();
                     }
                   : () => showAlert('感悟天地之理。試著在下方輸入這場冒險的核心「兩個字」。', '🔍 獲取線索')
@@ -538,7 +566,7 @@ const BagModal: React.FC<BagModalProps> = ({
         <div className="modal-actions" style={{ marginTop: '20px' }}>
           <button
             className="submit-btn"
-            onClick={onClose}
+            onClick={handleClose}
             style={{
               width: '100%',
               background: 'transparent',
