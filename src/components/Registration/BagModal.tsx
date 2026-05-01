@@ -241,7 +241,7 @@ const BagModal: React.FC<BagModalProps> = ({
         >
           <ChestIcon size={30} />
           <h2 style={{ color: 'var(--primary-gold)', margin: 0 }}>
-            我的最終神祕道具箱
+            我的道具箱
           </h2>
         </div>
 
